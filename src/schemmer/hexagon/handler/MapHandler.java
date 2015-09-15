@@ -20,6 +20,7 @@ public class MapHandler {
 	private Hexagon[][] map;
 	
 	private Hexagon marked;
+	private Hexagon hovered;
 	private Point clicked;
 	
 	public MapHandler(Main main){
@@ -43,6 +44,9 @@ public class MapHandler {
 		}
 		if(clicked != null)
 			g2d.fillRect((int)clicked.x, (int)clicked.y, 5, 5);
+		if(hovered != null){
+			hovered.draw(g2d, new Color(150,150,250), new BasicStroke(3));
+		}
 		if(marked != null){
 			marked.draw(g2d, new Color(0,0,255), new BasicStroke(3));
 		}
@@ -64,17 +68,32 @@ public class MapHandler {
 		    	map[r + radius][q + radius + Math.min(0, r)] = new Hexagon(new Cube(q, -q-r, r));
 		    }
 		}
+		marked = null;
+		hovered = null;
 	}
 
 	public void setMarked(Cube c){
 		marked = this.getInArray(c);
 	}
 	
+	public void setHovered(Cube c){
+		hovered = this.getInArray(c);
+	}
+	
 	public void setMarked(MouseEvent e){
 		clicked = new Point(e.getX(), e.getY());
-
 		main.getGUI().getScreen().setDebug("Clicked @"+ e.getX()+" | "+e.getY());
 		this.setMarked(Conv.pointToCube(e.getX(), e.getY(), main.getGUI().getScreen()));
+	}
+	
+	public void setHovered(MouseEvent e){
+		clicked = new Point(e.getX(), e.getY());
+		this.setHovered(Conv.pointToCube(e.getX(), e.getY()));
+	}
+	
+	public void recreate(int newRadius){
+		RADIUS = newRadius;
+		createHexagon(RADIUS);
 	}
 		
 }

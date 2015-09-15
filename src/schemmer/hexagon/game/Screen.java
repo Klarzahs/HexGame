@@ -58,4 +58,8 @@ public class Screen extends JPanel{
 		debug = debug + "   " + d;
 	}
 	
+	public void recreate(int newRadius){
+		mh.recreate(newRadius);
+	}
+	
 }

@@ -13,6 +13,7 @@ import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.processes.GameLoop;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
+import schemmer.hexagon.utils.Log;
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private GUI gui;
@@ -73,11 +74,12 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		Cube c = Conv.pointToCube(e.getX(), e.getY());
-		mh.setMarked(e);
+		mh.setHovered(e);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		gui.getScreen().setDebug(""+e.getKeyCode());
 		if(e.getModifiers() == InputEvent.CTRL_MASK){
 			switch (e.getKeyCode()){
 				case 521: // "+"
@@ -89,19 +91,14 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 				default:
 					break;
 			}
+			if(e.getKeyCode() <= 57 && e.getKeyCode() >=49) gui.getScreen().recreate(e.getKeyCode()-48);
 		}
 	}
 
 	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyReleased(KeyEvent e) {}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void keyTyped(KeyEvent e) {}
 	
 }
