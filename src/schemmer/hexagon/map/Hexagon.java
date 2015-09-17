@@ -15,6 +15,8 @@ public class Hexagon {
 	private static int SIZE = 50;			// in Pixel
 	// width = sqrt(3)/2 * height
 	
+	private HexType type;
+	
 	private Point center;
 	private Cube coords;
 	
@@ -30,26 +32,35 @@ public class Hexagon {
 		return new Point(center.x + SIZE * Math.cos(angleRad), center.y + SIZE * Math.sin(angleRad));
 	}
 	
-	public void draw(Graphics2D g2d){
+	public void draw(Graphics2D g2d, int offX, int offY){
 		recalculateCenter();
-		g2d.setColor(new Color(255, 125, 0));
+		g2d.setColor(type.getColor());
 		for (int i = 0; i < CORNERS; i++){
-			g2d.drawLine((int)(hexCorner(i).x), (int)(hexCorner(i).y), (int)(hexCorner((i+1)%CORNERS).x), (int)(hexCorner((i+1)%CORNERS).y));
+			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
-		g2d.drawString(""+(int)this.coords.getV()[0] + "|" + (int)this.coords.getV()[1]+"|"+(int)this.coords.getV()[2], (int)center.x, (int)center.y);
+		g2d.drawString(""+(int)this.coords.getV()[0] + "|" + (int)this.coords.getV()[1]+"|"+(int)this.coords.getV()[2], (int)center.x-offX, (int)center.y-offY);
 	}
 	
-	public void fill(Graphics2D g2d){
+	public void fill(Graphics2D g2d, int offX, int offY){
+		recalculateCenter();
+		g2d.setColor(type.getColor());
 		int xs[] = new int [(int) CORNERS];
 		int ys[] = new int [(int) CORNERS];
 		
 		for (int i = 0; i < xs.length; i++){
-			xs[i] = (int) hexCorner(i).x;
-			ys[i] = (int) hexCorner(i).y;
+			xs[i] = (int) hexCorner(i).x - offX;
+			ys[i] = (int) hexCorner(i).y - offY;
 		}
 		
 		g2d.fillPolygon(xs, ys, (int) CORNERS);
 		
+	}
+	
+	public void drawOutline(Graphics2D g2d, int offX, int offY){
+		g2d.setColor(Color.GRAY);
+		for (int i = 0; i < CORNERS; i++){
+			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
+		}
 	}
 	
 	public static double getSize(){
@@ -64,12 +75,12 @@ public class Hexagon {
 		return "Center @"+center.x+" | "+center.y+"\n";
 	}
 	
-	public void draw(Graphics2D g2d, Color c, Stroke s){
+	public void draw(Graphics2D g2d, Color c, Stroke s, int offX, int offY){
 		g2d.setColor(c);
 		g2d.setStroke(s);
 		recalculateCenter();
 		for (int i = 0; i < CORNERS; i++){
-			g2d.drawLine((int)(hexCorner(i).x), (int)(hexCorner(i).y), (int)(hexCorner((i+1)%CORNERS).x), (int)(hexCorner((i+1)%CORNERS).y));
+			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
 	}
 	
@@ -92,6 +103,14 @@ public class Hexagon {
 	
 	public static void zoomOut(){
 		if (SIZE > 20) SIZE --;
+	}
+	
+	public HexType getType(){
+		return type;
+	}
+	
+	public void setType(int i){
+		type = new HexType(i);
 	}
 }
 

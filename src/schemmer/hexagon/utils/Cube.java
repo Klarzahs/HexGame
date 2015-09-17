@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Cube {
 	int[] v = new int [3];
 	
-	private static Cube[] directions = {new Cube(+1, -1,  0), new Cube(+1,  0, -1), new Cube( 0, +1, -1),
+	public static Cube[] directions = {new Cube(+1, -1,  0), new Cube(+1,  0, -1), new Cube( 0, +1, -1),
 			   new Cube(-1, +1,  0), new Cube(-1,  0, +1), new Cube( 0, -1, +1)};
 	
 	private static Cube[] diagonals = {new Cube(+2, -1, -1), new Cube(+1, +1, -2), new Cube(-1, +2, -1), 

@@ -20,6 +20,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private GameLoop gl;
 	private EntityHandler eh;
 	private MapHandler mh;
+	private final int HEIGHT = 1080;
+	private final int WIDTH = 1920;
 	
 	public static void main (String [] args) {
 		Main main = new Main();
@@ -28,12 +30,15 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public Main (){
 		eh = new EntityHandler();
 		mh = new MapHandler(this);
-		gui = new GUI(1920, 1080, true, this);
+		
+		gui = new GUI(WIDTH, HEIGHT, true, this);
 		gui.addMouseListener(this);
 		gui.addMouseMotionListener(this);
 		gui.addKeyListener(this);
-		gl = new GameLoop(this);
 		
+		mh.addScreen();
+		
+		gl = new GameLoop(this);
 		gl.run();
 	}
 	
@@ -91,7 +96,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 				default:
 					break;
 			}
-			if(e.getKeyCode() <= 57 && e.getKeyCode() >=49) gui.getScreen().recreate(e.getKeyCode()-48);
+			if(e.getKeyCode() <= 57 && e.getKeyCode() >=49) gui.getScreen().recreate((e.getKeyCode()-48)*2);
 		}
 	}
 

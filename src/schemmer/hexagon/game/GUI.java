@@ -31,4 +31,6 @@ public class GUI extends JFrame{
 	public Screen getScreen(){
 		return screen;
 	}
+	
+	
 }

@@ -3,7 +3,7 @@ package schemmer.hexagon.utils;
 import schemmer.hexagon.game.Screen;
 
 public class Axial {
-	int[] v = new int [2];
+	public int[] v = new int [2];
 	
 	private static Axial[] directions = {
 			new Axial(+1,  0), new Axial(+1, -1),new Axial( 0, -1),

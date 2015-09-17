@@ -6,16 +6,18 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
 import schemmer.hexagon.game.Main;
+import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.processes.MapFactory;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
-import schemmer.hexagon.utils.Log;
 import schemmer.hexagon.utils.Point;
 
 public class MapHandler {
 	private Main main;
+	private Screen screen;
 	
-	public int RADIUS = 7;
+	public int RADIUS = 15;
 	
 	private Hexagon[][] map;
 	
@@ -32,24 +34,24 @@ public class MapHandler {
 		
 	}
 	
-	public void draw(Graphics2D g2d){
+	public void draw(Graphics2D g2d, int offX, int offY){
 		g2d.setColor(new Color(150,150,150));
 		g2d.setStroke(new BasicStroke(1));
 		for (int q = 0; q < map.length; q++){
 			for (int r = 0; r < map[q].length; r++){
-				if(map[q][r] != null)
-					map[q][r].draw(g2d);
+				if(map[q][r] != null){
+					map[q][r].fill(g2d, offX, offY);
+					map[q][r].drawOutline(g2d, offX, offY);
+				}
 			}
-			
 		}
-		if(clicked != null)
-			g2d.fillRect((int)clicked.x, (int)clicked.y, 5, 5);
 		if(hovered != null){
-			hovered.draw(g2d, new Color(150,150,250), new BasicStroke(3));
+			hovered.draw(g2d, new Color(150,150,250), new BasicStroke(3), offX, offY);
 		}
 		if(marked != null){
-			marked.draw(g2d, new Color(0,0,255), new BasicStroke(3));
+			marked.draw(g2d, new Color(0,0,255), new BasicStroke(3), offX, offY);
 		}
+		
 	}
 	
 	public Hexagon getInArray(Cube c){
@@ -66,8 +68,10 @@ public class MapHandler {
 		    int r2 = Math.min(radius, -q + radius);
 		    for (int r = r1; r <= r2; r++) {
 		    	map[r + radius][q + radius + Math.min(0, r)] = new Hexagon(new Cube(q, -q-r, r));
+		    	map[r + radius][q + radius + Math.min(0, r)].setType(5);
 		    }
 		}
+		MapFactory.createTypes(map, radius);
 		marked = null;
 		hovered = null;
 	}
@@ -82,18 +86,24 @@ public class MapHandler {
 	
 	public void setMarked(MouseEvent e){
 		clicked = new Point(e.getX(), e.getY());
-		main.getGUI().getScreen().setDebug("Clicked @"+ e.getX()+" | "+e.getY());
-		this.setMarked(Conv.pointToCube(e.getX(), e.getY(), main.getGUI().getScreen()));
+		screen.setDebug("Clicked @"+ clicked.getX()+" | "+clicked.getY());
+		this.setMarked(Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen));
 	}
 	
 	public void setHovered(MouseEvent e){
 		clicked = new Point(e.getX(), e.getY());
-		this.setHovered(Conv.pointToCube(e.getX(), e.getY()));
+		this.setHovered(Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY()));
 	}
 	
 	public void recreate(int newRadius){
 		RADIUS = newRadius;
 		createHexagon(RADIUS);
+		screen.calculateOffsets();
 	}
 		
+	public void addScreen(){
+		screen = main.getGUI().getScreen();
+	}
+	
+	
 }

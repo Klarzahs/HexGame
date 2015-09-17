@@ -1,5 +1,8 @@
 package schemmer.hexagon.processes;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
+
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.handler.EntityHandler;
@@ -34,9 +37,6 @@ public class GameLoop extends Thread{
 
 		// keep looping round til the game ends
 		while (isRunning){
-			// work out how long its been since the last update, this
-			// will be used to calculate how far the entities should
-			// move this loop
 			now = System.currentTimeMillis();
 			updateLength = now - lastLoopTime;
 			lastLoopTime = now;
@@ -46,10 +46,7 @@ public class GameLoop extends Thread{
 			lastFpsTime += updateLength;
 			fps++;
 	      
-			// update our FPS counter if a second has passed since
-			// we last recorded
 			if (lastFpsTime >= 1000){
-				//log("(FPS: "+fps+")");
 				lastFpsTime = 0;
 				fps = 0;
 			}
@@ -61,11 +58,8 @@ public class GameLoop extends Thread{
 			// draw everyting
 			screen.repaint();
 	      
-			// we want each frame to take 10 milliseconds, to do this
-			// we've recorded when we started the frame. We add 10 milliseconds
-			// to this and then factor in the current time to give 
-			// us our final value to wait for
-			// remember this is in ms, whereas our lastLoopTime etc. vars are in ns.
+			moveScreen();
+			
 			try{
 				Thread.sleep(lastLoopTime-System.currentTimeMillis() + OPTIMAL_TIME);
 			} 
@@ -73,6 +67,16 @@ public class GameLoop extends Thread{
 				log(e.getCause()+" "+e.getMessage());
 			}
 		}
+	}
+	
+	private void moveScreen(){
+		Point p = MouseInfo.getPointerInfo().getLocation();
+		double x = p.getX();
+		double y = p.getY();
+		if (x < 200) screen.moveLeft();
+		if (x > Screen.WIDTH - 200) screen.moveRight();
+		if (y < 200) screen.moveUp();
+		if (y > Screen.HEIGHT - 200) screen.moveDown();
 	}
 	
 	public void stopThread(){
