@@ -1,6 +1,6 @@
 package schemmer.hexagon.utils;
 
-import schemmer.hexagon.game.Screen;
+import schemmer.hexagon.handler.Screen;
 import schemmer.hexagon.map.Hexagon;
 
 public class Conv {

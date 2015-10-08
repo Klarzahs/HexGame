@@ -1,4 +1,4 @@
-package schemmer.hexagon.game;
+package schemmer.hexagon.handler;
 
 import javax.swing.JFrame;
 

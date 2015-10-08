@@ -1,6 +1,6 @@
 package schemmer.hexagon.utils;
 
-import schemmer.hexagon.game.Screen;
+import schemmer.hexagon.handler.Screen;
 
 public class Axial {
 	public int[] v = new int [2];

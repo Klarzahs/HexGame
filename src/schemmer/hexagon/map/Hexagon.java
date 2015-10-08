@@ -4,10 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 
-import schemmer.hexagon.game.Screen;
+import schemmer.hexagon.handler.Screen;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
-import schemmer.hexagon.utils.Log;
 import schemmer.hexagon.utils.Point;
 
 public class Hexagon {

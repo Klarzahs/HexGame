@@ -1,4 +1,4 @@
-package schemmer.hexagon.game;
+package schemmer.hexagon.handler;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -92,13 +92,13 @@ public class Screen extends JPanel{
 	}
 	
 	public void calculateOffsets(){
-		System.out.println(((mh.RADIUS*2 + 1) * Hexagon.getSize()));
+		//System.out.println("DiffY: "+((mh.RADIUS*2 + 1) * Hexagon.getSize()));
 		double diffX = WIDTH / 2 - ((mh.RADIUS*2 + 1) * Math.sqrt(3)/2 * Hexagon.getSize());
 		double diffY = HEIGHT / 2 - ((mh.RADIUS*2 + 1) * Hexagon.getSize());
 		maxOffX = (int) Math.abs((diffX ) * 1.2d);
 		maxOffY = (int) Math.abs((diffY ) * 1.2d);
-		System.out.println(maxOffX);
-		System.out.println(maxOffY);
+		//System.out.println("maxOffX: "+maxOffX);
+		//System.out.println("maxOffY: "+maxOffY);
 		
 	}
 }

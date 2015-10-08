@@ -1,4 +1,4 @@
-package schemmer.hexagon.game;
+package schemmer.hexagon.handler;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -7,13 +7,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import schemmer.hexagon.handler.EntityHandler;
-import schemmer.hexagon.handler.MapHandler;
+import schemmer.hexagon.game.GameLoop;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.processes.GameLoop;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
-import schemmer.hexagon.utils.Log;
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private GUI gui;

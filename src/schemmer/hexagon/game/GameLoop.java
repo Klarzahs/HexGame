@@ -1,12 +1,12 @@
-package schemmer.hexagon.processes;
+package schemmer.hexagon.game;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
 
-import schemmer.hexagon.game.Main;
-import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.handler.EntityHandler;
+import schemmer.hexagon.handler.Main;
 import schemmer.hexagon.handler.MapHandler;
+import schemmer.hexagon.handler.Screen;
 import schemmer.hexagon.utils.Log;
 
 public class GameLoop extends Thread{

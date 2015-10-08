@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
-import schemmer.hexagon.game.Main;
-import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.processes.MapFactory;
 import schemmer.hexagon.utils.Conv;
@@ -63,14 +61,7 @@ public class MapHandler {
 	
 	public void createHexagon(int radius){
 		map = new Hexagon[2*radius+1][2*radius+1];
-		for (int q = -radius; q <= radius; q++) {
-			int r1 = Math.max(-radius, -q - radius);
-		    int r2 = Math.min(radius, -q + radius);
-		    for (int r = r1; r <= r2; r++) {
-		    	map[r + radius][q + radius + Math.min(0, r)] = new Hexagon(new Cube(q, -q-r, r));
-		    	map[r + radius][q + radius + Math.min(0, r)].setType(5);
-		    }
-		}
+		
 		MapFactory.createTypes(map, radius);
 		marked = null;
 		hovered = null;
