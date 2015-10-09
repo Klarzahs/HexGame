@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
+import schemmer.hexagon.game.Main;
+import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.processes.MapFactory;
 import schemmer.hexagon.utils.Conv;
@@ -38,7 +40,8 @@ public class MapHandler {
 		for (int q = 0; q < map.length; q++){
 			for (int r = 0; r < map[q].length; r++){
 				if(map[q][r] != null){
-					map[q][r].fill(g2d, offX, offY);
+					//map[q][r].fill(g2d, offX, offY);
+					map[q][r].drawPicture(g2d, offX, offY);
 					map[q][r].drawOutline(g2d, offX, offY);
 				}
 			}

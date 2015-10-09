@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 public class HexType {
 	private HexTypeInt index;
 	private HexTypeColor color;
-	private BufferedImage image;
+	private String image;
 	
 	public HexType(int i){
 		index = HexTypeInt.values()[i];
@@ -17,11 +17,20 @@ public class HexType {
 		return color.getColor();
 	}
 	
-	public BufferedImage getImage(){
-		return image;
-	}
-	
 	public int getIndex(){
 		return index.getValue();
+	}
+	
+	public String getImage(){
+		switch (index){
+		case TYPE_FIELD:
+			return "_tile";
+		case TYPE_HILL:
+			return "";
+		case TYPE_MOUNTAIN:
+			return "_full";
+		default:
+			return "";
+		}
 	}
 }

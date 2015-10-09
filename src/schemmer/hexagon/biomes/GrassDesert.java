@@ -1,0 +1,14 @@
+package schemmer.hexagon.biomes;
+
+public class GrassDesert extends Biome{
+	public GrassDesert(){
+		this.food = 1f;
+		this.gold = 1f;
+		this.stone = 1f;
+		this.wood = 0.5f;
+		
+		this.name = "GD";
+		this.image = "tileSand";
+		this.imageAddition = "";
+	}
+}

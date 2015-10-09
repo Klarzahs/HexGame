@@ -19,7 +19,7 @@ public class SimplexNoise {
 
 	  private final static int octaves = 3;
 	  private final static float roughness = 0.3f;
-	  private final static float scale = 0.006f;
+	  private static float scale = 0.006f;
 	  
 	  public final static int size = 256;
 	  
@@ -45,7 +45,12 @@ public class SimplexNoise {
 	
 	  private static double dot(Grad g, double x, double y) {
 	    return g.x*x + g.y*y; }
-	
+	  
+	  public static double simplexnoise(double xin, double yin, float s){
+		  scale = s;
+		  return simplexnoise (xin, yin);
+	  }
+	  
 	  // 2D simplex noise
 	  public static double simplexnoise(double xin, double yin) {
 		  	
@@ -114,14 +119,14 @@ public class SimplexNoise {
 		    }
 	  }
 	  
-	  public static float octavedNoise(int x, int y) {
+	  public static float octavedNoise(int x, int y, float s) {
 		float noiseSum = 0;
 		float layerFrequency = scale;
 		float layerWeight = 1;
 		float weightSum = 0;
 		
 		for (int octave = 0; octave < octaves; octave++) {
-		    noiseSum += simplexnoise(x * layerFrequency, y * layerFrequency) * layerWeight;
+		    noiseSum += simplexnoise(x * layerFrequency, y * layerFrequency, s) * layerWeight;
 		    layerFrequency *= 2;
 		    weightSum += layerWeight;
 		    layerWeight *= roughness;

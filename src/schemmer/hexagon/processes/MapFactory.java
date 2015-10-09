@@ -1,5 +1,14 @@
 package schemmer.hexagon.processes;
 
+import schemmer.hexagon.biomes.Desert;
+import schemmer.hexagon.biomes.Forest;
+import schemmer.hexagon.biomes.GrassDesert;
+import schemmer.hexagon.biomes.RainForest;
+import schemmer.hexagon.biomes.Savanna;
+import schemmer.hexagon.biomes.SeasonalForest;
+import schemmer.hexagon.biomes.Swamp;
+import schemmer.hexagon.biomes.Taiga;
+import schemmer.hexagon.biomes.Tundra;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.utils.Cube;
@@ -11,13 +20,24 @@ public class MapFactory {
 	private final static float hillWeight = 0.80f;
 	private final static float mountainWeight = 1f;
 	
+	private static Tundra tundra = new Tundra();
+	private static Desert desert = new Desert();
+	private static Forest forest = new Forest();
+	private static GrassDesert grassDesert = new GrassDesert();
+	private static RainForest rainForest = new RainForest();
+	private static Savanna savanna = new Savanna();
+	private static Swamp swamp = new Swamp();
+	private static Taiga taiga = new Taiga();
+	private static SeasonalForest seasonalForest = new SeasonalForest();
+	
 	private static float[][] noise;
 	
 	public static void createTypes(Hexagon[][] map, int radius){
 		createMap(map, radius);
 		
+		// ------- Create terrain -----------
 		SimplexNoise.updateGradients();
-		noise = MapFactory.generateSimplexNoise(SimplexNoise.size*2, SimplexNoise.size*2);
+		noise = MapFactory.generateSimplexNoise(SimplexNoise.size*2, SimplexNoise.size*2, 0.006f);
 		
 		int pixelPerHex = (SimplexNoise.size*2) / (map.length);
 		for(int x = 0; x < map.length; x++){
@@ -34,6 +54,55 @@ public class MapFactory {
 						map[x][y].setType(HexTypeInt.TYPE_HILL.getValue());
 					else 
 						map[x][y].setType(HexTypeInt.TYPE_MOUNTAIN.getValue());
+				}
+			}
+		}
+		
+		// ------- Create biomes -----------
+		SimplexNoise.updateGradients();
+		noise = MapFactory.generateSimplexNoise(SimplexNoise.size*2, SimplexNoise.size*2, 0.05f);
+		
+		for(int x = 0; x < map.length; x++){
+			for (int y = 0; y < map[x].length; y++){
+				if(map[x][y] != null 
+						&& map[x][y].getType().getIndex() != HexTypeInt.TYPE_DEEPWATER.getValue()
+						&& map[x][y].getType().getIndex() != HexTypeInt.TYPE_WATER.getValue()
+						&& map[x][y].getType().getIndex() != HexTypeInt.TYPE_MOUNTAIN.getValue() ){
+					float rainfall = hexToNoise(x, y, pixelPerHex);
+					//add coords to check if near aequator (hot)
+					float nearAequator = (Math.abs(x-radius)) / ((float) radius);
+					float temperature = 1 - nearAequator;
+					if(rainfall < .35f){
+						if(temperature < .15f)
+							map[x][y].setBiome(tundra);
+						else if(temperature < .45f)
+							map[x][y].setBiome(seasonalForest);
+						else if(temperature < .65f)
+							map[x][y].setBiome(grassDesert);
+						else
+							map[x][y].setBiome(desert);
+					}
+					else if(rainfall < .5f){
+						if(temperature < .2f)
+							map[x][y].setBiome(tundra);
+						else if(temperature < .30f)
+							map[x][y].setBiome(taiga);
+						else if(temperature < .65f)
+							map[x][y].setBiome(forest);
+						else
+							map[x][y].setBiome(savanna);
+					}
+					else if(rainfall < .75f){
+						if(temperature < .20f)
+							map[x][y].setBiome(taiga);
+						else if(temperature < .65f)
+							map[x][y].setBiome(swamp);
+						else
+							map[x][y].setBiome(seasonalForest);
+					}
+					else
+						map[x][y].setBiome(rainForest);
+					
 				}
 			}
 		}
@@ -57,17 +126,16 @@ public class MapFactory {
 		    int r2 = Math.min(radius, -q + radius);
 		    for (int r = r1; r <= r2; r++) {
 		    	map[r + radius][q + radius + Math.min(0, r)] = new Hexagon(new Cube(q, -q-r, r));
-		    	map[r + radius][q + radius + Math.min(0, r)].setType(5);
 		    }
 		}
 	}
 	
-	public static float[][] generateSimplexNoise(int width, int height){
+	public static float[][] generateSimplexNoise(int width, int height, float scale){
 	    float[][] simplexnoise = new float[width][height];
 	    
 	    for(int x = 0; x < width; x++){
 	       for(int y = 0; y < height; y++){
-	          simplexnoise[x][y] = (float) SimplexNoise.octavedNoise(x, y); 	//(x * frequency,y * frequency);
+	          simplexnoise[x][y] = (float) SimplexNoise.octavedNoise(x, y, scale); 	//(x * frequency,y * frequency);
 	          simplexnoise[x][y] = (simplexnoise[x][y] + 1) / 2;   //generate values between 0 and 1
 	       }
 	    }
