@@ -8,7 +8,7 @@ public class Savanna extends Biome{
 		this.wood = 0.5f;
 		
 		this.name = "SA";
-		this.image = "tileAutumn";
-		this.imageAddition = "";
+		this.image = "Autumn";
+		this.imageAddition = "Savanna";
 	}
 }

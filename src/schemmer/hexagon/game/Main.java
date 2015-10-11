@@ -1,11 +1,19 @@
 package schemmer.hexagon.game;
 
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
@@ -20,6 +28,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private MapHandler mh;
 	private final int HEIGHT = 1080;
 	private final int WIDTH = 1920;
+	
+	// ------ UI -------
+	private Cursor rightClick, normalClick, leftClick;
+	BufferedImage rightClickImage, normalClickImage, leftClickImage;
 	
 	public static void main (String [] args) {
 		Main main = new Main();
@@ -36,8 +48,31 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		
 		mh.addScreen();
 		
+		createUI();
+		
 		gl = new GameLoop(this);
 		gl.run();
+	}
+	
+	private void createUI(){
+		try {
+			rightClickImage = ImageIO.read(this.getClass().getResourceAsStream("/png/cursorSword_bronze.png"));
+			normalClickImage = ImageIO.read(this.getClass().getResourceAsStream("/png/cursorGauntlet_blue.png"));
+			leftClickImage = ImageIO.read(this.getClass().getResourceAsStream("/png/cursorHand_beige.png"));
+			rightClick = Toolkit.getDefaultToolkit().createCustomCursor(
+					rightClickImage,					
+					new Point(0,0),"Right Click");
+			normalClick = Toolkit.getDefaultToolkit().createCustomCursor(
+					normalClickImage,					
+					new Point(0,0),"Normal cursor");
+			leftClick = Toolkit.getDefaultToolkit().createCustomCursor(
+					leftClickImage,					
+					new Point(0,0),"Left Click");
+			
+			this.gui.getRootPane().setCursor(normalClick);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public EntityHandler getEH(){
@@ -65,10 +100,20 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public void mouseExited(MouseEvent e) {}
 
 	@Override
-	public void mousePressed(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {
+		//SwingUtilities.isLeftMouseButton(MouseEvent anEvent) 
+		//SwingUtilities.isRightMouseButton(MouseEvent anEvent) 
+		//SwingUtilities.isMiddleMouseButton(MouseEvent anEvent)
+		if(SwingUtilities.isRightMouseButton(e))
+			this.gui.getRootPane().setCursor(rightClick);
+		if(SwingUtilities.isLeftMouseButton(e))
+			this.gui.getRootPane().setCursor(leftClick);
+	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {
+		this.gui.getRootPane().setCursor(normalClick);
+	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {

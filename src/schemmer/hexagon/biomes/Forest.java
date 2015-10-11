@@ -8,7 +8,7 @@ public class Forest extends Biome{
 		this.wood = 2f;
 		
 		this.name = "F";
-		this.image = "tileGrass";
-		this.imageAddition = "";
+		this.image = "Grass";
+		this.imageAddition = "Forest";
 	}
 }

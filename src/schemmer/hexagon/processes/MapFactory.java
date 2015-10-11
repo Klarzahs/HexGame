@@ -14,8 +14,8 @@ import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.utils.Cube;
 
 public class MapFactory {
-	private final static float deepWaterWeight = 0.35f;		// forest and desert are determined by biome
-	private final static float waterWeight = 0.45f;
+	private final static float deepWaterWeight = 0.285f;		
+	private final static float waterWeight = 0.35f;
 	private final static float fieldWeight = 0.70f;
 	private final static float hillWeight = 0.80f;
 	private final static float mountainWeight = 1f;

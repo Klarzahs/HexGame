@@ -28,7 +28,20 @@ public class HexType {
 		case TYPE_HILL:
 			return "";
 		case TYPE_MOUNTAIN:
-			return "_full";
+			return "";
+		default:
+			return "_tile";
+		}
+	}
+	
+	public String getAddition(){
+		switch (index){
+		case TYPE_MOUNTAIN:
+			return "rockSnow_2";
+		case TYPE_DEEPWATER:
+			return "addDeepwater";
+		case TYPE_WATER:
+			return "addWater";
 		default:
 			return "";
 		}

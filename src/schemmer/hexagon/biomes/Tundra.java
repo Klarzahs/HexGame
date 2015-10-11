@@ -8,7 +8,7 @@ public class Tundra extends Biome{
 		this.wood = 0f;
 		
 		this.name = "TU";
-		this.image = "tileSnow";
-		this.imageAddition = "";
+		this.image = "Snow";
+		this.imageAddition = "Tundra";
 	}
 }

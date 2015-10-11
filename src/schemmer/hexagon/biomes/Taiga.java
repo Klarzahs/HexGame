@@ -8,7 +8,7 @@ public class Taiga extends Biome{
 		this.wood = 1f;
 		
 		this.name = "T";
-		this.image = "tileStone";
-		this.imageAddition = "";
+		this.image = "Dirt";
+		this.imageAddition = "Taiga";
 	}
 }

@@ -25,6 +25,7 @@ public class Hexagon {
 	private Cube coords;
 	
 	private BufferedImage image;
+	private BufferedImage addition;
 	
 	public Hexagon(Cube c){
 		this.coords = c;
@@ -44,26 +45,54 @@ public class Hexagon {
 		for (int i = 0; i < CORNERS; i++){
 			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
-		g2d.drawString(""+(int)this.coords.getV()[0] + "|" + (int)this.coords.getV()[1]+"|"+(int)this.coords.getV()[2], (int)center.x-offX, (int)center.y-offY);
+		//g2d.drawString(""+(int)this.coords.getV()[0] + "|" + (int)this.coords.getV()[1]+"|"+(int)this.coords.getV()[2], (int)center.x-offX, (int)center.y-offY);
 	}
 	
 	public void drawPicture(Graphics2D g2d, int offX, int offY){
 		recalculateCenter();
+		float OSF = SIZE/50f; 			//Offset Scaling Factor
 		if(image == null)
 			createPicture();
-		g2d.drawImage(image, (int)center.x-offX-SIZE, (int)center.y-offY-SIZE, (int) (SIZE*Math.sqrt(3)), SIZE*2, null);
+		g2d.drawImage(image, (int) (center.x-offX-SIZE+7*OSF), (int)center.y-offY-SIZE, (int) (SIZE*Math.sqrt(3) +1*OSF), (int)(SIZE*2 + 1 * OSF), null);
+		if(addition == null)
+			createAddition();
+		if(type.getIndex() == HexTypeInt.TYPE_MOUNTAIN.getValue() || type.getIndex() == HexTypeInt.TYPE_HILL.getValue())
+			g2d.drawImage(addition, (int)(center.x-offX-SIZE + 15*OSF), (int)(center.y-offY-SIZE ), (int) (SIZE*Math.sqrt(3) - 15 * OSF), (int)(SIZE*2 - 15*OSF), null);
+		else 
+			g2d.drawImage(addition, (int) (center.x-offX-SIZE+7*OSF), (int)center.y-offY-SIZE, (int) (SIZE*Math.sqrt(3) +1*OSF), (int)(SIZE*2 + 1 * OSF), null);
 	}
 	
 	private void createPicture(){
-		String filepath = "/png/";
+		String filepath = "/png/images/tile";
 		if(biome != null){
 			filepath += biome.getImage();
 			filepath += type.getImage();
-		} else
-			filepath += "tileWater_tile";
+		} else{
+			if (type.getIndex() == HexTypeInt.TYPE_WATER.getValue())
+				filepath += "Water_tile";
+			if (type.getIndex() == HexTypeInt.TYPE_DEEPWATER.getValue())
+				filepath += "Deepwater_tile";
+			if (type.getIndex() == HexTypeInt.TYPE_MOUNTAIN.getValue())
+				filepath += "Snow";
+		}
 		filepath += ".png";
 		try{
 			image = ImageIO.read(this.getClass().getResourceAsStream(filepath));
+		} catch (Exception e){
+			System.out.println("Couldn't load picture \""+filepath+"\"");
+		}
+	}
+	
+	private void createAddition(){
+		String filepath = "/png/additions/";
+		if(biome != null){
+			filepath += "add";
+			filepath += biome.getAddition();
+		} else 
+			filepath += type.getAddition();
+		filepath += ".png";
+		try{
+			addition = ImageIO.read(this.getClass().getResourceAsStream(filepath));
 		} catch (Exception e){
 			System.out.println("Couldn't load picture \""+filepath+"\"");
 		}
@@ -90,8 +119,8 @@ public class Hexagon {
 		for (int i = 0; i < CORNERS; i++){
 			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
-		if (biome != null)
-			g2d.drawString(this.getBiome().getName(), (int)center.x-offX, (int)center.y-offY);
+		//if (biome != null)
+			//g2d.drawString(this.getBiome().getName(), (int)center.x-offX, (int)center.y-offY);
 	}
 	
 	public static double getSize(){

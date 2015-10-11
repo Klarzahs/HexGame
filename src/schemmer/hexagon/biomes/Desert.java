@@ -8,7 +8,7 @@ public class Desert extends Biome{
 		this.wood = 0.5f;
 		
 		this.name = "D";
-		this.image = "tileSand";
-		this.imageAddition = "";
+		this.image = "Sand";
+		this.imageAddition = "Desert";
 	}
 }

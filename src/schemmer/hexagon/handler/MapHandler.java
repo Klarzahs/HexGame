@@ -17,7 +17,7 @@ public class MapHandler {
 	private Main main;
 	private Screen screen;
 	
-	public int RADIUS = 15;
+	public int RADIUS = 5;
 	
 	private Hexagon[][] map;
 	
@@ -37,8 +37,8 @@ public class MapHandler {
 	public void draw(Graphics2D g2d, int offX, int offY){
 		g2d.setColor(new Color(150,150,150));
 		g2d.setStroke(new BasicStroke(1));
-		for (int q = 0; q < map.length; q++){
-			for (int r = 0; r < map[q].length; r++){
+		for (int q = map.length - 1 ; q >= 0 ; q--){		//draw backwards for overlapping images
+			for (int r = map[q].length - 1; r >= 0; r--){
 				if(map[q][r] != null){
 					//map[q][r].fill(g2d, offX, offY);
 					map[q][r].drawPicture(g2d, offX, offY);

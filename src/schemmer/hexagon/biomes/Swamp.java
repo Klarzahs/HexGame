@@ -8,7 +8,7 @@ public class Swamp extends Biome {
 		this.wood = 1.5f;
 		
 		this.name = "SW";
-		this.image = "tileMagic";
-		this.imageAddition = "";
+		this.image = "Magic";
+		this.imageAddition = "Swamp";
 	}
 }

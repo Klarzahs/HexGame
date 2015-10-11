@@ -48,7 +48,7 @@ public class Screen extends JPanel{
 		}
 	
 		g.drawImage( offImg, 0, 0, this );
-		g2d.setColor( Color.WHITE ); g.fillRect( 0, 0, getWidth(), getHeight() );
+		g2d.setColor( Color.LIGHT_GRAY ); g.fillRect( 0, 0, getWidth(), getHeight() );
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
 		mh.draw(g2d, offX, offY);
@@ -92,13 +92,9 @@ public class Screen extends JPanel{
 	}
 	
 	public void calculateOffsets(){
-		//System.out.println("DiffY: "+((mh.RADIUS*2 + 1) * Hexagon.getSize()));
 		double diffX = WIDTH / 2 - ((mh.RADIUS*2 + 1) * Math.sqrt(3)/2 * Hexagon.getSize());
 		double diffY = HEIGHT / 2 - ((mh.RADIUS*2 + 1) * Hexagon.getSize());
 		maxOffX = (int) Math.abs((diffX ) * 1.2d);
 		maxOffY = (int) Math.abs((diffY ) * 1.2d);
-		//System.out.println("maxOffX: "+maxOffX);
-		//System.out.println("maxOffY: "+maxOffY);
-		
 	}
 }

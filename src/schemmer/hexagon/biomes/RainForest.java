@@ -8,7 +8,7 @@ public class RainForest extends Biome {
 		this.wood = 2f;
 		
 		this.name = "RF";
-		this.image = "tileGrass";
-		this.imageAddition = "";
+		this.image = "Grass";
+		this.imageAddition = "Rainforest";
 	}
 }
