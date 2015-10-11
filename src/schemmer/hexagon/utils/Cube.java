@@ -51,6 +51,10 @@ public class Cube {
 		return new Cube(a.v[0]+b.v[0], a.v[1]+b.v[1], a.v[2]+b.v[2]);
 	}
 	
+	public static Cube addCubes(Cube a, Cube b){
+		return new Cube(a.v[0]+b.v[0], a.v[1]+b.v[1], a.v[2]+b.v[2]);
+	}
+	
 	public static int distance(Cube a, Cube b){
 		return (Math.abs(a.v[0]-b.v[0]) + Math.abs(a.v[1]-b.v[1]) + Math.abs(a.v[2]-b.v[2])) / 2;
 	}

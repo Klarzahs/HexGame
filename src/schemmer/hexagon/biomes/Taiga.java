@@ -10,5 +10,7 @@ public class Taiga extends Biome{
 		this.name = "T";
 		this.image = "Dirt";
 		this.imageAddition = "Taiga";
+		
+		this.movementCosts = 1;
 	}
 }

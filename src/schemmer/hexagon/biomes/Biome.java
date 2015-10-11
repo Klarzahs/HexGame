@@ -7,6 +7,8 @@ public abstract class Biome {
 	protected float stone;
 	protected float gold;
 	
+	protected int movementCosts;
+	
 	protected String name = "";
 	protected String imageAddition = "";
 	protected String image = "";
@@ -21,5 +23,9 @@ public abstract class Biome {
 	
 	public String getAddition(){
 		return imageAddition;
+	}
+	
+	public int getMovementCosts(){
+		return movementCosts;
 	}
 }

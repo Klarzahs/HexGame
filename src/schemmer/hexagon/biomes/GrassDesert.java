@@ -10,5 +10,7 @@ public class GrassDesert extends Biome{
 		this.name = "GD";
 		this.image = "Sand";
 		this.imageAddition = "Grassdesert";
+		
+		this.movementCosts = 1;
 	}
 }

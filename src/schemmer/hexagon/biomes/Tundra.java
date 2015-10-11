@@ -10,5 +10,7 @@ public class Tundra extends Biome{
 		this.name = "TU";
 		this.image = "Snow";
 		this.imageAddition = "Tundra";
+		
+		this.movementCosts = 2;
 	}
 }

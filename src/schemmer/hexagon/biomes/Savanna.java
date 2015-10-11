@@ -10,5 +10,7 @@ public class Savanna extends Biome{
 		this.name = "SA";
 		this.image = "Autumn";
 		this.imageAddition = "Savanna";
+		
+		this.movementCosts = 1;
 	}
 }

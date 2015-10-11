@@ -46,4 +46,11 @@ public class HexType {
 			return "";
 		}
 	}
+	
+	public boolean isMoveable(){
+		if (index == HexTypeInt.TYPE_DEEPWATER || index == HexTypeInt.TYPE_MOUNTAIN || index == HexTypeInt.TYPE_WATER)
+			return false;
+		return true;
+	}
+	
 }

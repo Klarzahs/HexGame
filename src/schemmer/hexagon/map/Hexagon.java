@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 
 import schemmer.hexagon.biomes.Biome;
 import schemmer.hexagon.game.Screen;
+import schemmer.hexagon.units.Hero;
+import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Point;
@@ -26,6 +28,8 @@ public class Hexagon {
 	
 	private BufferedImage image;
 	private BufferedImage addition;
+	
+	private Unit unit;
 	
 	public Hexagon(Cube c){
 		this.coords = c;
@@ -51,15 +55,23 @@ public class Hexagon {
 	public void drawPicture(Graphics2D g2d, int offX, int offY){
 		recalculateCenter();
 		float OSF = SIZE/50f; 			//Offset Scaling Factor
+		
+		// Base image
 		if(image == null)
 			createPicture();
 		g2d.drawImage(image, (int) (center.x-offX-SIZE+7*OSF), (int)center.y-offY-SIZE, (int) (SIZE*Math.sqrt(3) +1*OSF), (int)(SIZE*2 + 1 * OSF), null);
+		
+		// Additions
 		if(addition == null)
 			createAddition();
 		if(type.getIndex() == HexTypeInt.TYPE_MOUNTAIN.getValue() || type.getIndex() == HexTypeInt.TYPE_HILL.getValue())
 			g2d.drawImage(addition, (int)(center.x-offX-SIZE + 15*OSF), (int)(center.y-offY-SIZE ), (int) (SIZE*Math.sqrt(3) - 15 * OSF), (int)(SIZE*2 - 15*OSF), null);
 		else 
 			g2d.drawImage(addition, (int) (center.x-offX-SIZE+7*OSF), (int)center.y-offY-SIZE, (int) (SIZE*Math.sqrt(3) +1*OSF), (int)(SIZE*2 + 1 * OSF), null);
+		
+		// Unit image
+		if(unit != null)
+			g2d.drawImage(unit.getImage(), (int)(center.x-offX-SIZE + 5*OSF), (int)(center.y-offY-SIZE +5*OSF ), (int) (SIZE*Math.sqrt(3) - 5 * OSF), (int)(SIZE*2 - 5*OSF), null);
 	}
 	
 	private void createPicture(){
@@ -110,17 +122,29 @@ public class Hexagon {
 		}
 		
 		g2d.fillPolygon(xs, ys, (int) CORNERS);
+	}
+	
+	public void showMovement(Graphics2D g2d, Color c, int offX, int offY){
+		recalculateCenter();
+		g2d.setColor(c);
+		int xs[] = new int [(int) CORNERS];
+		int ys[] = new int [(int) CORNERS];
 		
+		for (int i = 0; i < xs.length; i++){
+			xs[i] = (int) hexCorner(i).x - offX;
+			ys[i] = (int) hexCorner(i).y - offY;
+		}
 		
+		g2d.fillPolygon(xs, ys, (int) CORNERS);
 	}
 	
 	public void drawOutline(Graphics2D g2d, int offX, int offY){
-		g2d.setColor(Color.GRAY);
+		g2d.setColor(Color.BLACK);
 		for (int i = 0; i < CORNERS; i++){
 			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
-		//if (biome != null)
-			//g2d.drawString(this.getBiome().getName(), (int)center.x-offX, (int)center.y-offY);
+		if (biome != null)
+			g2d.drawString(""+this.getBiome().getMovementCosts(), (int)center.x-offX, (int)center.y-offY);
 	}
 	
 	public static double getSize(){
@@ -179,6 +203,52 @@ public class Hexagon {
 	
 	public Biome getBiome(){
 		return biome;
+	}
+	
+	public boolean moveTo(Hexagon hex){
+		if(hex.getType().isMoveable()){
+			hex.moveTo(this.unit);
+			this.unit.move(hex.getMovementCosts());
+			this.unit = null;
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean moveUnitTo(Unit u, Hexagon to){
+		if(to.getType().isMoveable()){
+			to.moveTo(u);
+			u.move(to.getMovementCosts());
+			return true;
+		}
+		return false;
+	}
+	
+	public void moveTo(Unit u){
+		this.unit = u;
+	}
+
+	public boolean isMoveable(){
+		return type.isMoveable();
+	}
+	
+	public boolean isOccupied(){
+		return (unit != null);
+	}
+	
+	public Unit getUnit(){
+		return unit;
+	}
+	
+	public void unitMoved(){
+		unit = null;
+	}
+	
+	public int getMovementCosts(){
+		if(type.isMoveable())
+			return biome.getMovementCosts();
+		else
+			return -1;
 	}
 }
 

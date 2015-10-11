@@ -10,5 +10,7 @@ public class Desert extends Biome{
 		this.name = "D";
 		this.image = "Sand";
 		this.imageAddition = "Desert";
+		
+		this.movementCosts = 2;
 	}
 }
