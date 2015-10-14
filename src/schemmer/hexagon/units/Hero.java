@@ -14,7 +14,7 @@ public class Hero extends Unit {
 		} catch (IOException e) {
 			System.out.println("Couldn't load Hero image!");
 		}
-		this.maxMovementSpeed = 3;
+		this.maxMovementSpeed = 10;
 		this.movementSpeed = this.maxMovementSpeed;
 	}
 }

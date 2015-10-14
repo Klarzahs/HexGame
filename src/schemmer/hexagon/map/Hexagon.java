@@ -31,6 +31,10 @@ public class Hexagon {
 	
 	private Unit unit;
 	
+	// sorting
+	public int priority = 999;
+	private int costs = -1;
+	
 	public Hexagon(Cube c){
 		this.coords = c;
 		this.center = Conv.cubeToPixel(c);
@@ -143,8 +147,10 @@ public class Hexagon {
 		for (int i = 0; i < CORNERS; i++){
 			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
-		if (biome != null)
-			g2d.drawString(""+this.getBiome().getMovementCosts(), (int)center.x-offX, (int)center.y-offY);
+		if (biome != null){
+			if(costs != -1)
+				g2d.drawString(this.printCoords()+ "|"+this.costs, (int)center.x-offX-25, (int)center.y-offY);
+		}
 	}
 	
 	public static double getSize(){
@@ -152,7 +158,7 @@ public class Hexagon {
 	}
 	
 	public String printCoords(){
-		return "Coords: "+coords.printCube()+"\n";
+		return coords.printCube()+"\n";
 	}
 	
 	public String printCenter(){
@@ -245,10 +251,25 @@ public class Hexagon {
 	}
 	
 	public int getMovementCosts(){
-		if(type.isMoveable())
+		if(type.isMoveable()){
+			if(type.getIndex() == HexTypeInt.TYPE_HILL.getValue())			//hills cost 1 more movement point
+				return biome.getMovementCosts() + 1;
 			return biome.getMovementCosts();
+		}
 		else
 			return -1;
+	}
+	
+	public boolean equals(Hexagon b){
+		return this.getCoords().equals(b.getCoords());
+	}
+	
+	public void setCosts(int i){
+		costs = i;
+	}
+	
+	public int getCosts(){
+		return costs;
 	}
 }
 

@@ -19,7 +19,6 @@ import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.utils.AStar;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
 

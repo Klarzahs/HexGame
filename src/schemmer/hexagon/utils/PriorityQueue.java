@@ -1,6 +1,6 @@
 package schemmer.hexagon.utils;
 
-import schemmer.hexagon.map.Hexagon;
+/*
 
 public class PriorityQueue {
 	public Hexagon hex;
@@ -70,7 +70,7 @@ public class PriorityQueue {
 	}
 	
 	public boolean delete(Hexagon h){
-		if(this.hex == h){
+		if(this.hex.equals(h)){
 			if(this.before != null){
 				this.before.next = this.next;
 				if(this.next != null)
@@ -98,6 +98,18 @@ public class PriorityQueue {
 		}
 	}
 	
+	public boolean update(Hexagon h, int p){
+		if(this.contains(h)){
+			this.delete(h);
+			this.add(h, p);
+			return true;
+		}
+		else if(this.next != null)
+			return next.update(h, p);
+		this.add(h, p);
+		return false;
+	}
+	
 	public int getFirstPriority(){
 		return this.prio;
 	}
@@ -111,7 +123,7 @@ public class PriorityQueue {
 	public boolean contains(Hexagon h){
 		if(isEmpty())
 			return false;
-		if(this.hex == h)
+		if(this.hex.equals(h))
 			return true;
 		if(this.next == null)
 			return false;
@@ -121,4 +133,24 @@ public class PriorityQueue {
 	public boolean isEmpty(){
 		return (this.hex == null);
 	}
+	
+	public int getPriority(Hexagon h){
+		if(this.hex.equals(h)) 
+			return this.prio;
+		if(this.next != null)
+			return next.getPriority(h);
+		return -1;
+	}
+	
+	public int size(){
+		if(this.isEmpty())
+			return 0;
+		else{
+			if(this.next != null)
+				return 1 + next.size();
+			return 1;
+		}
+	}
 }
+
+*/

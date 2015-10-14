@@ -2,18 +2,32 @@ package schemmer.hexagon.utils;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.utils.Dijkstra.HexagonComparator;
+
+/*
+ * 
+ * TODO: implement/debug A* Algorithm for better performance
 
 public class AStar {
 	public static ArrayList<Hexagon> calculate(MapHandler mh, Hexagon start, Hexagon goal, int maxMovement){
-		PriorityQueue frontier = new PriorityQueue(start,0);
-		ArrayList<Hexagon> visited = new ArrayList<Hexagon>();
-		AbstractMap<Hexagon, Hexagon> cameFrom = new HashMap<Hexagon, Hexagon>();
-		AbstractMap<Hexagon, Integer> costSoFar = new HashMap<Hexagon, Integer>();
+		ArrayList<Hexagon> result = new ArrayList<Hexagon>();
+		
+		AbstractMap<Hexagon, Hexagon> previous = new  HashMap<Hexagon, Hexagon>();
+		AbstractMap<Hexagon, Integer> costs = new  HashMap<Hexagon, Integer>();
+		
+		Comparator<Hexagon> comp = new HexagonComparator();
+		PriorityQueue<Hexagon> frontier = new PriorityQueue<Hexagon>(100, comp);
+		PriorityQueue<Hexagon> visited = new PriorityQueue<Hexagon>(100, comp);
+
+		Hexagon current, next;
+		
 		cameFrom.put(start, null);
 		costSoFar.put(start, 0);
 		
@@ -94,27 +108,32 @@ public class AStar {
 		return false;
 	}
 	
+	public static class HexagonComparator implements Comparator<Hexagon>{
+		@Override
+	    public int compare(Hexagon x, Hexagon y)
+	    {
+	        return x.priority - y.priority;
+	    }
+	}
+	
 	public static void test(){
-		Hexagon h = new Hexagon(new Cube(0,0,0));
-		PriorityQueue pq = new PriorityQueue(h, 1);
-		Log.d("AStar", pq.toString());
-		pq.add(h, 3);
-		Log.d("AStar", pq.toString());
-		pq.add(h, 2);
-		Log.d("AStar", pq.toString());
-		pq.add(h, 5);
-		Log.d("AStar", pq.toString());
-		pq.add(h, 5);
-		Log.d("AStar", pq.toString());
-		pq.deleteFirst();
-		Log.d("AStar", pq.toString());
-		pq.deleteFirst();
-		Log.d("AStar", pq.toString());
-		pq.add(h, 6);
-		Log.d("AStar", pq.toString());
-		pq.delete(6);
-		Log.d("AStar", pq.toString());
-		pq.delete(3);
-		Log.d("AStar", pq.toString());
+		Hexagon h1 = new Hexagon(new Cube(1,0,0));
+		Hexagon h2 = new Hexagon(new Cube(0,1,0));
+		Hexagon h3 = new Hexagon(new Cube(0,0,1));
+		
+		/*
+		 * PriorityQueue pq = new PriorityQueue(h1, 1);
+			Log.d("AStar", pq.toString());
+			pq.update(h2, 3);
+			Log.d("AStar", pq.toString());
+			pq.update(h3, 10);
+			Log.d("AStar", pq.toString());
+			pq.update(h1, 12);
+			Log.d("AStar", pq.toString());
+			pq.update(h3, 8);
+			Log.d("AStar", pq.toString());
+			
 	}
 }
+
+*/

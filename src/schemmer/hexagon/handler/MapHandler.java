@@ -12,9 +12,9 @@ import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.processes.MapFactory;
 import schemmer.hexagon.units.Unit;
-import schemmer.hexagon.utils.AStar;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
+import schemmer.hexagon.utils.Dijkstra;
 import schemmer.hexagon.utils.Point;
 
 public class MapHandler {
@@ -81,7 +81,7 @@ public class MapHandler {
 
 	public void setMarked(Cube c){
 		marked = this.getInArray(c);
-		if(marked.isOccupied()){
+		if(marked != null && marked.isOccupied()){
 			getMovementRange(marked);
 		}else
 			movementRange = null;
@@ -105,21 +105,21 @@ public class MapHandler {
 		clicked = new Point(e.getX(), e.getY());
 		screen.setDebug("MoveTo @"+ clicked.getX()+" | "+clicked.getY());
 		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
-		Hexagon h = this.getInArray(c);
-		if(h != null && movementRange != null){
-			if(h.getCoords() != marked.getCoords()){
+		Hexagon target = this.getInArray(c);
+		if(target != null && movementRange != null){
+			if(target.getCoords() != marked.getCoords()){
 				Unit u = marked.getUnit();
-				if(h.getType().isMoveable()){
+				if(target.getType().isMoveable()){
 					//calculate tiles
-					ArrayList<Hexagon> movements = AStar.calculate(this, marked, h, u.getMovementSpeed());
 					
-					//step through the tiles
-					AStar.isDoable(u, this, marked, h, true);
-					while(movements.size() > 0 && u.getMovementSpeed() >= movements.get(0).getMovementCosts()){
-						Hexagon.moveUnitTo(u, h);
-						marked.unitMoved();
-						movements.remove(0);
+					if(movementRange.contains(target)){
+						int costs = Dijkstra.getMovementCost(map, this, marked, target);
+						if(costs != -1 && costs <= u.getMovementSpeed()){
+							Hexagon.moveUnitTo(u, target);
+							marked.unitMoved();
+						}
 					}
+					
 					movementRange = null;
 					System.out.println("Rem. speed is: "+u.getMovementSpeed());
 				}
@@ -155,17 +155,10 @@ public class MapHandler {
 	
 	public ArrayList<Hexagon> getMovementRange(Hexagon start){
 		ArrayList<Hexagon> results = new ArrayList<Hexagon>();
-		int maxRange = start.getUnit().getMovementSpeed();
-		for (int dx = -maxRange; dx <= maxRange; dx++){
-		    for (int dy = Math.max(-maxRange, -dx-maxRange); dy <= Math.min(maxRange, -dx + maxRange); dy++){
-		        int dz = -dx-dy;
-		        Cube c = Cube.addCubes(start.getCoords(), new Cube(dx, dy, dz));
-		        Hexagon temp = this.getInArray(c);
-		        if(temp != null && temp.isMoveable() && AStar.isDoable(start.getUnit(), this, start, temp, false))
-	        		results.add(temp);
-		    }
+		if(start.isOccupied()){
+			results = Dijkstra.getMovementRange(map, this, start);
+			movementRange = results;
 		}
-		movementRange = results;
 		return results;
 	}
 	

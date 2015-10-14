@@ -94,4 +94,14 @@ public class Cube {
 	public void setV(int[] i){
 		this.v = i;
 	}
+	
+	public boolean equals(Cube b){
+		if(this.v[0] != b.v[0])
+			return false;
+		if(this.v[1] != b.v[1])
+			return false;
+		if(this.v[2] != b.v[2])
+			return false;
+		return true;
+	}
 }
