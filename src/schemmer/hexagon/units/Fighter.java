@@ -1,5 +1,9 @@
 package schemmer.hexagon.units;
 
-public interface Fighter {
+import schemmer.hexagon.player.Player;
 
+public abstract class Fighter extends Unit{
+	public Fighter(Player p, int speed) {
+		super(p, speed);
+	}
 }

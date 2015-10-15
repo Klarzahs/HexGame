@@ -45,7 +45,7 @@ public class Axial {
 		if(r < 0 && Math.abs((r % 1)) > 0.5) r--;
 		if(r > 0 && Math.abs((r % 1)) > 0.5) r++;
 		Cube c = Conv.axialToCube(new Axial((int) q, (int) r));
-		s.appenDebug("Round @"+Conv.cubeToAxial(Cube.round(c.v[0], c.v[1], c.v[2])).print());
+		s.appendDebug("Round @"+Conv.cubeToAxial(Cube.round(c.v[0], c.v[1], c.v[2])).print());
 		return Conv.cubeToAxial(Cube.round(c.v[0], c.v[1], c.v[2]));
 	}
 	

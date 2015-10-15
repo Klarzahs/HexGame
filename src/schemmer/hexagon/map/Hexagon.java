@@ -53,7 +53,7 @@ public class Hexagon {
 		for (int i = 0; i < CORNERS; i++){
 			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
-		//g2d.drawString(""+(int)this.coords.getV()[0] + "|" + (int)this.coords.getV()[1]+"|"+(int)this.coords.getV()[2], (int)center.x-offX, (int)center.y-offY);
+		g2d.drawString(""+(int)this.coords.getV()[0] + "|" + (int)this.coords.getV()[1]+"|"+(int)this.coords.getV()[2], (int)center.x-offX, (int)center.y-offY);
 	}
 	
 	public void drawPicture(Graphics2D g2d, int offX, int offY){
@@ -75,7 +75,7 @@ public class Hexagon {
 		
 		// Unit image
 		if(unit != null)
-			g2d.drawImage(unit.getImage(), (int)(center.x-offX-SIZE + 5*OSF), (int)(center.y-offY-SIZE +5*OSF ), (int) (SIZE*Math.sqrt(3) - 5 * OSF), (int)(SIZE*2 - 5*OSF), null);
+			g2d.drawImage(unit.getImage(), (int)(center.x-offX-SIZE + 10*OSF), (int)(center.y-offY-SIZE  ), (int) (SIZE*Math.sqrt(3) - 10 * OSF), (int)(SIZE*2 - 5*OSF), null);
 	}
 	
 	private void createPicture(){
@@ -149,7 +149,7 @@ public class Hexagon {
 		}
 		if (biome != null){
 			if(costs != -1)
-				g2d.drawString(this.printCoords()+ "|"+this.costs, (int)center.x-offX-25, (int)center.y-offY);
+				g2d.drawString(""+this.getCosts(), (int)center.x-offX-25, (int)center.y-offY);
 		}
 	}
 	
@@ -224,7 +224,6 @@ public class Hexagon {
 	public static boolean moveUnitTo(Unit u, Hexagon to){
 		if(to.getType().isMoveable()){
 			to.moveTo(u);
-			u.move(to.getMovementCosts());
 			return true;
 		}
 		return false;

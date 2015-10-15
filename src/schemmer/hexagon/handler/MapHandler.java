@@ -30,6 +30,11 @@ public class MapHandler {
 	private ArrayList<Hexagon> movementRange;
 	private Point clicked;
 	
+	private final Color movementRangeColor = new Color(50, 50, 255, 75);
+	private final Color movementPathColor = new Color(255, 50, 50, 75);
+	private final Color hoveredColor = new Color(150,150,250);
+	private final Color markedColor = new Color(0,0,255);
+	
 	public MapHandler(Main main){
 		this.main = main;
 		createHexagon(RADIUS);
@@ -52,14 +57,22 @@ public class MapHandler {
 			}
 		}
 		if(hovered != null){
-			hovered.draw(g2d, new Color(150,150,250), new BasicStroke(3), offX, offY);
+			hovered.draw(g2d, hoveredColor, new BasicStroke(3), offX, offY);
 		}
 		if(marked != null){
-			marked.draw(g2d, new Color(0,0,255), new BasicStroke(3), offX, offY);
+			marked.draw(g2d, markedColor, new BasicStroke(3), offX, offY);
 		}
 		if(movementRange != null){
 			for(int i = 0; i < movementRange.size(); i++){
-				movementRange.get(i).showMovement(g2d, new Color(50, 50, 200, 75), offX, offY);
+				movementRange.get(i).showMovement(g2d, movementRangeColor, offX, offY);
+			}
+		}
+		if(movementRange != null && movementRange.contains(hovered)){
+			ArrayList<Hexagon> path = Dijkstra.getMovementPath(map, this, marked, hovered);
+			g2d.setColor(movementPathColor);
+			for (int i = 0; i < path.size() -1 ; i++){
+				g2d.drawLine(path.get(i).getCenter().getX()-offX, path.get(i).getCenter().getY()-offY, 
+						path.get(i+1).getCenter().getX()-offX, path.get(i+1).getCenter().getY()-offY);
 			}
 		}
 	}
@@ -77,6 +90,7 @@ public class MapHandler {
 		MapFactory.createTypes(map, radius);
 		marked = null;
 		hovered = null;
+		this.clearMovementRange();
 	}
 
 	public void setMarked(Cube c){
@@ -84,7 +98,7 @@ public class MapHandler {
 		if(marked != null && marked.isOccupied()){
 			getMovementRange(marked);
 		}else
-			movementRange = null;
+			this.clearMovementRange();
 	}
 	
 	public boolean isMarked(){
@@ -109,19 +123,21 @@ public class MapHandler {
 		if(target != null && movementRange != null){
 			if(target.getCoords() != marked.getCoords()){
 				Unit u = marked.getUnit();
-				if(target.getType().isMoveable()){
-					//calculate tiles
-					
-					if(movementRange.contains(target)){
-						int costs = Dijkstra.getMovementCost(map, this, marked, target);
-						if(costs != -1 && costs <= u.getMovementSpeed()){
-							Hexagon.moveUnitTo(u, target);
-							marked.unitMoved();
+				//check if unit from other player than current
+				if(u.getPlayer() == main.getCurrentPlayer()){
+					if(target.getType().isMoveable()){
+						//calculate tiles
+						if(movementRange.contains(target)){
+							int costs = Dijkstra.getMovementCost(map, this, marked, target);
+							if(costs != -1 && costs <= u.getMovementSpeed()){
+								Hexagon.moveUnitTo(u, target);
+								u.move(costs);
+								marked.unitMoved();
+							}
 						}
+						
+						this.clearMovementRange();
 					}
-					
-					movementRange = null;
-					System.out.println("Rem. speed is: "+u.getMovementSpeed());
 				}
 			}
 		}
@@ -162,5 +178,10 @@ public class MapHandler {
 		return results;
 	}
 	
-	
+	public void clearMovementRange(){
+		if(movementRange != null)
+			for (int i = 0; i < movementRange.size(); i++)
+				movementRange.get(i).setCosts(-1);
+		movementRange = null;
+	}
 }

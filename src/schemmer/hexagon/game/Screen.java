@@ -61,7 +61,7 @@ public class Screen extends JPanel{
 		debug = d;
 	}
 	
-	public void appenDebug(String d){
+	public void appendDebug(String d){
 		debug = debug + "   " + d;
 	}
 	

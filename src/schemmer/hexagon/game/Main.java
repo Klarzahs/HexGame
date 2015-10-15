@@ -19,6 +19,7 @@ import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.player.Player;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
 
@@ -140,7 +141,13 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 				case 45: // "-"
 					Hexagon.zoomOut();
 					break;
+				case 32: // " "
+					rh.nextPlayer();
+					mh.clearMovementRange();
+					gui.getScreen().appendDebug(rh.getCurrentRound()+": "+ rh.getCurrentPlayer());
+					break;
 				default:
+					gui.getScreen().appendDebug(""+e.getKeyCode());
 					break;
 			}
 			if(e.getKeyCode() <= 57 && e.getKeyCode() >=49) gui.getScreen().recreate((e.getKeyCode()-48)*2);
@@ -176,4 +183,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	@Override
 	public void keyTyped(KeyEvent e) {}
 	
+	public Player getCurrentPlayer(){
+		return rh.getCurrentPlayer();
+	}
 }

@@ -8,7 +8,7 @@ import schemmer.hexagon.utils.Log;
 public class RoundHandler {
 	private ArrayList<Player> players = new ArrayList<Player>();
 	private MapHandler mh;
-	private int i;
+	private int playerCount, currentPlayer, currentRound;
 	
 	public RoundHandler(MapHandler mh){
 		this.mh = mh;
@@ -31,9 +31,28 @@ public class RoundHandler {
 		for (int i = 1; i < max; i++){
 			createNPC();
 		}
+		playerCount = max;
 	}
 	
 	public Player getCurrentPlayer(){
-		return players.get(i);
+		return players.get(currentPlayer);
+	}
+	
+	public void startRound(){
+		currentPlayer = 0;
+		currentRound += 1;
+		for(int i = 0; i < players.size(); i++){
+			players.get(i).refreshAll();
+		}
+	}
+	
+	public void nextPlayer(){
+		currentPlayer += 1;
+		if(currentPlayer == playerCount)
+			startRound();
+	}
+	
+	public int getCurrentRound(){
+		return currentRound;
 	}
 }

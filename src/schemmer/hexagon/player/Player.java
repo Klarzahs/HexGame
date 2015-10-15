@@ -16,9 +16,10 @@ public class Player {
 	private static Hero hero;
 	private Hexagon startingPoint;
 	
-	private PlayerColor color = new PlayerColor();
+	private PlayerColor color;
 	
 	public Player(boolean isAI, Hexagon hex){
+		color = new PlayerColor();
 		hero = new Hero(this);
 		startingPoint = hex;
 		startingPoint.moveTo(hero);
@@ -31,5 +32,21 @@ public class Player {
 	
 	public PlayerColor getPColor(){
 		return color;
+	}
+	
+	public void refreshAll(){
+		refreshUnits();
+		refreshBuildings();
+	}
+	
+	private void refreshUnits(){
+		for (int i = 0; i < fighters.size(); i++)
+			fighters.get(i).refresh();
+		for (int i = 0; i < villagers.size(); i++)
+			villagers.get(i).refresh();
+		hero.refresh();
+	}
+	
+	private void refreshBuildings(){
 	}
 }

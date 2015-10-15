@@ -1,16 +1,5 @@
 package schemmer.hexagon.utils;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.PriorityQueue;
-
-import schemmer.hexagon.handler.MapHandler;
-import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.units.Unit;
-import schemmer.hexagon.utils.Dijkstra.HexagonComparator;
-
 /*
  * 
  * TODO: implement/debug A* Algorithm for better performance

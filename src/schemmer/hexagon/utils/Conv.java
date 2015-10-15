@@ -53,7 +53,7 @@ public class Conv {
 		y = y - Screen.HEIGHT/2;
 		double q = (x * Math.sqrt(3)/3 - y / 3) / Hexagon.getSize();
 		double r = y * 2/3 / Hexagon.getSize();
-		s.appenDebug("Axial @" + q + "|" +r);
+		s.appendDebug("Axial @" + q + "|" +r);
 		return Axial.round(q, r, s);
 	}
 	

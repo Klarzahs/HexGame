@@ -9,6 +9,7 @@ import schemmer.hexagon.player.Player;
 public class Villager extends Unit{
 	
 	public Villager(Player p){
+		super(p,2);
 		try {
 			String str = p.getPColor().getColorString();
 			image = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces ("+ str +")/piece"+ str +"_border01.png"));
