@@ -31,6 +31,7 @@ public class MapHandler {
 	private Point clicked;
 	
 	private final Color movementRangeColor = new Color(50, 50, 255, 75);
+	private final Color movementRangeEnemyColor = new Color(255, 50, 255, 75);
 	private final Color movementPathColor = new Color(255, 50, 50, 75);
 	private final Color hoveredColor = new Color(150,150,250);
 	private final Color markedColor = new Color(0,0,255);
@@ -62,9 +63,12 @@ public class MapHandler {
 		if(marked != null){
 			marked.draw(g2d, markedColor, new BasicStroke(3), offX, offY);
 		}
-		if(movementRange != null){
+		if(movementRange != null && marked.getUnit() != null){
 			for(int i = 0; i < movementRange.size(); i++){
-				movementRange.get(i).showMovement(g2d, movementRangeColor, offX, offY);
+				if(marked.getUnit().getPlayer() == main.getRH().getCurrentPlayer())
+					movementRange.get(i).showMovement(g2d, movementRangeColor, offX, offY);
+				else
+					movementRange.get(i).showMovement(g2d, movementRangeEnemyColor, offX, offY);
 			}
 		}
 		if(movementRange != null && movementRange.contains(hovered)){
@@ -94,6 +98,7 @@ public class MapHandler {
 	}
 
 	public void setMarked(Cube c){
+		this.clearMovementRange();
 		marked = this.getInArray(c);
 		if(marked != null && marked.isOccupied()){
 			getMovementRange(marked);
@@ -178,10 +183,69 @@ public class MapHandler {
 		return results;
 	}
 	
+	public boolean isOccupied(MouseEvent e){
+		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
+		Hexagon target = this.getInArray(c);
+		if(target != null)
+			return (target.isOccupied());
+		return false;
+	}
+	
+	public void attack(MouseEvent e){
+		clicked = new Point(e.getX(), e.getY());
+		screen.setDebug("Attack @"+ clicked.getX()+" | "+clicked.getY());
+		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
+		Hexagon target = this.getInArray(c);
+		
+		
+		if(marked.getUnit() != null && marked.getUnit().getPlayer() == main.getRH().getCurrentPlayer()){
+			if(target.isOccupied()){
+				if(target.getUnit().getPlayer() != main.getRH().getCurrentPlayer()){
+					marked.getUnit().attack(target.getUnit(), marked, target);
+					if(marked.getUnit().getHealth() <= 0){
+						marked.getUnit().handleDelete();
+						marked.deleteUnit();
+					}
+					if(target.getUnit().getHealth() <= 0){
+						target.getUnit().handleDelete();
+						target.deleteUnit();
+					}
+				}
+			}
+		}
+	}
+	
+	public void attack(Cube c){
+		this.clearMovementRange();
+		marked = this.getInArray(c);
+		if(marked != null && marked.isOccupied()){
+			getMovementRange(marked);
+		}else
+			this.clearMovementRange();
+	}
+	
 	public void clearMovementRange(){
 		if(movementRange != null)
 			for (int i = 0; i < movementRange.size(); i++)
 				movementRange.get(i).setCosts(-1);
 		movementRange = null;
+	}
+	
+	public Hexagon getMarked(){
+		return marked;
+	}
+	
+	public Unit getUnit(){
+		if(isMarked())
+			return marked.getUnit();
+		return null;
+	}
+	
+	public boolean isHovered(){
+		return (hovered != null);
+	}
+	
+	public Hexagon getHovered(){
+		return hovered;
 	}
 }

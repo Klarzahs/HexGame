@@ -42,7 +42,9 @@ public class Dijkstra {
 		Hexagon current, next;
 		
 		//initialise
-		int maxMovement = start.getUnit().getMovementSpeed();
+		int maxMovement = 0;
+		if(start.getUnit() != null)
+			maxMovement = start.getUnit().getMovementSpeed();
         
 		for (int dx = -maxMovement; dx <= maxMovement; dx++){
 		    for (int dy = Math.max(-maxMovement, -dx-maxMovement); dy <= Math.min(maxMovement, -dx + maxMovement); dy++){
@@ -82,15 +84,18 @@ public class Dijkstra {
 		}
 		
 		//if the costs are lower than maxMovement and the goal is in the array calculate the path
-		if(costs.get(goal) <= maxMovement){
-			current = goal;
-			while(previous.get(current) != null){
-				result.add(current);
-				current = previous.get(current);
+		if(maxMovement != 0){
+			if(costs.get(goal) <= maxMovement){
+				current = goal;
+				while(previous.get(current) != null){
+					result.add(current);
+					current = previous.get(current);
+				}
+				result.add(start);
 			}
-			result.add(start);
+			return result;
 		}
-		return result;
+		return null;
 	}
 	
 	public static ArrayList<Hexagon> calculateResult(Hexagon[][] map, MapHandler mh, Hexagon start){

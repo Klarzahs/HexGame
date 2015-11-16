@@ -8,8 +8,10 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import schemmer.hexagon.biomes.Biome;
+import schemmer.hexagon.buildings.Building;
+import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Screen;
-import schemmer.hexagon.units.Hero;
+import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
@@ -30,6 +32,7 @@ public class Hexagon {
 	private BufferedImage addition;
 	
 	private Unit unit;
+	private Building building;
 	
 	// sorting
 	public int priority = 999;
@@ -269,6 +272,20 @@ public class Hexagon {
 	
 	public int getCosts(){
 		return costs;
+	}
+	
+	public void deleteUnit(){
+		this.getUnit().getPlayer().deleteUnit(this.getUnit());
+		this.unit = null;
+	}
+	
+	public void build(Player p, int i){
+		switch (i){
+		case 0:
+			this.building = new TownCenter(p);
+		default:
+			this.building = new TownCenter(p);
+		}
 	}
 }
 

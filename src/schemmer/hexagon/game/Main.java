@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
+import schemmer.hexagon.handler.UIHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.utils.Conv;
@@ -35,6 +36,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	// ------ UI -------
 	private Cursor rightClick, normalClick, leftClick;
 	BufferedImage rightClickImage, normalClickImage, leftClickImage;
+	private UIHandler uih;
 	
 	public static void main (String [] args) {
 		Main main = new Main();
@@ -52,7 +54,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		mh.addScreen();
 		
 		rh = new RoundHandler(mh);
-		rh.createAllPlayers(1);
+		rh.createAllPlayers(3);
+		rh.startRound();
 		
 		createUI();
 		
@@ -64,6 +67,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	
 	private void createUI(){
 		try {
+			uih = new UIHandler(this);
+			gui.getScreen().setUIH(uih);
+			
+			// ---- cursor ----
 			rightClickImage = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/cursorSword_bronze.png"));
 			normalClickImage = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/cursorGauntlet_blue.png"));
 			leftClickImage = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/cursorHand_beige.png"));
@@ -168,8 +175,13 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private void handleRightClick(MouseEvent e){
 		if(SwingUtilities.isRightMouseButton(e)){
 			this.gui.getRootPane().setCursor(rightClick);
-			if(mh.isMarked())
-				mh.moveTo(e);
+			if(mh.isMarked()){
+				if(mh.isOccupied(e)){
+					mh.attack(e);
+				}else {
+					mh.moveTo(e);
+				}
+			}
 		}
 	}
 	

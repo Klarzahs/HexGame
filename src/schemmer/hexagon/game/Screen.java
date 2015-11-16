@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
+import schemmer.hexagon.handler.UIHandler;
 import schemmer.hexagon.map.Hexagon;
 
 public class Screen extends JPanel{
@@ -25,6 +26,7 @@ public class Screen extends JPanel{
 	private BufferedImage offImg;
 	private EntityHandler eh;
 	private MapHandler mh;
+	private UIHandler uih;
 	private String debug;
 	
 	private int offX = 0, offY = 0;
@@ -53,6 +55,7 @@ public class Screen extends JPanel{
 		
 		mh.draw(g2d, offX, offY);
 		eh.draw(g2d, offX, offY);
+		uih.draw(g2d);
 		
 		g2d.drawString(debug+ "\n "+offX+"|"+offY , 20, HEIGHT-100);
 	}
@@ -96,5 +99,9 @@ public class Screen extends JPanel{
 		double diffY = HEIGHT / 2 - ((mh.RADIUS*2 + 1) * Hexagon.getSize());
 		maxOffX = (int) Math.abs((diffX ) * 1.2d);
 		maxOffY = (int) Math.abs((diffY ) * 1.2d);
+	}
+	
+	public void setUIH(UIHandler myUIH){
+		uih = myUIH;
 	}
 }

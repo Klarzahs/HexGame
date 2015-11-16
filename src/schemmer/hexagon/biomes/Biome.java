@@ -28,4 +28,20 @@ public abstract class Biome {
 	public int getMovementCosts(){
 		return movementCosts;
 	}
+	
+	public float getWood(){
+		return wood;
+	}
+	
+	public float getFood(){
+		return food;
+	}
+	
+	public float getStone(){
+		return stone;
+	}
+	
+	public float getGold(){
+		return gold;
+	}
 }

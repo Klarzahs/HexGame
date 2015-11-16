@@ -7,7 +7,7 @@ public class GrassDesert extends Biome{
 		this.stone = 1f;
 		this.wood = 0.5f;
 		
-		this.name = "GD";
+		this.name = "Grass Desert";
 		this.image = "Sand";
 		this.imageAddition = "Grassdesert";
 		

@@ -1,14 +1,12 @@
-package schemmer.hexagon.utils;
-
-import java.util.Random;
+package schemmer.hexagon.player;
 
 public class PlayerColor {
 	private int color;
 	private String colorStr;
 	
-	public PlayerColor(){
-		Random r = new Random();
-		color = r.nextInt(7);
+	public PlayerColor(int i){
+		//TODO: Change back
+		color = 0;
 		switch(color){
 		case 0:
 			colorStr = "Black";

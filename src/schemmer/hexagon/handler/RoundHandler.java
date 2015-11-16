@@ -14,22 +14,22 @@ public class RoundHandler {
 		this.mh = mh;
 	}
 	
-	public void createNPC(){
-		Player pl = new Player(true, mh.getStartingLocation());
+	public void createNPC(int i){
+		Player pl = new Player(true, mh.getStartingLocation(), i);
 		players.add(pl);
 	}
 	
-	public void createPC(){
-		Player pl = new Player(true, mh.getStartingLocation());
+	public void createPC(int i){
+		Player pl = new Player(true, mh.getStartingLocation(), i);
 		players.add(pl);
 	}
 	
 	public void createAllPlayers(int max){
 		if(max < 1)
 			Log.e("RoundHandler", "Max Players below 1!");
-		createPC();
+		createPC(0);
 		for (int i = 1; i < max; i++){
-			createNPC();
+			createNPC(i);
 		}
 		playerCount = max;
 	}
@@ -47,6 +47,7 @@ public class RoundHandler {
 	}
 	
 	public void nextPlayer(){
+		getCurrentPlayer().refreshAll();
 		currentPlayer += 1;
 		if(currentPlayer == playerCount)
 			startRound();
@@ -54,5 +55,17 @@ public class RoundHandler {
 	
 	public int getCurrentRound(){
 		return currentRound;
+	}
+	
+	public int getPlayerCount(){
+		return playerCount;
+	}
+	
+	public Player getPlayer(int i){
+		return players.get(i);
+	}
+	
+	public int getCurrentPlayerIndex(){
+		return currentPlayer;
 	}
 }

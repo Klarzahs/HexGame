@@ -7,7 +7,7 @@ public class SeasonalForest extends Biome{
 		this.stone = 1f;
 		this.wood = 0.5f;
 		
-		this.name = "SF";
+		this.name = "Seasonal Forest";
 		this.image = "Grass";
 		this.imageAddition = "Seasonalforest";
 		
