@@ -1,5 +1,6 @@
 package schemmer.hexagon.handler;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -15,6 +16,7 @@ import schemmer.hexagon.player.Player;
 import schemmer.hexagon.ui.InfoScreen;
 import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.utils.Dijkstra;
 
 public class UIHandler {
 	private ArrayList<InfoScreen> UIElements = new ArrayList<InfoScreen>();
@@ -56,6 +58,8 @@ public class UIHandler {
 		// ---- Fields ----
 		drawFieldInfo(g2d, middleX, middleY);
 		
+		// ---- Minimap ----
+		drawMinimap(g2d, middleY*2, middleX/4);
 	}
 	
 	
@@ -133,5 +137,29 @@ public class UIHandler {
 				g2d.drawString(str, main.getGUI().getWidth() - 290, middleY + 60);
 			}
 		}
+	}
+	
+	private void drawMinimap(Graphics2D g2d, int maxY, int size){
+		g2d.drawImage(panelBeige, 0, maxY-size, size, size, null);
+		
+		MapHandler mh = main.getMH();
+		Hexagon[][] map = mh.getMap();
+		boolean[][] visibleMap = main.getCurrentPlayer().getVisMap();
+		
+		BufferedImage worldImage = new BufferedImage(main.getGUI().getWidth(), main.getGUI().getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D worldImage2D = worldImage.createGraphics();
+		
+		int offX = main.getGUI().getScreen().getOffX();
+		int offY = main.getGUI().getScreen().getOffY();
+		
+		for (int q = map.length - 1 ; q >= 0 ; q--){		//draw backwards for overlapping images
+			for (int r = map[q].length - 1; r >= 0; r--){
+				if(map[q][r] != null && visibleMap[q][r]){
+					map[q][r].fill(worldImage2D, offX, offY);
+				}
+			}
+		}
+		
+		g2d.drawImage(worldImage, 10, maxY-size + 10, size - 20, size - 20, null);
 	}
 }

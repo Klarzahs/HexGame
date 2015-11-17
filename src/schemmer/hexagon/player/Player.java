@@ -3,17 +3,23 @@ package schemmer.hexagon.player;
 import java.util.ArrayList;
 
 import schemmer.hexagon.buildings.Building;
+import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.units.Fighter;
 import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.units.Villager;
+import schemmer.hexagon.utils.Cube;
 
 public class Player {
 	private ArrayList<Fighter> fighters = new ArrayList<Fighter>();
 	private ArrayList<Villager> villagers = new ArrayList<Villager>();
 	private ArrayList<Building> buildings = new ArrayList<Building>();
+	
+	private boolean[][] visibleMap;		//RANGE: 0..2*radius
+	private int visibleRadius = 4;
+	
 	private Hero hero;
 	private Hexagon startingPoint;
 	private PlayerIcon icon;
@@ -23,11 +29,37 @@ public class Player {
 	
 	private PlayerColor color;
 	
-	public Player(boolean isAI, Hexagon hex, int i){
+	public Player(boolean isAI, int i, MapHandler mh){
 		color = new PlayerColor(i);
 		setHero(new Hero(this));
-		startingPoint = hex;
+		
+		//create starting location and add hero
+		startingPoint = mh.getStartingLocation();
 		startingPoint.moveTo(getHero());
+		
+		//create and init the visibleMap, startingPos + ~4 Hexs
+		visibleMap = new boolean[2*mh.RADIUS+1][2*mh.RADIUS+1];
+		updateVisibleMap(mh, startingPoint, visibleRadius);
+	}
+	
+	public void updateVisibleMap(MapHandler mh, Hexagon hex, Unit u){
+		updateVisibleMap(mh, hex, u.getMaxMovementSpeed()+1);
+	}
+	
+	public void updateVisibleMap(MapHandler mh, Hexagon hex, int visibleRadius){
+		//iterate over adjacent fields that fullfill dx+dy+dz <= radius
+		for (int dx = - visibleRadius; dx <= visibleRadius; dx++){
+			for(int dy = Math.max(- visibleRadius, - dx - visibleRadius); dy <= Math.min(visibleRadius,  - dx + visibleRadius); dy++){
+				
+				int dz = -dx - dy;
+				Cube c = hex.getCoords();
+				c = Cube.addCubes(c, new Cube (dx, dy, dz));
+				
+				int[] arr = mh.getAsArray(c);
+				if(arr != null)
+					visibleMap[arr[0]][arr[1]] = true;
+			}
+		}
 	}
 	
 	public void createVillager(){
@@ -171,6 +203,10 @@ public class Player {
 
 	public void setGoldPR(int goldPR) {
 		this.goldPR = goldPR;
+	}
+	
+	public boolean[][] getVisMap(){
+		return visibleMap;
 	}
 
 }

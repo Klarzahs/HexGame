@@ -15,12 +15,12 @@ public class RoundHandler {
 	}
 	
 	public void createNPC(int i){
-		Player pl = new Player(true, mh.getStartingLocation(), i);
+		Player pl = new Player(true, i, mh);
 		players.add(pl);
 	}
 	
 	public void createPC(int i){
-		Player pl = new Player(true, mh.getStartingLocation(), i);
+		Player pl = new Player(false, i, mh);
 		players.add(pl);
 	}
 	
@@ -35,6 +35,7 @@ public class RoundHandler {
 	}
 	
 	public Player getCurrentPlayer(){
+		if(players.size() == 0) return null;
 		return players.get(currentPlayer);
 	}
 	
@@ -51,6 +52,14 @@ public class RoundHandler {
 		currentPlayer += 1;
 		if(currentPlayer == playerCount)
 			startRound();
+	}
+	
+	public void quicksave(){
+		
+	}
+	
+	public void quickload(){
+		
 	}
 	
 	public int getCurrentRound(){

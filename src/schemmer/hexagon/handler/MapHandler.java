@@ -10,6 +10,7 @@ import java.util.Random;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.player.Player;
 import schemmer.hexagon.processes.MapFactory;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.utils.Conv;
@@ -21,9 +22,10 @@ public class MapHandler {
 	private Main main;
 	private Screen screen;
 	
-	public int RADIUS = 5;
+	public int RADIUS = 25;
+	public boolean DEBUG = false;
 	
-	private Hexagon[][] map;
+	private Hexagon[][] map;		//Range: 0..2*radius+1, but hex coords are range: -radius .. radius
 	
 	private Hexagon marked;
 	private Hexagon hovered;
@@ -35,6 +37,7 @@ public class MapHandler {
 	private final Color movementPathColor = new Color(255, 50, 50, 75);
 	private final Color hoveredColor = new Color(150,150,250);
 	private final Color markedColor = new Color(0,0,255);
+	private final Color fogColor = new Color(175,175,175);
 	
 	public MapHandler(Main main){
 		this.main = main;
@@ -48,15 +51,31 @@ public class MapHandler {
 	public void draw(Graphics2D g2d, int offX, int offY){
 		g2d.setColor(new Color(150,150,150));
 		g2d.setStroke(new BasicStroke(1));
+		
+		//visibility map for current player
+		boolean[][] visMap = null;
+		if(main.getCurrentPlayer() != null)
+			visMap = main.getCurrentPlayer().getVisMap();
+		
 		for (int q = map.length - 1 ; q >= 0 ; q--){		//draw backwards for overlapping images
 			for (int r = map[q].length - 1; r >= 0; r--){
 				if(map[q][r] != null){
-					//map[q][r].fill(g2d, offX, offY);
-					map[q][r].drawPicture(g2d, offX, offY);
-					map[q][r].drawOutline(g2d, offX, offY);
+					if(DEBUG){
+						map[q][r].drawPicture(g2d, offX, offY);
+						map[q][r].drawOutline(g2d, offX, offY);
+					}else{
+						if(visMap != null && visMap[q][r]){
+							map[q][r].drawPicture(g2d, offX, offY);
+							map[q][r].drawOutline(g2d, offX, offY);
+							
+						}else{
+							map[q][r].fill(g2d, offX, offY, fogColor);
+						}
+					}
 				}
 			}
 		}
+		
 		if(hovered != null){
 			hovered.draw(g2d, hoveredColor, new BasicStroke(3), offX, offY);
 		}
@@ -72,13 +91,16 @@ public class MapHandler {
 			}
 		}
 		if(movementRange != null && movementRange.contains(hovered)){
-			ArrayList<Hexagon> path = Dijkstra.getMovementPath(map, this, marked, hovered);
 			g2d.setColor(movementPathColor);
-			for (int i = 0; i < path.size() -1 ; i++){
-				g2d.drawLine(path.get(i).getCenter().getX()-offX, path.get(i).getCenter().getY()-offY, 
-						path.get(i+1).getCenter().getX()-offX, path.get(i+1).getCenter().getY()-offY);
+			ArrayList<Hexagon> path = Dijkstra.getMovementPath(map, this, marked, hovered);
+			if(path != null){
+				for (int i = 0; i < path.size() -1 ; i++){
+					g2d.drawLine(path.get(i).getCenter().getX()-offX, path.get(i).getCenter().getY()-offY, 
+							path.get(i+1).getCenter().getX()-offX, path.get(i+1).getCenter().getY()-offY);
+				}
 			}
 		}
+		
 	}
 	
 	public Hexagon getInArray(Cube c){
@@ -86,6 +108,16 @@ public class MapHandler {
 		int r = c.getV()[0] + RADIUS + Math.min(c.getV()[2],  0);
 		if(q < 0 || q > 2 * RADIUS || r < 0 || r > 2 * RADIUS) return null;
 		return map[q][r];
+	}
+	
+	public int[] getAsArray(Cube c){
+		int q = c.getV()[2] + RADIUS;
+		int r = c.getV()[0] + RADIUS + Math.min(c.getV()[2],  0);
+		if(q < 0 || q > 2 * RADIUS || r < 0 || r > 2 * RADIUS) return null;
+		int [] arr = new int[2];
+		arr[0] = q;
+		arr[1] = r;
+		return arr;
 	}
 	
 	public void createHexagon(int radius){
@@ -117,26 +149,33 @@ public class MapHandler {
 	public void setMarked(MouseEvent e){
 		clicked = new Point(e.getX(), e.getY());
 		screen.setDebug("Clicked @"+ clicked.getX()+" | "+clicked.getY());
-		this.setMarked(Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen));
+		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
+		this.setMarked(c);
 	}
 	
 	public void moveTo(MouseEvent e){
 		clicked = new Point(e.getX(), e.getY());
-		screen.setDebug("MoveTo @"+ clicked.getX()+" | "+clicked.getY());
+		
 		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
 		Hexagon target = this.getInArray(c);
+		
 		if(target != null && movementRange != null){
 			if(target.getCoords() != marked.getCoords()){
+				
+				//check if unit from current player
 				Unit u = marked.getUnit();
-				//check if unit from other player than current
 				if(u.getPlayer() == main.getCurrentPlayer()){
 					if(target.getType().isMoveable()){
 						//calculate tiles
 						if(movementRange.contains(target)){
 							int costs = Dijkstra.getMovementCost(map, this, marked, target);
 							if(costs != -1 && costs <= u.getMovementSpeed()){
+								//update the visibleMap of current player
+								ArrayList<Hexagon> path = Dijkstra.getMovementPath(map, this, marked, target);
+								updateVisibleMap(path, main.getCurrentPlayer(), u);
+								
 								Hexagon.moveUnitTo(u, target);
-								u.move(costs);
+								u.moved(costs);
 								marked.unitMoved();
 							}
 						}
@@ -248,4 +287,15 @@ public class MapHandler {
 	public Hexagon getHovered(){
 		return hovered;
 	}
+	
+	public void updateVisibleMap(ArrayList<Hexagon> path, Player cPlayer, Unit u){
+		for(int i = 0; i < path.size(); i++){
+			cPlayer.updateVisibleMap(this, path.get(i), u);
+		}
+	}
+	
+	public Hexagon[][] getMap(){
+		return map;
+	}
+	
 }

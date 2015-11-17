@@ -13,6 +13,7 @@ public class GameLoop extends Thread{
 	final long OPTIMAL_TIME = 1000 / TARGET_FPS;   
 	
 	private boolean isRunning = false;
+	private boolean isPaused = true;
 	private long lastFpsTime = 0;
 	private int fps = 0;
 	
@@ -32,37 +33,41 @@ public class GameLoop extends Thread{
 		double delta;
 		long lastLoopTime = System.currentTimeMillis();
 		isRunning = true;
+		isPaused = false;
 
 		// keep looping round til the game ends
 		while (isRunning){
-			now = System.currentTimeMillis();
-			updateLength = now - lastLoopTime;
-			lastLoopTime = now;
-			delta = updateLength / ((double)OPTIMAL_TIME);
-
-			// update the frame counter
-			lastFpsTime += updateLength;
-			fps++;
-	      
-			if (lastFpsTime >= 1000){
-				lastFpsTime = 0;
-				fps = 0;
-			}
-	      
-			// update the game logic
-			eh.update(delta);
-			mh.update(delta);
-	      
-			// draw everyting
-			screen.repaint();
-	      
-			moveScreen();
-			
-			try{
-				Thread.sleep(lastLoopTime-System.currentTimeMillis() + OPTIMAL_TIME);
-			} 
-			catch(Exception e){
-				log(e.getCause()+" "+e.getMessage());
+			while(!isPaused){
+				now = System.currentTimeMillis();
+				updateLength = now - lastLoopTime;
+				lastLoopTime = now;
+				delta = updateLength / ((double)OPTIMAL_TIME);
+	
+				// update the frame counter
+				lastFpsTime += updateLength;
+				fps++;
+		      
+				if (lastFpsTime >= 1000){
+					screen.setFPS(""+fps);
+					lastFpsTime = 0;
+					fps = 0;
+				}
+		      
+				// update the game logic
+				eh.update(delta);
+				mh.update(delta);
+		      
+				// draw everyting
+				screen.repaint();
+		      
+				moveScreen();
+				
+				try{
+					Thread.sleep(lastLoopTime-System.currentTimeMillis() + OPTIMAL_TIME);
+				} 
+				catch(Exception e){
+					log(e.getCause()+" "+e.getMessage());
+				}
 			}
 		}
 	}
@@ -79,7 +84,18 @@ public class GameLoop extends Thread{
 	
 	public void stopThread(){
 		isRunning = false;
+		isPaused = true;
 		log("Stopped thread, exit code 0");
+	}
+	
+	public void pause(){
+		isPaused = true;
+		log("Paused Thread!");
+	}
+	
+	public void unpause(){
+		isPaused = false;
+		log("Unpaused Thread!");
 	}
 	
 	public void log(String s){

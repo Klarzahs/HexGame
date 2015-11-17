@@ -153,6 +153,16 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 					mh.clearMovementRange();
 					gui.getScreen().appendDebug(rh.getCurrentRound()+": "+ rh.getCurrentPlayer());
 					break;
+				case 116: // "F5" - Quicksave
+					gl.pause();
+					rh.quicksave();
+					gl.unpause();
+					break;
+				case 120: // "F9" - Quickload
+					gl.pause();
+					rh.quickload();
+					gl.unpause();
+					break;
 				default:
 					gui.getScreen().appendDebug(""+e.getKeyCode());
 					break;
@@ -160,10 +170,6 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			if(e.getKeyCode() <= 57 && e.getKeyCode() >=49) gui.getScreen().recreate((e.getKeyCode()-48)*2);
 		}
 	}
-	
-	//SwingUtilities.isLeftMouseButton(MouseEvent anEvent) 
-	//SwingUtilities.isRightMouseButton(MouseEvent anEvent) 
-	//SwingUtilities.isMiddleMouseButton(MouseEvent anEvent)
 	
 	private void handleLeftClick(MouseEvent e){
 		if(SwingUtilities.isLeftMouseButton(e)){

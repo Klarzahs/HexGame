@@ -33,7 +33,7 @@ public abstract class Unit {
 		return maxMovementSpeed;
 	}
 	
-	public void move(int costs){
+	public void moved(int costs){
 		movementSpeed -= costs;
 	}
 	

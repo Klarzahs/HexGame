@@ -125,7 +125,9 @@ public class MapFactory {
 			int r1 = Math.max(-radius, -q - radius);
 		    int r2 = Math.min(radius, -q + radius);
 		    for (int r = r1; r <= r2; r++) {
-		    	map[r + radius][q + radius + Math.min(0, r)] = new Hexagon(new Cube(q, -q-r, r));
+		    	int x = r + radius;
+		    	int y = q + radius + Math.min(0, r);
+		    	map[x][y] = new Hexagon(new Cube(q, -q-r, r), x, y);
 		    }
 		}
 	}

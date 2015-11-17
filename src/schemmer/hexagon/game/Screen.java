@@ -28,6 +28,7 @@ public class Screen extends JPanel{
 	private MapHandler mh;
 	private UIHandler uih;
 	private String debug;
+	private String fps = "";
 	
 	private int offX = 0, offY = 0;
 	private int maxOffX, maxOffY;
@@ -55,9 +56,11 @@ public class Screen extends JPanel{
 		
 		mh.draw(g2d, offX, offY);
 		eh.draw(g2d, offX, offY);
-		uih.draw(g2d);
+		if(uih != null) uih.draw(g2d);
 		
+		g2d.setColor(Color.YELLOW);
 		g2d.drawString(debug+ "\n "+offX+"|"+offY , 20, HEIGHT-100);
+		g2d.drawString(fps, WIDTH-100, 20);
 	}
 	
 	public void setDebug(String d){
@@ -103,5 +106,9 @@ public class Screen extends JPanel{
 	
 	public void setUIH(UIHandler myUIH){
 		uih = myUIH;
+	}
+	
+	public void setFPS(String f){
+		this.fps = f;
 	}
 }

@@ -19,14 +19,15 @@ import schemmer.hexagon.utils.Point;
 
 public class Hexagon {
 	private final static double CORNERS = 6;	// # Corners
-	private static int SIZE = 50;			// in Pixel
+	private static int SIZE = 30;			// in Pixel
 	private static float widthFactor = (float) (Math.sqrt(3)/2f);
 	
 	private HexType type;
 	private Biome biome;
 	
-	private Point center;
-	private Cube coords;
+	private Point center;		// pixel
+	private Cube coords;		// cube coords
+	private int posX, posY;		// coords in map
 	
 	private BufferedImage image;
 	private BufferedImage addition;
@@ -34,14 +35,17 @@ public class Hexagon {
 	private Unit unit;
 	private Building building;
 	
+	
 	// sorting
 	public int priority = 999;
 	private int costs = -1;
 	
-	public Hexagon(Cube c){
+	public Hexagon(Cube c, int x, int y){
 		this.coords = c;
 		this.center = Conv.cubeToPixel(c);
 		center = new Point(center.x + Screen.WIDTH/2, center.y + Screen.HEIGHT/2);
+		this.posX = x;
+		this.posY = y;
 	}
 	
 	public Point hexCorner(double i){
@@ -120,6 +124,20 @@ public class Hexagon {
 	public void fill(Graphics2D g2d, int offX, int offY){
 		recalculateCenter();
 		g2d.setColor(type.getColor());
+		int xs[] = new int [(int) CORNERS];
+		int ys[] = new int [(int) CORNERS];
+		
+		for (int i = 0; i < xs.length; i++){
+			xs[i] = (int) hexCorner(i).x - offX;
+			ys[i] = (int) hexCorner(i).y - offY;
+		}
+		
+		g2d.fillPolygon(xs, ys, (int) CORNERS);
+	}
+	
+	public void fill(Graphics2D g2d, int offX, int offY, Color c){
+		recalculateCenter();
+		g2d.setColor(c);
 		int xs[] = new int [(int) CORNERS];
 		int ys[] = new int [(int) CORNERS];
 		
@@ -217,7 +235,7 @@ public class Hexagon {
 	public boolean moveTo(Hexagon hex){
 		if(hex.getType().isMoveable()){
 			hex.moveTo(this.unit);
-			this.unit.move(hex.getMovementCosts());
+			this.unit.moved(hex.getMovementCosts());
 			this.unit = null;
 			return true;
 		}
@@ -286,6 +304,14 @@ public class Hexagon {
 		default:
 			this.building = new TownCenter(p);
 		}
+	}
+	
+	public int getX(){
+		return posX;
+	}
+	
+	public int getY(){
+		return posY;
 	}
 }
 

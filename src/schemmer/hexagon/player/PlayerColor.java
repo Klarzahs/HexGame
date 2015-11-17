@@ -5,8 +5,7 @@ public class PlayerColor {
 	private String colorStr;
 	
 	public PlayerColor(int i){
-		//TODO: Change back
-		color = 0;
+		color = i;
 		switch(color){
 		case 0:
 			colorStr = "Black";
