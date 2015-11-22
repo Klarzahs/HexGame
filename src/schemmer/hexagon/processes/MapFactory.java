@@ -9,6 +9,7 @@ import schemmer.hexagon.biomes.SeasonalForest;
 import schemmer.hexagon.biomes.Swamp;
 import schemmer.hexagon.biomes.Taiga;
 import schemmer.hexagon.biomes.Tundra;
+import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.utils.Cube;
@@ -32,8 +33,8 @@ public class MapFactory {
 	
 	private static float[][] noise;
 	
-	public static void createTypes(Hexagon[][] map, int radius){
-		createMap(map, radius);
+	public static void createTypes(Main m, Hexagon[][] map, int radius){
+		createMap(m, map, radius);
 		
 		// ------- Create terrain -----------
 		SimplexNoise.updateGradients();
@@ -120,14 +121,14 @@ public class MapFactory {
 		return sumNoise;
 	}
 	
-	private static void createMap(Hexagon[][] map, int radius){
+	private static void createMap(Main m, Hexagon[][] map, int radius){
 		for (int q = -radius; q <= radius; q++) {
 			int r1 = Math.max(-radius, -q - radius);
 		    int r2 = Math.min(radius, -q + radius);
 		    for (int r = r1; r <= r2; r++) {
 		    	int x = r + radius;
 		    	int y = q + radius + Math.min(0, r);
-		    	map[x][y] = new Hexagon(new Cube(q, -q-r, r), x, y);
+		    	map[x][y] = new Hexagon(m, new Cube(q, -q-r, r), x, y);
 		    }
 		}
 	}

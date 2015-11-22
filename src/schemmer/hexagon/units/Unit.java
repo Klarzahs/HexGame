@@ -83,4 +83,8 @@ public abstract class Unit {
 		//TODO: implement winning
 		return true;
 	}
+	
+	public boolean isBuilder(){
+		return (this.getClass() == Hero.class || this.getClass() == Villager.class);
+	}
 }

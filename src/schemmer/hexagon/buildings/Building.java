@@ -2,6 +2,7 @@ package schemmer.hexagon.buildings;
 
 import java.awt.image.BufferedImage;
 
+import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 
 public abstract class Building {
@@ -11,10 +12,16 @@ public abstract class Building {
 	protected int health = maxHealth;
 	protected int createCount;
 	
+	protected static Costs costs;
+	
+	protected Hexagon field;
+	
 	protected Player p;
 	
-	public Building(Player pl){
+	public Building(Player pl, Hexagon hex){
 		p = pl;
+		field = hex;
+		System.out.println("New building was created!");
 	}
 	
 	public BufferedImage getImage(){
@@ -34,7 +41,12 @@ public abstract class Building {
 	}
 	
 	public void buildStep(){
-		if(this.tTB > 0)
+		if(this.tTB > 0 && field.isOccupiedByBuilder())
 			this.tTB = this.tTB - 1;
+		else if(this.tTB > 0 ) System.out.println("Building needs a builder!");
+	}
+	
+	public int gettTB(){
+		return tTB;
 	}
 }

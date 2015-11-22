@@ -3,6 +3,7 @@ package schemmer.hexagon.player;
 import java.util.ArrayList;
 
 import schemmer.hexagon.buildings.Building;
+import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.ui.PlayerIcon;
@@ -24,7 +25,7 @@ public class Player {
 	private Hexagon startingPoint;
 	private PlayerIcon icon;
 	
-	private int woodCount = 0, foodCount = 0, stoneCount = 0, goldCount = 0, maxPop = 0;
+	private int woodCount = 5, foodCount = 2, stoneCount = 5, goldCount = 0, maxPop = 0;
 	private int woodPR = 0, foodPR = 0, stonePR = 0, goldPR = 0;		//PR = per round
 	
 	private PlayerColor color;
@@ -207,6 +208,19 @@ public class Player {
 	
 	public boolean[][] getVisMap(){
 		return visibleMap;
+	}
+	
+	public Costs getRessources(){
+		return new Costs(getFoodCount(), getWoodCount(), getStoneCount(), getGoldCount());
+	}
+	
+	public void substractCostFromRessources(Costs co){
+		Costs newRess = Costs.substract(getRessources(), co);
+		int arr[] = newRess.getCosts();
+		setFoodCount(arr[0]);
+		setWoodCount(arr[1]);
+		setStoneCount(arr[2]);
+		setGoldCount(arr[3]);
 	}
 
 }

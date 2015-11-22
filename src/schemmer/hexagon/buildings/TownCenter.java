@@ -4,13 +4,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 
 public class TownCenter extends Building{
 	
 	
-	public TownCenter(Player p){
-		super(p);
+	public TownCenter(Player p, Hexagon h){
+		super(p, h);
 		this.tTB = 3;
 		try {
 			String str = p.getPColor().getColorString();
@@ -32,5 +33,9 @@ public class TownCenter extends Building{
 			}
 			this.p.setMaxPop(5);
 		}
+	}
+	
+	public static Costs getCosts(){
+		return new Costs(2, 5, 5, 0);
 	}
 }

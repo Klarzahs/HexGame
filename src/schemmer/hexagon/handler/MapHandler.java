@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.map.Hexagon;
@@ -123,7 +124,7 @@ public class MapHandler {
 	public void createHexagon(int radius){
 		map = new Hexagon[2*radius+1][2*radius+1];
 		
-		MapFactory.createTypes(map, radius);
+		MapFactory.createTypes(main, map, radius);
 		marked = null;
 		hovered = null;
 		this.clearMovementRange();
@@ -296,6 +297,30 @@ public class MapHandler {
 	
 	public Hexagon[][] getMap(){
 		return map;
+	}
+	
+	public boolean isBuildUpon(MouseEvent e){
+		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
+		Hexagon target = this.getInArray(c);
+		if(target != null)
+			return (target.isBuildUpon());
+		return false;
+	}
+	
+	public boolean build(MouseEvent e, int nr){
+		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
+		Hexagon target = this.getInArray(c);
+		if(target != null){
+			Costs co = main.getUIH().getCurrentIconCosts();
+			if(main.getCurrentPlayer().getRessources().isHigherThan(co)){
+				main.getCurrentPlayer().substractCostFromRessources(co);
+				target.build(main.getCurrentPlayer(), nr);
+				main.getUIH().resetIconNr();
+			} else{
+				System.out.println("Needz more money!");
+			}
+		}
+		return false;
 	}
 	
 }

@@ -9,7 +9,11 @@ import javax.imageio.ImageIO;
 
 import schemmer.hexagon.biomes.Biome;
 import schemmer.hexagon.buildings.Building;
+import schemmer.hexagon.buildings.Farm;
+import schemmer.hexagon.buildings.Hut;
+import schemmer.hexagon.buildings.Lumbermill;
 import schemmer.hexagon.buildings.TownCenter;
+import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
@@ -35,17 +39,20 @@ public class Hexagon {
 	private Unit unit;
 	private Building building;
 	
+	private Main main;
+	
 	
 	// sorting
 	public int priority = 999;
 	private int costs = -1;
 	
-	public Hexagon(Cube c, int x, int y){
+	public Hexagon(Main m, Cube c, int x, int y){
 		this.coords = c;
 		this.center = Conv.cubeToPixel(c);
 		center = new Point(center.x + Screen.WIDTH/2, center.y + Screen.HEIGHT/2);
 		this.posX = x;
 		this.posY = y;
+		main = m;
 	}
 	
 	public Point hexCorner(double i){
@@ -83,6 +90,10 @@ public class Hexagon {
 		// Unit image
 		if(unit != null)
 			g2d.drawImage(unit.getImage(), (int)(center.x-offX-SIZE + 10*OSF), (int)(center.y-offY-SIZE  ), (int) (SIZE*Math.sqrt(3) - 10 * OSF), (int)(SIZE*2 - 5*OSF), null);
+		
+		// Building image
+		if(building != null)
+			g2d.drawImage(building.getImage(), (int)(center.x-offX-SIZE + 10*OSF), (int)(center.y-offY-SIZE  ), (int) (SIZE*Math.sqrt(3) - 10 * OSF), (int)(SIZE*2 - 5*OSF), null);
 	}
 	
 	private void createPicture(){
@@ -298,12 +309,31 @@ public class Hexagon {
 	}
 	
 	public void build(Player p, int i){
-		switch (i){
-		case 0:
-			this.building = new TownCenter(p);
+		switch (i){					// farm, lumbermill, hut, main building
+		case 0:				
+			this.building = new Farm(p, this);
+			break;
+		case 1:
+			this.building = new Lumbermill(p, this);
+			break;
+		case 2:
+			this.building = new Hut(p, this);
+			break;
+		case 3:
+			this.building = new TownCenter(p, this);
+			break;
 		default:
-			this.building = new TownCenter(p);
+			this.building = new TownCenter(p, this);
 		}
+		p.addBuilding(this.building);
+	}
+	
+	public boolean isBuildUpon(){
+		if(building != null){
+			if(building.gettTB() > 0) return false;
+			return true;
+		}
+		return false;
 	}
 	
 	public int getX(){
@@ -313,5 +343,11 @@ public class Hexagon {
 	public int getY(){
 		return posY;
 	}
+	
+	public boolean isOccupiedByBuilder(){
+		return this.isOccupied() && unit.isBuilder() && unit.getPlayer() == main.getCurrentPlayer();
+	}
+	
+	
 }
 

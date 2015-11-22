@@ -42,9 +42,6 @@ public class RoundHandler {
 	public void startRound(){
 		currentPlayer = 0;
 		currentRound += 1;
-		for(int i = 0; i < players.size(); i++){
-			players.get(i).refreshAll();
-		}
 	}
 	
 	public void nextPlayer(){

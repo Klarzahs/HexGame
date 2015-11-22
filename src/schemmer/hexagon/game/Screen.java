@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -59,7 +60,7 @@ public class Screen extends JPanel{
 		if(uih != null) uih.draw(g2d);
 		
 		g2d.setColor(Color.YELLOW);
-		g2d.drawString(debug+ "\n "+offX+"|"+offY , 20, HEIGHT-100);
+		g2d.drawString(debug, WIDTH/2, HEIGHT-100);
 		g2d.drawString(fps, WIDTH-100, 20);
 	}
 	
@@ -110,5 +111,9 @@ public class Screen extends JPanel{
 	
 	public void setFPS(String f){
 		this.fps = f;
+	}
+	
+	public boolean isCursorInIconArea(double x, double y){
+		return uih.cursorInIconArea(x, y);
 	}
 }
