@@ -10,6 +10,7 @@ import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.units.Fighter;
 import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.units.Villager;
 import schemmer.hexagon.utils.Cube;
 
@@ -132,6 +133,10 @@ public class Player {
 	public void addBuilding(Building b){
 		buildings.add(b);
 	}
+	
+	public ArrayList<Building> getBuildings(){
+		return buildings;
+	}
 
 	public int getMaxPop() {
 		return maxPop;
@@ -150,7 +155,7 @@ public class Player {
 	}
 
 	public int getFoodPR() {
-		return foodPR;
+		return getRate(UnitState.STATE_FOOD);
 	}
 
 	public void setFoodPR(int foodPR) {
@@ -166,7 +171,7 @@ public class Player {
 	}
 
 	public int getWoodPR() {
-		return woodPR;
+		return getRate(UnitState.STATE_WOOD);
 	}
 
 	public void setWoodPR(int woodPR) {
@@ -174,7 +179,7 @@ public class Player {
 	}
 
 	public int getStonePR() {
-		return stonePR;
+		return getRate(UnitState.STATE_STONE);
 	}
 
 	public void setStonePR(int stonePR) {
@@ -198,7 +203,7 @@ public class Player {
 	}
 
 	public int getGoldPR() {
-		return goldPR;
+		return getRate(UnitState.STATE_GOLD);
 	}
 
 	public void setGoldPR(int goldPR) {
@@ -229,5 +234,17 @@ public class Player {
 		}
 		return ret;
 	}
-
+	
+	
+	private int getRate(UnitState s){
+		int ret = 0;
+		for (int i = 0; i < villagers.size(); i++){
+			if(villagers.get(i).getState() == s)
+				ret += villagers.get(i).getGatheringRate();
+		}
+		
+		if(getHero().getState() == s)
+			ret += getHero().getGatheringRate();
+		return ret;
+	}
 }

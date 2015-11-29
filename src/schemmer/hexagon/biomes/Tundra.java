@@ -2,10 +2,10 @@ package schemmer.hexagon.biomes;
 
 public class Tundra extends Biome{
 	public Tundra(){
-		this.food = 0.5f;
-		this.gold = 1f;
-		this.stone = 1f;
-		this.wood = 0f;
+		this.food = 2;
+		this.gold = 1;
+		this.stone = 1;
+		this.wood = 0;
 		
 		this.name = "Tundra";
 		this.image = "Snow";

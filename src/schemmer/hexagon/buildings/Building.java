@@ -60,7 +60,7 @@ public abstract class Building {
 	}
 	
 	public boolean isProducing(){
-		return (producingCount > 0);
+		return (currentlyProduced >= 0);
 	}
 	
 	public int getProducingCount(){
@@ -84,5 +84,9 @@ public abstract class Building {
 	}
 	
 	public void produce(int nr){
+	}
+	
+	public Hexagon getField(){
+		return field;
 	}
 }

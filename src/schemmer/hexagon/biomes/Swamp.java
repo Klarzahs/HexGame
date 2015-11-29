@@ -2,10 +2,10 @@ package schemmer.hexagon.biomes;
 
 public class Swamp extends Biome {
 	public Swamp(){
-		this.food = 2f;
-		this.gold = 0.5f;
-		this.stone = 0.5f;
-		this.wood = 1.5f;
+		this.food = 2;
+		this.gold = 0;
+		this.stone = 1;
+		this.wood = 2;
 		
 		this.name = "Swamp";
 		this.image = "Magic";

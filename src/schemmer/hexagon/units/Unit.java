@@ -16,11 +16,15 @@ public abstract class Unit {
 	protected int health = 100, maxHealth = 100;
 	protected int attack, defense;
 	
+	protected Hexagon field;
+	
+	protected UnitState state;
 	
 	public Unit(Player p, int speed){
 		player = p;
 		maxMovementSpeed = 3;
 		movementSpeed = maxMovementSpeed;
+		state = UnitState.STATE_NONE;
 	}
 	
 	public BufferedImage getImage(){
@@ -92,5 +96,21 @@ public abstract class Unit {
 	
 	public static Costs getCosts(){
 		return null;
+	}
+	
+	public Hexagon getField(){
+		return field;
+	}
+	
+	public void setField(Hexagon h){
+		field = h;
+	}
+	
+	public void setState(UnitState s){
+		state = s;
+	}
+	
+	public UnitState getState(){
+		return state;
 	}
 }

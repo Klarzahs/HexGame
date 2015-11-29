@@ -2,10 +2,10 @@ package schemmer.hexagon.biomes;
 
 
 public abstract class Biome {
-	protected float wood;
-	protected float food;
-	protected float stone;
-	protected float gold;
+	protected int wood;
+	protected int food;
+	protected int stone;
+	protected int gold;
 	
 	protected int movementCosts;
 	
@@ -29,19 +29,19 @@ public abstract class Biome {
 		return movementCosts;
 	}
 	
-	public float getWood(){
+	public int getWood(){
 		return wood;
 	}
 	
-	public float getFood(){
+	public int getFood(){
 		return food;
 	}
 	
-	public float getStone(){
+	public int getStone(){
 		return stone;
 	}
 	
-	public float getGold(){
+	public int getGold(){
 		return gold;
 	}
 }

@@ -1,5 +1,13 @@
 package schemmer.hexagon.buildings;
 
-public class Quarry {
+import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.player.Player;
+
+public class Quarry extends Building{
+
+	public Quarry(Player pl, Hexagon hex) {
+		super(pl, hex);
+		// TODO Auto-generated constructor stub
+	}
 
 }

@@ -263,6 +263,7 @@ public class Hexagon {
 	
 	public void moveTo(Unit u){
 		this.unit = u;
+		u.setField(this);
 	}
 
 	public boolean isMoveable(){

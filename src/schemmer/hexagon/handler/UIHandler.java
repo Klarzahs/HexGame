@@ -24,6 +24,7 @@ import schemmer.hexagon.ui.InfoScreen;
 import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.units.Villager;
 
 public class UIHandler {
@@ -38,6 +39,7 @@ public class UIHandler {
 	private int middleX, middleY;
 	
 	private BufferedImage[] buildingIcons = new BufferedImage[4];  		// farm, lumbermill, hut, main building
+	private BufferedImage[] stateIcons = new BufferedImage[6];  		// food, wood, stone, gold, building, none
 	
 	public UIHandler(Main m){
 		main = m;
@@ -51,10 +53,18 @@ public class UIHandler {
 		try {
 			buttonBeigePressed = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/buttonLong_beige_pressed.png"));
 			panelBeige = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/panel_beige.png"));
+			
 			buildingIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_farm.png"));
 			buildingIcons[1] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_lumbermill.png"));
 			buildingIcons[2] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_hut.png"));
 			buildingIcons[3] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_towncenter.png"));
+			
+			stateIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_food.png"));
+			stateIcons[1] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_wood.png"));
+			stateIcons[2] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_stone.png"));
+			stateIcons[3] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_gold.png"));
+			stateIcons[4] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_build.png"));
+			stateIcons[5] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_none.png"));
 			
 		} catch (IOException e) {
 			System.out.println("Couldn't load an UI Image");
@@ -105,8 +115,12 @@ public class UIHandler {
 					g2d.setColor(Color.RED);
 					g2d.drawRect(middleX/4 + 20, middleY*2 - middleX/8 + 10, 70, 70);
 					g2d.setColor(new Color(200,50,50,150));
-					if(b.isProducing())
-						g2d.fillRect(middleX/4 + 20 + (100 - b.getProducingCount()), middleY*2 - middleX/8 + 10, 70 - b.getProducingCount(), 70);
+					if(b.isProducing()){
+						if(b.getProducingCount() == 0)
+							g2d.fillRect(middleX/4 + 20, middleY*2 - middleX/8 + 10, 70 , 70);
+						else
+							g2d.fillRect(middleX/4 + 20 + (100 - b.getProducingCount()), middleY*2 - middleX/8 + 10, 70 - b.getProducingCount(), 70);
+					}
 				}
 				
 				g2d.drawImage(b.getUnitIcons()[0], middleX/4 + 20, middleY*2 - middleX/8 + 10, null);
@@ -121,15 +135,28 @@ public class UIHandler {
 		if(isBuilderSelected()){
 			g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/8, middleX/2, middleX/8, null);
 			drawBuildingIcons(g2d, middleX, middleY);
+			drawStateIcons(g2d, middleX, middleY);
 		}
 	}
 	
 	private void drawBuildingIcons(Graphics2D g2d, int middleX, int middleY){
 		for (int i = 0; i < buildingIcons.length; i++){
 			g2d.setColor(Color.BLACK);
-			if(i == selectedNr) g2d.drawRect(middleX/4 + 20 + i * 70, middleY*2 - middleX/8 + 10, 70, 70);
+			if(i == selectedNr) 
+				g2d.drawRect(middleX/4 + 20 + i * 70, middleY*2 - middleX/8 + 10, 70, 70);
 			g2d.drawImage(buildingIcons[i], middleX/4 + 20 + i * 70, middleY*2 - middleX/8 + 10, null);
+		}
+	}
+	
+	private void drawStateIcons(Graphics2D g2d, int middleX, int middleY){
+		for (int i = 0; i < stateIcons.length; i++){
+			g2d.setColor(Color.BLACK);
+			UnitState s = (main.getMH().getUnit() != null) ? main.getMH().getUnit().getState() : null;
 			
+			if(s != null && i == s.getValue()) 
+				g2d.drawRect(middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/8 + 10 + (i % 2) * 70, 70, 70);
+			g2d.drawImage(stateIcons[i], middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/8 + 10 + (i % 2) * 70, null);
+			//System.out.println((i / 2) + " | " + (i % 2)+": "+(stateIcons[i] == null)+ " @"+(middleX + 20 + (i % 2) * 70)+"|"+(middleY*16 - middleX/2 + 10 + (i % 2) * 70));
 		}
 	}
 	
@@ -345,6 +372,7 @@ public class UIHandler {
 	
 	public boolean isUnitPossible(){ 
 		if(selectedUnitNr < 0) return false;
+		if(main.getMH().getMarked().getBuilding().isProducing()) return false;
 		Costs co = getCurrentUnitIconCosts();
 		if(co == null) System.out.println("Unit Costs are NULL");
 		if(main.getCurrentPlayer().getRessources().isHigherThan(co)) return true;
