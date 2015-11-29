@@ -175,7 +175,15 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		if(SwingUtilities.isLeftMouseButton(e)){
 			this.gui.getRootPane().setCursor(leftClick);
 			
-			if(uih.isBuilderSelected() && uih.cursorInIconArea(e)) uih.handleBuilding(e);
+			if(uih.isBuilderSelected() && uih.cursorInIconArea(e)) {
+				uih.handleBuildingSelection(e, uih.isHeroSelected());
+			}
+			else if (uih.isBuildingSelected() && uih.cursorInIconArea(e)){
+				uih.handleUnitSelection(e);
+				if(uih.isUnitIconSelected() && uih.isUnitPossible()){
+					mh.produce(uih.getUnitIconNr());
+				}
+			}
 			else {
 				mh.setMarked(e);
 				uih.resetIconNr();
@@ -219,4 +227,5 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public UIHandler getUIH(){
 		return uih;
 	}
+	
 }

@@ -22,7 +22,7 @@ import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Point;
 
 public class Hexagon {
-	private final static double CORNERS = 6;	// # Corners
+	public final static double CORNERS = 6;	// # Corners
 	private static int SIZE = 30;			// in Pixel
 	private static float widthFactor = (float) (Math.sqrt(3)/2f);
 	
@@ -348,6 +348,16 @@ public class Hexagon {
 		return this.isOccupied() && unit.isBuilder() && unit.getPlayer() == main.getCurrentPlayer();
 	}
 	
+	public Building getBuilding(){
+		return building;
+	}
 	
+	public Hexagon neighbour(int i){
+		Cube c = this.coords;
+		Cube cnew = c.neighbour(i);
+		if(cnew != null)
+			return main.getMH().getInArray(cnew);
+		return null;
+	}
 }
 

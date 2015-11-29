@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
@@ -135,8 +136,8 @@ public class MapHandler {
 		marked = this.getInArray(c);
 		if(marked != null && marked.isOccupied()){
 			getMovementRange(marked);
-		}else
-			this.clearMovementRange();
+		}
+		
 	}
 	
 	public boolean isMarked(){
@@ -310,12 +311,14 @@ public class MapHandler {
 	public boolean build(MouseEvent e, int nr){
 		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
 		Hexagon target = this.getInArray(c);
-		if(target != null){
+		if(target != null ){
+			//TODO: disable build out of range!
 			Costs co = main.getUIH().getCurrentIconCosts();
 			if(main.getCurrentPlayer().getRessources().isHigherThan(co)){
 				main.getCurrentPlayer().substractCostFromRessources(co);
 				target.build(main.getCurrentPlayer(), nr);
 				main.getUIH().resetIconNr();
+				return true;
 			} else{
 				System.out.println("Needz more money!");
 			}
@@ -323,4 +326,23 @@ public class MapHandler {
 		return false;
 	}
 	
+	public boolean produce(int nr){
+		if(isMarked()){
+			Costs co = main.getUIH().getCurrentUnitIconCosts();
+			if(main.getCurrentPlayer().getRessources().isHigherThan(co) && main.getCurrentPlayer().getPopCount() <= main.getCurrentPlayer().getMaxPop()){
+				main.getCurrentPlayer().substractCostFromRessources(co);
+				marked.getBuilding().produce(nr);
+				main.getUIH().resetUnitIconNr();
+				return true;
+			} else{
+				System.out.println("Needz more money!");
+			}
+		}
+		return false;
+	}
+	
+	public boolean isBuildUpon(){
+		if(marked == null) return false;
+		return marked.isBuildUpon();
+	}
 }

@@ -7,6 +7,8 @@ import schemmer.hexagon.player.Player;
 
 public abstract class Building {
 	protected BufferedImage image;
+	protected boolean imageLoaded = false;
+	
 	protected int tTB; 			//time to build 
 	protected int maxHealth = 100;
 	protected int health = maxHealth;
@@ -17,6 +19,13 @@ public abstract class Building {
 	protected Hexagon field;
 	
 	protected Player p;
+	
+	protected int producingCount = 0;			// how far is the production (of 100)?
+	protected int producingStep = 0;			// how much production is gained each round?
+	protected int producableCount = -1;			// how many things can be produced?
+	protected int currentlyProduced = -1;		// which thing is produced (-1 == nothing)?
+	
+	protected static BufferedImage[] unitIcons;
 	
 	public Building(Player pl, Hexagon hex){
 		p = pl;
@@ -48,5 +57,32 @@ public abstract class Building {
 	
 	public int gettTB(){
 		return tTB;
+	}
+	
+	public boolean isProducing(){
+		return (producingCount > 0);
+	}
+	
+	public int getProducingCount(){
+		return producingCount;
+	}
+	
+	public int getProducableCount(){
+		return producableCount;
+	}
+	
+	public int getProduct(){
+		return currentlyProduced;
+	}
+	
+	public BufferedImage[] getUnitIcons(){
+		return null;
+	}
+	
+	public Object getClassOf(int i){
+		return null;
+	}
+	
+	public void produce(int nr){
 	}
 }

@@ -2,6 +2,7 @@ package schemmer.hexagon.units;
 
 import java.awt.image.BufferedImage;
 
+import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 
@@ -14,6 +15,7 @@ public abstract class Unit {
 	
 	protected int health = 100, maxHealth = 100;
 	protected int attack, defense;
+	
 	
 	public Unit(Player p, int speed){
 		player = p;
@@ -86,5 +88,9 @@ public abstract class Unit {
 	
 	public boolean isBuilder(){
 		return (this.getClass() == Hero.class || this.getClass() == Villager.class);
+	}
+	
+	public static Costs getCosts(){
+		return null;
 	}
 }

@@ -25,7 +25,7 @@ public class Player {
 	private Hexagon startingPoint;
 	private PlayerIcon icon;
 	
-	private int woodCount = 5, foodCount = 2, stoneCount = 5, goldCount = 0, maxPop = 0;
+	private int woodCount = 5, foodCount = 4, stoneCount = 5, goldCount = 0, maxPop = 0;
 	private int woodPR = 0, foodPR = 0, stonePR = 0, goldPR = 0;		//PR = per round
 	
 	private PlayerColor color;
@@ -63,8 +63,7 @@ public class Player {
 		}
 	}
 	
-	public void createVillager(){
-		Villager vil = new Villager(this);
+	public void addVillager(Villager vil){
 		villagers.add(vil);
 	}
 	
@@ -221,6 +220,14 @@ public class Player {
 		setWoodCount(arr[1]);
 		setStoneCount(arr[2]);
 		setGoldCount(arr[3]);
+	}
+	
+	public int getPopCount(){
+		int ret = 0;
+		for(int i = 0; i < villagers.size(); i++){
+			ret += 1;
+		}
+		return ret;
 	}
 
 }
