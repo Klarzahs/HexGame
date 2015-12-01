@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
+import schemmer.hexagon.units.UnitState;
 
 public abstract class Building {
 	protected BufferedImage image;
@@ -50,7 +51,7 @@ public abstract class Building {
 	}
 	
 	public void buildStep(){
-		if(this.tTB > 0 && field.isOccupiedByBuilder())
+		if(this.tTB > 0 && field.isOccupiedByBuilder() && field.getUnit().getState() == UnitState.STATE_BUILDING)
 			this.tTB = this.tTB - 1;
 		else if(this.tTB > 0 ) System.out.println("Building needs a builder!");
 	}

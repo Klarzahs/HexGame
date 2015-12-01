@@ -30,7 +30,7 @@ public class TownCenter extends Building{
 		
 		try {
 			String str = p.getPColor().getColorString();
-			image = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces ("+ str +")/piece"+ str +"_building.png"));
+			image = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_building.png"));
 		} catch (IOException e) {
 			System.out.println("Couldn't load TownCenter-Building image!");
 		}

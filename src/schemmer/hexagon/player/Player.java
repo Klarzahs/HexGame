@@ -75,6 +75,8 @@ public class Player {
 	public void refreshAll(){
 		refreshUnits();
 		refreshBuildings();
+		
+		updateRessources();
 	}
 	
 	private void refreshUnits(){
@@ -90,6 +92,13 @@ public class Player {
 		for(int i = 0; i < buildings.size(); i++){
 			buildings.get(i).buildStep();
 		}
+	}
+	
+	private void updateRessources(){
+		setFoodCount(getFoodCount() + getFoodPR()); 
+		setWoodCount(getWoodCount() + getWoodPR());
+		setStoneCount(getStoneCount() + getStonePR());
+		setGoldCount(getGoldCount() + getGoldPR());
 	}
 	
 	public void setIcon(PlayerIcon pic){

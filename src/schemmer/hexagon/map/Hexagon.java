@@ -17,6 +17,7 @@ import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Point;
@@ -264,6 +265,13 @@ public class Hexagon {
 	public void moveTo(Unit u){
 		this.unit = u;
 		u.setField(this);
+		
+		if(this.getBuilding() != null && this.getUnit() != null){
+			if(this.getBuilding().gettTB() > 0 && this.getUnit().isBuilder()) 
+				this.unit.setState(UnitState.STATE_BUILDING);
+			else 
+				this.unit.setState(UnitState.STATE_NONE);
+		}
 	}
 
 	public boolean isMoveable(){
@@ -326,6 +334,8 @@ public class Hexagon {
 		default:
 			this.building = new TownCenter(p, this);
 		}
+
+		this.unit.setState(UnitState.STATE_BUILDING);
 		p.addBuilding(this.building);
 	}
 	

@@ -174,19 +174,24 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private void handleLeftClick(MouseEvent e){
 		if(SwingUtilities.isLeftMouseButton(e)){
 			this.gui.getRootPane().setCursor(leftClick);
+
 			
 			if(uih.isBuilderSelected() && uih.cursorInIconArea(e)) {
 				uih.handleBuildingSelection(e, uih.isHeroSelected());
+				
+				uih.handleStateSelection(e);
 			}
+			
 			else if (uih.isBuildingSelected() && uih.cursorInIconArea(e)){
 				uih.handleUnitSelection(e);
 				if(uih.isUnitIconSelected() && uih.isUnitPossible()){
 					mh.produce(uih.getUnitIconNr());
 				}
 			}
+			
 			else {
 				mh.setMarked(e);
-				uih.resetIconNr();
+				uih.resetAllIcons();
 			}
 		}
 	}

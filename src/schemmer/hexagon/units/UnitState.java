@@ -17,5 +17,17 @@ public enum UnitState {
     public int getValue() {
         return value;
     }
+    
+    public static UnitState getStateOfValue(int i){
+    	switch(i){
+	    	case 0: return STATE_FOOD;
+	    	case 1: return STATE_WOOD;
+	    	case 2: return STATE_STONE;
+	    	case 3: return STATE_GOLD;
+	    	case 4: return STATE_BUILDING;
+	    	case 5: return STATE_NONE;
+	    	default: return STATE_NONE;
+    	}
+    }
 
 }

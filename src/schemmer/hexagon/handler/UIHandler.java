@@ -34,7 +34,7 @@ public class UIHandler {
 	private BufferedImage panelBeige;
 	private Main main;
 	
-	private int selectedNr = -1, selectedUnitNr = -1;
+	private int selectedNr = -1, selectedUnitNr = -1, selectedStateNr;
 	
 	private int middleX, middleY;
 	
@@ -54,10 +54,10 @@ public class UIHandler {
 			buttonBeigePressed = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/buttonLong_beige_pressed.png"));
 			panelBeige = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/panel_beige.png"));
 			
-			buildingIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_farm.png"));
-			buildingIcons[1] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_lumbermill.png"));
-			buildingIcons[2] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_hut.png"));
-			buildingIcons[3] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_towncenter.png"));
+			buildingIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_farm.png"));
+			buildingIcons[1] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_lumbermill.png"));
+			buildingIcons[2] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_hut.png"));
+			buildingIcons[3] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_towncenter.png"));
 			
 			stateIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_food.png"));
 			stateIcons[1] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_wood.png"));
@@ -133,7 +133,7 @@ public class UIHandler {
 	private void drawUnitMenu(Graphics2D g2d, int middleX, int middleY){
 		// check if selected unit is a builder from current player
 		if(isBuilderSelected()){
-			g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/8, middleX/2, middleX/8, null);
+			g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/6, middleX/2 + 80, middleX/6, null);
 			drawBuildingIcons(g2d, middleX, middleY);
 			drawStateIcons(g2d, middleX, middleY);
 		}
@@ -143,8 +143,8 @@ public class UIHandler {
 		for (int i = 0; i < buildingIcons.length; i++){
 			g2d.setColor(Color.BLACK);
 			if(i == selectedNr) 
-				g2d.drawRect(middleX/4 + 20 + i * 70, middleY*2 - middleX/8 + 10, 70, 70);
-			g2d.drawImage(buildingIcons[i], middleX/4 + 20 + i * 70, middleY*2 - middleX/8 + 10, null);
+				g2d.drawRect(middleX/4 + 20 + i * 70, middleY*2 - middleX/6 + 10, 70, 70);
+			g2d.drawImage(buildingIcons[i], middleX/4 + 20 + i * 70, middleY*2 - middleX/6 + 10, null);
 		}
 	}
 	
@@ -154,8 +154,8 @@ public class UIHandler {
 			UnitState s = (main.getMH().getUnit() != null) ? main.getMH().getUnit().getState() : null;
 			
 			if(s != null && i == s.getValue()) 
-				g2d.drawRect(middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/8 + 10 + (i % 2) * 70, 70, 70);
-			g2d.drawImage(stateIcons[i], middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/8 + 10 + (i % 2) * 70, null);
+				g2d.drawRect(middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/6 + 10 + (i % 2) * 70, 70, 70);
+			g2d.drawImage(stateIcons[i], middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/6 + 10 + (i % 2) * 70, null);
 			//System.out.println((i / 2) + " | " + (i % 2)+": "+(stateIcons[i] == null)+ " @"+(middleX + 20 + (i % 2) * 70)+"|"+(middleY*16 - middleX/2 + 10 + (i % 2) * 70));
 		}
 	}
@@ -285,13 +285,18 @@ public class UIHandler {
 	
 	
 	public boolean cursorInIconArea(double x, double y){
-		if(isBuilderSelected()) return cursorInBuildingIconArea(x, y);
-		else if(isBuildingSelected()) return cursorInUnitIconArea(x, y);
+		if(isBuilderSelected()) return cursorInBuildingIconArea(x, y) | cursorInStateIconArea(x, y);
+		else if(isBuildingSelected()) return cursorInUnitIconArea(x, y) | cursorInStateIconArea(x, y);
 		return false;
 	}
 	
 	private boolean cursorInBuildingIconArea(double x, double y){
-		Rectangle icons = new Rectangle(middleX/4 + 20, middleY*2 - middleX/8 + 10, buildingIcons.length * 70, 70);
+		Rectangle icons = new Rectangle(middleX/4 + 20, middleY*2 - middleX/6 + 10, buildingIcons.length * 70, 70);
+		return icons.contains(x, y);
+	}
+	
+	private boolean cursorInStateIconArea(double x, double y){
+		Rectangle icons = new Rectangle(middleX/4 + 320, middleY*2 - middleX/6 + 10 , 3 * 70, 2 * 70);
 		return icons.contains(x, y);
 	}
 	
@@ -299,7 +304,7 @@ public class UIHandler {
 		if(main.getMH().isBuildUpon()){
 			int temp = main.getMH().getMarked().getBuilding().getProducableCount();
 			if(temp != -1){
-				Rectangle icons = new Rectangle(middleX/4 + 20, middleY*2 - middleX/8 + 10, temp * 70, 70);
+				Rectangle icons = new Rectangle(middleX/4 + 20, middleY*2 - middleX/6 + 10, temp * 70, 70);
 				return icons.contains(x, y);
 			}
 		}
@@ -307,10 +312,10 @@ public class UIHandler {
 	}
 	
 	public void handleBuildingSelection(MouseEvent e, boolean heroSelected){
-		Rectangle rIcon1 = new Rectangle(middleX/4 + 20, middleY*2 - middleX/8 + 10, 70, 70);
-		Rectangle rIcon2 = new Rectangle(middleX/4 + 20 + 70, middleY*2 - middleX/8 + 10, 70, 70);
-		Rectangle rIcon3 = new Rectangle(middleX/4 + 20 + 140, middleY*2 - middleX/8 + 10, 70, 70);
-		Rectangle rIcon4 = new Rectangle(middleX/4 + 20 + 210, middleY*2 - middleX/8 + 10, 70, 70);
+		Rectangle rIcon1 = new Rectangle(middleX/4 + 20, middleY*2 - middleX/6 + 10, 70, 70);
+		Rectangle rIcon2 = new Rectangle(middleX/4 + 20 + 70, middleY*2 - middleX/6 + 10, 70, 70);
+		Rectangle rIcon3 = new Rectangle(middleX/4 + 20 + 140, middleY*2 - middleX/6 + 10, 70, 70);
+		Rectangle rIcon4 = new Rectangle(middleX/4 + 20 + 210, middleY*2 - middleX/6 + 10, 70, 70);
 		if(!heroSelected){
 			//TODO: Builder code
 		}
@@ -331,11 +336,30 @@ public class UIHandler {
 		int prodCount = main.getMH().getMarked().getBuilding().getProducableCount();
 		Rectangle[] r = new Rectangle[prodCount];
 		for(int i = 0; i < prodCount; i++){
-			r[i] = new Rectangle(middleX/4 + 20 + i * 70, middleY*2 - middleX/8 + 10, 70, 70);
+			r[i] = new Rectangle(middleX/4 + 20 + i * 70, middleY*2 - middleX/6 + 10, 70, 70);
 			if(r[i].contains(e.getX(), e.getY())){
 				selectedUnitNr = i;
 			}
 		}
+	}
+	
+	public void handleStateSelection(MouseEvent e){
+		for(int i = 0; i < stateIcons.length; i++){
+			Rectangle r = new Rectangle(middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/6 + 10 + (i % 2) * 70, 70, 70);
+			if(r.contains(e.getX(), e.getY())){
+				selectedStateNr = i;
+			}
+		}
+		
+		if(selectedStateNr != -1){
+			main.getMH().getUnit().setState(UnitState.getStateOfValue(selectedStateNr));
+		}
+	}
+	
+	public void resetAllIcons(){
+		resetIconNr();
+		resetUnitIconNr();
+		resetStateIconNr();
 	}
 	
 	public void resetIconNr(){
@@ -344,6 +368,10 @@ public class UIHandler {
 	
 	public void resetUnitIconNr(){
 		selectedUnitNr = -1;
+	}
+
+	public void resetStateIconNr(){
+		selectedStateNr = -1;
 	}
 	
 	public boolean isIconSelected(){

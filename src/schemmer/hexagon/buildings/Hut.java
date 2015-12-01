@@ -14,7 +14,7 @@ public class Hut extends Building{
 		this.tTB = 2;
 		try {
 			String str = p.getPColor().getColorString();
-			image = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces ("+ str +")/piece"+ str +"_building.png"));
+			image = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_building.png"));
 		} catch (IOException e) {
 			System.out.println("Couldn't load Hut-Building image!");
 		}
@@ -29,7 +29,7 @@ public class Hut extends Building{
 			} catch (IOException e) {
 				System.out.println("Couldn't load Hut image!");
 			}
-			this.p.setMaxPop(5);
+			this.p.setMaxPop(this.p.getMaxPop() + 3);
 		}
 	}
 	
