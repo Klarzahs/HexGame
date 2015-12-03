@@ -90,10 +90,6 @@ public abstract class Unit {
 		return true;
 	}
 	
-	public boolean isBuilder(){
-		return (this.getClass() == Hero.class || this.getClass() == Villager.class);
-	}
-	
 	public static Costs getCosts(){
 		return null;
 	}
@@ -108,9 +104,14 @@ public abstract class Unit {
 	
 	public void setState(UnitState s){
 		state = s;
+		
 	}
 	
 	public UnitState getState(){
 		return state;
+	}
+	
+	public boolean isBuilder(){
+		return false;
 	}
 }

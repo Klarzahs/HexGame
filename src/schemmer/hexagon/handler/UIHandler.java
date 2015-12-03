@@ -34,7 +34,7 @@ public class UIHandler {
 	private BufferedImage panelBeige;
 	private Main main;
 	
-	private int selectedNr = -1, selectedUnitNr = -1, selectedStateNr;
+	private int selectedNr = -1, selectedUnitNr = -1, selectedStateNr = -1;
 	
 	private int middleX, middleY;
 	
@@ -353,6 +353,7 @@ public class UIHandler {
 		
 		if(selectedStateNr != -1){
 			main.getMH().getUnit().setState(UnitState.getStateOfValue(selectedStateNr));
+			main.getCurrentPlayer().setRessourcesChanged(true);
 		}
 	}
 	

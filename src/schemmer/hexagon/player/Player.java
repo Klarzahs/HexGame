@@ -28,6 +28,7 @@ public class Player {
 	
 	private int woodCount = 5, foodCount = 4, stoneCount = 5, goldCount = 0, maxPop = 0;
 	private int woodPR = 0, foodPR = 0, stonePR = 0, goldPR = 0;		//PR = per round
+	private boolean hasRessourcesChanged = true;
 	
 	private PlayerColor color;
 	
@@ -99,6 +100,8 @@ public class Player {
 		setWoodCount(getWoodCount() + getWoodPR());
 		setStoneCount(getStoneCount() + getStonePR());
 		setGoldCount(getGoldCount() + getGoldPR());
+		if(hasRessourcesChanged)
+			hasRessourcesChanged = false;
 	}
 	
 	public void setIcon(PlayerIcon pic){
@@ -164,7 +167,13 @@ public class Player {
 	}
 
 	public int getFoodPR() {
-		return getRate(UnitState.STATE_FOOD);
+		if(hasRessourcesChanged){
+			foodPR = getRate(UnitState.STATE_FOOD);
+			foodPR -= villagers.size();  	// cost per villager
+			return foodPR;
+		}
+		else
+			return foodPR;
 	}
 
 	public void setFoodPR(int foodPR) {
@@ -180,7 +189,11 @@ public class Player {
 	}
 
 	public int getWoodPR() {
-		return getRate(UnitState.STATE_WOOD);
+		if(hasRessourcesChanged){
+			woodPR = getRate(UnitState.STATE_WOOD);
+			return woodPR;
+		}
+		return woodPR; 
 	}
 
 	public void setWoodPR(int woodPR) {
@@ -188,7 +201,12 @@ public class Player {
 	}
 
 	public int getStonePR() {
-		return getRate(UnitState.STATE_STONE);
+		if(hasRessourcesChanged){
+			stonePR = getRate(UnitState.STATE_STONE);
+			return stonePR;
+		}
+		else
+			return stonePR;
 	}
 
 	public void setStonePR(int stonePR) {
@@ -212,7 +230,13 @@ public class Player {
 	}
 
 	public int getGoldPR() {
-		return getRate(UnitState.STATE_GOLD);
+		if(hasRessourcesChanged){
+			goldPR = getRate(UnitState.STATE_GOLD);
+			goldPR -= fighters.size();
+			return goldPR;
+		}
+		else
+			return goldPR;
 	}
 
 	public void setGoldPR(int goldPR) {
@@ -249,11 +273,19 @@ public class Player {
 		int ret = 0;
 		for (int i = 0; i < villagers.size(); i++){
 			if(villagers.get(i).getState() == s)
-				ret += villagers.get(i).getGatheringRate();
+				ret += villagers.get(i).getGatheringRate(s);
 		}
 		
 		if(getHero().getState() == s)
-			ret += getHero().getGatheringRate();
+			ret += getHero().getGatheringRate(s);
 		return ret;
+	}
+	
+	public void setRessourcesChanged(boolean b){
+		hasRessourcesChanged = b;
+	}
+	
+	public boolean getRessourceChanged(){
+		return hasRessourcesChanged;
 	}
 }

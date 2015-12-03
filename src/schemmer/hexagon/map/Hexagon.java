@@ -265,12 +265,15 @@ public class Hexagon {
 	public void moveTo(Unit u){
 		this.unit = u;
 		u.setField(this);
+		u.getPlayer().setRessourcesChanged(true);
 		
 		if(this.getBuilding() != null && this.getUnit() != null){
 			if(this.getBuilding().gettTB() > 0 && this.getUnit().isBuilder()) 
 				this.unit.setState(UnitState.STATE_BUILDING);
 			else 
 				this.unit.setState(UnitState.STATE_NONE);
+		}else if (this.getUnit() != null){
+			this.unit.setState(UnitState.STATE_NONE);
 		}
 	}
 
