@@ -102,7 +102,7 @@ public class UIHandler {
 	private void drawUnitMenu(Graphics2D g2d, int middleX, int middleY){
 		// check if selected unit is a builder from current player
 		if(isBuilderSelected()){
-			g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/6, middleX/2 + 80, middleX/6, null);
+			g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/6, 440 + 3 * 70, middleX/6, null);
 			buildingIcons.drawIcons(g2d);
 			stateIcons.drawIcons(g2d);
 		}

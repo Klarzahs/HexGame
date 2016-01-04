@@ -17,7 +17,7 @@ public abstract class HoverableIcon {
 		
 		rects = new Rectangle[rectCount];
 		for(int i = 0; i < rectCount; i++){
-			rects[i] = new Rectangle(middleX/4 + offsetX + (i / tableSize) * 70, middleY*2 - middleX/6 + offsetY + (i % tableSize) * 70, 70, 70);
+			rects[i] = new Rectangle(middleX/4 + offsetX + (i % tableSize) * 70, middleY*2 - middleX/6 + offsetY + (i / tableSize) * 70, 70, 70);
 		}
 	}
 	public void handleHovering(MouseEvent e){

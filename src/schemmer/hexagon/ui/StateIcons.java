@@ -17,11 +17,12 @@ public class StateIcons extends HoverableIcon{
 	
 	private BufferedImage[] stateIcons = new BufferedImage[6];  		// food, wood, stone, gold, building, none
 	private int selectedStateNr = -1;
+	private static int div = 3;
 	
 	private Main main;
 	
 	public StateIcons(Main m, int middleX, int middleY){
-		super(middleX, middleY, 6, 320, 10, 2);
+		super(middleX, middleY, 6, 390, 10, div);
 		super.setMessages(new String[]{"Gather Food", "Gather Wood", "Gather Stone", "Gather Gold", "Build", "Idle"});
 		main = m;
 		
@@ -43,12 +44,12 @@ public class StateIcons extends HoverableIcon{
 			UnitState state = (main.getMH().getUnit() != null) ? main.getMH().getUnit().getState() : null;
 			
 			if(state != null && i == state.getValue()) 
-				g2d.drawRect(middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/6 + 10 + (i % 2) * 70, 70, 70);
-			g2d.drawImage(stateIcons[i], middleX/4 + 320 + (i / 2) * 70, middleY*2 - middleX/6 + 10 + (i % 2) * 70, null);
+				g2d.drawRect(middleX/4 + 390 + (i % div) * 70, middleY*2 - middleX/6 + 10 + (i / div) * 70, 70, 70);
+			g2d.drawImage(stateIcons[i], middleX/4 + 390 + (i % div) * 70, middleY*2 - middleX/6 + 10 + (i / div) * 70, null);
 			
 			String s = getHoveringMessage();
 			if(s != null){
-				g2d.drawString(s, middleX/4 + 320 + (selectedHoverableNr/2) * 70, middleY*2 - middleX/6 + 10 + (selectedHoverableNr % 2) * 70);
+				g2d.drawString(s, middleX/4 + 390 + (selectedHoverableNr % div) * 70, middleY*2 - middleX/6 + 10 + (selectedHoverableNr / div) * 70);
 			}
 		}
 	}
@@ -67,7 +68,7 @@ public class StateIcons extends HoverableIcon{
 	}
 	
 	public boolean cursorInStateIconArea(double x, double y){
-		Rectangle icons = new Rectangle(middleX/4 + 320, middleY*2 - middleX/6 + 10 , 3 * 70, 2 * 70);
+		Rectangle icons = new Rectangle(middleX/4 + 390, middleY*2 - middleX/6 + 10 , 3 * 70, 2 * 70);
 		return icons.contains(x, y);
 	}
 	

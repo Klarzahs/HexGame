@@ -30,7 +30,6 @@ public class Farm extends Building{
 			} catch (IOException e) {
 				System.out.println("Couldn't load Farm image!");
 			}
-			this.p.setMaxPop(5);
 		}
 	}
 	

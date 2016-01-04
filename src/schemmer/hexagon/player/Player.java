@@ -65,6 +65,10 @@ public class Player {
 		}
 	}
 	
+	public boolean isHexVisible(int q, int r){
+		return visibleMap[q][r];
+	}
+	
 	public void addVillager(Villager vil){
 		villagers.add(vil);
 	}

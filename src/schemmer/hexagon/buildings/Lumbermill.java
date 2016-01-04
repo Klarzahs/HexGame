@@ -29,11 +29,10 @@ public class Lumbermill extends Building{
 			} catch (IOException e) {
 				System.out.println("Couldn't load Lumbermill image!");
 			}
-			this.p.setMaxPop(5);
 		}
 	}
 	
 	public static Costs getCosts(){
-		return new Costs(1, 1, 3, 0);
+		return new Costs(1, 2, 2, 0);
 	}
 }

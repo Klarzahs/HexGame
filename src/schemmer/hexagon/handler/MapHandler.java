@@ -312,15 +312,17 @@ public class MapHandler {
 		Cube c = Conv.pointToCube(clicked.getX()+screen.getOffX(), clicked.getY()+screen.getOffY(), screen);
 		Hexagon target = this.getInArray(c);
 		if(target != null ){
-			//TODO: disable build out of range!
-			Costs co = main.getUIH().getBuildingIcons().getCurrentIconCosts();
-			if(main.getCurrentPlayer().getRessources().isHigherThan(co)){
-				main.getCurrentPlayer().substractCostFromRessources(co);
-				target.build(main.getCurrentPlayer(), nr);
-				main.getUIH().getBuildingIcons().resetBuildingIconNr();
-				return true;
-			} else{
-				System.out.println("Needz more money!");
+			//check if targeted hex is in range
+			if(target.getUnit() != null){
+				Costs co = main.getUIH().getBuildingIcons().getCurrentIconCosts();
+				if(main.getCurrentPlayer().getRessources().isHigherThan(co)){
+					main.getCurrentPlayer().substractCostFromRessources(co);
+					target.build(main.getCurrentPlayer(), nr);
+					main.getUIH().getBuildingIcons().resetBuildingIconNr();
+					return true;
+				} else{
+					System.out.println("Needz more money!");
+				}
 			}
 		}
 		return false;

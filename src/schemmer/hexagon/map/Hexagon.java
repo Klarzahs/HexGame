@@ -12,6 +12,7 @@ import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Farm;
 import schemmer.hexagon.buildings.Hut;
 import schemmer.hexagon.buildings.Lumbermill;
+import schemmer.hexagon.buildings.Quarry;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
@@ -321,7 +322,7 @@ public class Hexagon {
 	}
 	
 	public void build(Player p, int i){
-		switch (i){					// farm, lumbermill, hut, main building
+		switch (i){					// "Farm", "Lumbermill", "Quarry",  "Hut", "Towncenter"
 		case 0:				
 			this.building = new Farm(p, this);
 			break;
@@ -329,17 +330,22 @@ public class Hexagon {
 			this.building = new Lumbermill(p, this);
 			break;
 		case 2:
-			this.building = new Hut(p, this);
+			this.building = new Quarry(p, this);
 			break;
 		case 3:
+			this.building = new Hut(p, this);
+			break;
+		case 4:
 			this.building = new TownCenter(p, this);
 			break;
 		default:
 			this.building = new TownCenter(p, this);
 		}
-
-		this.unit.setState(UnitState.STATE_BUILDING);
-		p.addBuilding(this.building);
+		
+		if(this.unit != null){
+			this.unit.setState(UnitState.STATE_BUILDING);
+			p.addBuilding(this.building);
+		}
 	}
 	
 	public boolean isBuildUpon(){
