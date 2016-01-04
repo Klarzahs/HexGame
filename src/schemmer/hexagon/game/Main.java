@@ -39,7 +39,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private UIHandler uih;
 	
 	public static void main (String [] args) {
-		Main main = new Main();
+		new Main();
 	}
 	
 	public Main (){
@@ -133,7 +133,15 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		Cube c = Conv.pointToCube(e.getX(), e.getY());
+		if(uih != null){
+			if(uih.isBuilderSelected() && uih.cursorInIconArea(e)) {
+				uih.getBuildingIcons().handleHovering(e);
+				uih.getStateIcons().handleHovering(e);
+			}	
+			else {
+				uih.resetHoveringInformation();
+			}
+		}
 		mh.setHovered(e);
 	}
 
@@ -177,15 +185,15 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 
 			
 			if(uih.isBuilderSelected() && uih.cursorInIconArea(e)) {
-				uih.handleBuildingSelection(e, uih.isHeroSelected());
+				uih.getBuildingIcons().handleBuildingSelection(e, uih.isHeroSelected());
 				
-				uih.handleStateSelection(e);
+				uih.getStateIcons().handleStateSelection(e);
 			}
 			
 			else if (uih.isBuildingSelected() && uih.cursorInIconArea(e)){
-				uih.handleUnitSelection(e);
-				if(uih.isUnitIconSelected() && uih.isUnitPossible()){
-					mh.produce(uih.getUnitIconNr());
+				uih.getUnitIcons().handleUnitSelection(e);
+				if(uih.getUnitIcons().isUnitIconSelected() && uih.getUnitIcons().isUnitPossible()){
+					mh.produce(uih.getUnitIcons().getUnitIconNr());
 				}
 			}
 			
@@ -202,11 +210,11 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			if(mh.isMarked()){
 				if(mh.isOccupied(e)){
 						mh.attack(e);
-						uih.resetIconNr();
+						uih.getBuildingIcons().resetBuildingIconNr();
 				}else if(!mh.isBuildUpon(e)){
-					if(uih.isIconSelected() && uih.isBuildingPossible()){
+					if(uih.getBuildingIcons().isBuildingIconSelected() && uih.getBuildingIcons().isBuildingPossible()){
 						mh.moveTo(e);
-						mh.build(e, uih.getIconNr());
+						mh.build(e, uih.getBuildingIcons().getBuildingIconNr());
 					}else{
 						mh.moveTo(e);
 					}

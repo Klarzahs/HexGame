@@ -313,11 +313,11 @@ public class MapHandler {
 		Hexagon target = this.getInArray(c);
 		if(target != null ){
 			//TODO: disable build out of range!
-			Costs co = main.getUIH().getCurrentIconCosts();
+			Costs co = main.getUIH().getBuildingIcons().getCurrentIconCosts();
 			if(main.getCurrentPlayer().getRessources().isHigherThan(co)){
 				main.getCurrentPlayer().substractCostFromRessources(co);
 				target.build(main.getCurrentPlayer(), nr);
-				main.getUIH().resetIconNr();
+				main.getUIH().getBuildingIcons().resetBuildingIconNr();
 				return true;
 			} else{
 				System.out.println("Needz more money!");
@@ -328,11 +328,11 @@ public class MapHandler {
 	
 	public boolean produce(int nr){
 		if(isMarked()){
-			Costs co = main.getUIH().getCurrentUnitIconCosts();
+			Costs co = main.getUIH().getUnitIcons().getCurrentUnitIconCosts();
 			if(main.getCurrentPlayer().getRessources().isHigherThan(co) && main.getCurrentPlayer().getPopCount() <= main.getCurrentPlayer().getMaxPop()){
 				main.getCurrentPlayer().substractCostFromRessources(co);
 				marked.getBuilding().produce(nr);
-				main.getUIH().resetUnitIconNr();
+				main.getUIH().getUnitIcons().resetUnitIconNr();
 				return true;
 			} else{
 				System.out.println("Needz more money!");
