@@ -8,11 +8,14 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import schemmer.hexagon.biomes.Biome;
+import schemmer.hexagon.buildings.Barracks;
 import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Farm;
+import schemmer.hexagon.buildings.Forge;
 import schemmer.hexagon.buildings.Hut;
 import schemmer.hexagon.buildings.Lumbermill;
 import schemmer.hexagon.buildings.Quarry;
+import schemmer.hexagon.buildings.Stable;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
@@ -337,6 +340,15 @@ public class Hexagon {
 			break;
 		case 4:
 			this.building = new TownCenter(p, this);
+			break;
+		case 5:
+			this.building = new Forge(p, this);
+			break;
+		case 6:
+			this.building = new Barracks(p, this);
+			break;
+		case 7:
+			this.building = new Stable(p, this);
 			break;
 		default:
 			this.building = new TownCenter(p, this);

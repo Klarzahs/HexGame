@@ -11,7 +11,6 @@ import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.units.UnitState;
-import schemmer.hexagon.utils.HoverableIcon;
 
 public class StateIcons extends HoverableIcon{
 	

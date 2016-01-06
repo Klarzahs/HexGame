@@ -12,7 +12,9 @@ import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.ui.BuildingIcons;
+import schemmer.hexagon.ui.BuildingIconTier;
+import schemmer.hexagon.ui.BuildingIconsTierOne;
+import schemmer.hexagon.ui.BuildingIconsTierTwo;
 import schemmer.hexagon.ui.FieldInfo;
 import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.ui.RessourceInfo;
@@ -29,7 +31,8 @@ public class UIHandler {
 	private BufferedImage buttonBeigePressed;
 	private BufferedImage panelBeige;
 	
-	private BuildingIcons buildingIcons;
+	private BuildingIconsTierOne buildingIconsOne;
+	private BuildingIconsTierTwo buildingIconsTwo;
 	private StateIcons stateIcons;
 	private UnitIcons unitIcons;
 	
@@ -50,7 +53,8 @@ public class UIHandler {
 		middleX = main.getGUI().getWidth()/2;
 		middleY = main.getGUI().getHeight()/2;
 		
-		buildingIcons = new BuildingIcons(main, middleX, middleY);
+		buildingIconsOne = new BuildingIconsTierOne(main, middleX, middleY);
+		buildingIconsTwo = new BuildingIconsTierTwo(main, middleX, middleY);
 		stateIcons = new StateIcons(main, middleX, middleY);
 		unitIcons = new UnitIcons(main, middleX, middleY);
 		
@@ -101,10 +105,23 @@ public class UIHandler {
 	
 	private void drawUnitMenu(Graphics2D g2d, int middleX, int middleY){
 		// check if selected unit is a builder from current player
-		if(isBuilderSelected()){
+		if(isHeroSelected()){
 			g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/6, 440 + 3 * 70, middleX/6, null);
-			buildingIcons.drawIcons(g2d);
+			buildingIconsOne.drawIcons(g2d);
 			stateIcons.drawIcons(g2d);
+		}
+		if(isBuilderSelected() && !isHeroSelected()){
+			int tier = main.getCurrentPlayer().getTier();
+			if(tier == 1){
+				g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/6, 440 + 3 * 70, middleX/6, null);
+				buildingIconsOne.drawIcons(g2d);
+				stateIcons.drawIcons(g2d);
+			}
+			if(tier == 2){
+				g2d.drawImage(panelBeige, middleX/4, middleY*2 - middleX/6, 440 + 3 * 70, middleX/6, null);
+				buildingIconsTwo.drawIcons(g2d);
+				stateIcons.drawIcons(g2d);
+			}
 		}
 	}
 	
@@ -165,13 +182,13 @@ public class UIHandler {
 	}
 	
 	public boolean cursorInIconArea(double x, double y){
-		if(isBuilderSelected()) return buildingIcons.cursorInBuildingIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
+		if(isBuilderSelected()) return getBuildingIcons().cursorInBuildingIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
 		else if(isBuildingSelected()) return unitIcons.cursorInUnitIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
 		return false;
 	}
 	
 	public void resetAllIcons(){
-		buildingIcons.resetBuildingIconNr();
+		getBuildingIcons().resetBuildingIconNr();
 		unitIcons.resetUnitIconNr();
 		stateIcons.resetStateIconNr();
 	}
@@ -180,8 +197,13 @@ public class UIHandler {
 		return unitIcons;
 	}
 	
-	public BuildingIcons getBuildingIcons(){
-		return buildingIcons;
+	public BuildingIconTier getBuildingIcons(){
+		int tier = main.getCurrentPlayer().getTier();
+		if(tier == 1)
+			return buildingIconsOne;
+		//if(tier == 2)
+			return buildingIconsTwo;
+		
 	}
 	
 	public StateIcons getStateIcons(){
@@ -189,7 +211,7 @@ public class UIHandler {
 	}
 
 	public void resetHoveringInformation() {
-		buildingIcons.resetHoveringNr();
+		getBuildingIcons().resetHoveringNr();
 		stateIcons.resetHoveringNr();
 	}
 	

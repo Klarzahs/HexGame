@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Costs;
+import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.ui.PlayerIcon;
@@ -26,7 +27,7 @@ public class Player {
 	private Hexagon startingPoint;
 	private PlayerIcon icon;
 	
-	private int woodCount = 5, foodCount = 4, stoneCount = 5, goldCount = 0, maxPop = 0;
+	private int woodCount = 20, foodCount = 20, stoneCount = 20, goldCount = 20, maxPop = 0;
 	private int woodPR = 0, foodPR = 0, stonePR = 0, goldPR = 0;		//PR = per round
 	private boolean hasRessourcesChanged = true;
 	
@@ -291,5 +292,18 @@ public class Player {
 	
 	public boolean getRessourceChanged(){
 		return hasRessourcesChanged;
+	}
+	
+	public boolean hasTownCenter(){
+		for(int i = 0; i < buildings.size(); i++){
+			if(buildings.get(i).getClass() == TownCenter.class)
+				return true;
+		}
+		return false;
+	}
+	
+	public int getTier(){
+		if(hasTownCenter()) return 2;
+		return 1;
 	}
 }

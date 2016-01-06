@@ -1,4 +1,4 @@
-package schemmer.hexagon.utils;
+package schemmer.hexagon.ui;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
