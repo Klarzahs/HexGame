@@ -13,26 +13,44 @@ import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Main;
+import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.units.Villager;
 
-public class UnitIcons {
+public class BuildingMenu {
+	protected int middleX, middleY;
+	protected int offsetX, offsetY;
+	protected int div;
 	
-	private int middleX, middleY;
-	private int selectedUnitNr = -1;
-	private Main main;
+	protected int selectedUnitNr = -1;
 	
-	private BufferedImage panelBeige;
+	protected Rectangle[] rects;
+	protected BufferedImage panelBeige;
+	protected Main main;
 	
-	public UnitIcons(Main m, int x, int y){
-		main = m;
-		middleX = x;
-		middleY = y;
+	public BuildingMenu(Main m){
+		main = m; 
+		middleX = Screen.WIDTH/2;
+		middleY = Screen.HEIGHT/2;
+		
 		try{
 			panelBeige = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/panel_beige.png"));
 		}catch(IOException e){
 			System.out.println("Couldn't load an UI Image");
 		}
 	}
+	
+	protected void initMenu(int rectCount, int offX, int offY, int tableSize){
+		offsetX = offX;
+		offsetY = offY;
+		div = tableSize;
+		
+		rects = new Rectangle[rectCount];
+		for(int i = 0; i < rectCount; i++){
+			rects[i] = new Rectangle(middleX/4 + offsetX + (i % div) * 70, middleY*2 - middleX/8 + offsetY + (i / div) * 70, 70, 70);
+		}
+	}
+	
+	
 	public void drawMenuOfBuilding(Graphics2D g2d, int middleX, int middleY, Building b){
 		// check type of selected building
 		if(b.getClass() == TownCenter.class){
@@ -51,11 +69,11 @@ public class UnitIcons {
 						if(b.getProducingCount() == 0)
 							g2d.fillRect(middleX/4 + 20, middleY*2 - middleX/8 + 10, 70 , 70);
 						else
-							g2d.fillRect(middleX/4 + 20 + (100 - b.getProducingCount()), middleY*2 - middleX/8 + 10, 70 - b.getProducingCount(), 70);
+							g2d.fillRect(middleX/4 + offsetX + (100 - b.getProducingCount()) + (i % div) * 70, middleY*2 - middleX/8 + offsetY + (i / div) * 70, 70 - b.getProducingCount(), 70);
 					}
 				}
 				
-				g2d.drawImage(b.getUnitIcons()[0], middleX/4 + 20, middleY*2 - middleX/8 + 10, null);
+				g2d.drawImage(b.getUnitIcons()[i], middleX/4 + offsetX + (i % div) * 70, middleY*2 - middleX/8 + offsetY + (i / div) * 70, null);
 			}
 				
 		}
@@ -63,11 +81,9 @@ public class UnitIcons {
 	}
 	
 	public void handleUnitSelection(MouseEvent e){
-		int prodCount = main.getMH().getMarked().getBuilding().getProducableCount();
-		Rectangle[] r = new Rectangle[prodCount];
+		int prodCount = main.getCurrentBuilding().getProducableCount();
 		for(int i = 0; i < prodCount; i++){
-			r[i] = new Rectangle(middleX/4 + 20 + i * 70, middleY*2 - middleX/6 + 10, 70, 70);
-			if(r[i].contains(e.getX(), e.getY())){
+			if(rects[i].contains(e.getX(), e.getY())){
 				selectedUnitNr = i;
 			}
 		}
@@ -75,9 +91,9 @@ public class UnitIcons {
 	
 	public boolean cursorInUnitIconArea(double x, double y){
 		if(main.getMH().isBuildUpon()){
-			int temp = main.getMH().getMarked().getBuilding().getProducableCount();
-			if(temp != -1){
-				Rectangle icons = new Rectangle(middleX/4 + 20, middleY*2 - middleX/6 + 10, temp * 70, 70);
+			int procCount = main.getCurrentBuilding().getProducableCount();
+			if(procCount != -1){
+				Rectangle icons = new Rectangle(middleX/4 + 20, middleY*2 - middleX/6 + 10, procCount * 70, 70);
 				return icons.contains(x, y);
 			}
 		}
@@ -92,7 +108,7 @@ public class UnitIcons {
 	
 	public boolean isUnitPossible(){ 
 		if(selectedUnitNr < 0) return false;
-		if(main.getMH().getMarked().getBuilding().isProducing()) return false;
+		if(main.getCurrentBuilding().isProducing()) return false;
 		Costs co = getCurrentUnitIconCosts();
 		if(co == null) System.out.println("Unit Costs are NULL");
 		if(main.getCurrentPlayer().getRessources().isHigherThan(co)) return true;
@@ -111,4 +127,5 @@ public class UnitIcons {
 	public int getUnitIconNr(){
 		return selectedUnitNr;
 	}
+	
 }

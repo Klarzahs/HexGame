@@ -327,31 +327,31 @@ public class Hexagon {
 	public void build(Player p, int i){
 		switch (i){					// "Farm", "Lumbermill", "Quarry",  "Hut", "Towncenter"
 		case 0:				
-			this.building = new Farm(p, this);
+			this.building = new Farm(main, this);
 			break;
 		case 1:
-			this.building = new Lumbermill(p, this);
+			this.building = new Lumbermill(main, this);
 			break;
 		case 2:
-			this.building = new Quarry(p, this);
+			this.building = new Quarry(main, this);
 			break;
 		case 3:
-			this.building = new Hut(p, this);
+			this.building = new Hut(main, this);
 			break;
 		case 4:
-			this.building = new TownCenter(p, this);
+			this.building = new TownCenter(main, this);
 			break;
 		case 5:
-			this.building = new Forge(p, this);
+			this.building = new Forge(main, this);
 			break;
 		case 6:
-			this.building = new Barracks(p, this);
+			this.building = new Barracks(main, this);
 			break;
 		case 7:
-			this.building = new Stable(p, this);
+			this.building = new Stable(main, this);
 			break;
 		default:
-			this.building = new TownCenter(p, this);
+			this.building = new TownCenter(main, this);
 		}
 		
 		if(this.unit != null){

@@ -4,15 +4,16 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.player.Player;
 
 public class Stable extends Building{
-	public Stable(Player pl, Hexagon h) {
-		super(pl, h);
+	public Stable(Main m, Hexagon h) {
+		super(m, h);
+		initMenu(0, 0, 0, 1);
+		
 		this.tTB = 1;
 		try {
-			String str = p.getPColor().getColorString();
 			image = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_building.png"));
 		} catch (IOException e) {
 			System.out.println("Couldn't load Stable-Building image!");
@@ -20,18 +21,20 @@ public class Stable extends Building{
 	}
 	
 	public void buildStep(){
-		super.buildStep();
-		if(tTB == 0){
-			try {
-				String str = this.p.getPColor().getColorString();
-				image = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces ("+ str +")/piece"+ str +"_stable.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load Stable image!");
-			}
-		}
+		super.buildStep(this);
 	}
 	
 	public static Costs getCosts(){
 		return new Costs(1, 2, 3, 0);
+	}
+
+	@Override
+	public void unitFinished() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public String getImageName() {
+		return "stable";
 	}
 }

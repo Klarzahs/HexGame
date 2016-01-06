@@ -19,7 +19,6 @@ import schemmer.hexagon.ui.FieldInfo;
 import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.ui.RessourceInfo;
 import schemmer.hexagon.ui.StateIcons;
-import schemmer.hexagon.ui.UnitIcons;
 import schemmer.hexagon.ui.UnitInfo;
 import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.units.Unit;
@@ -34,7 +33,7 @@ public class UIHandler {
 	private BuildingIconsTierOne buildingIconsOne;
 	private BuildingIconsTierTwo buildingIconsTwo;
 	private StateIcons stateIcons;
-	private UnitIcons unitIcons;
+	private Building buildingMenuIcons;
 	
 	private FieldInfo fieldInfo;
 	private UnitInfo unitInfo;
@@ -56,7 +55,6 @@ public class UIHandler {
 		buildingIconsOne = new BuildingIconsTierOne(main, middleX, middleY);
 		buildingIconsTwo = new BuildingIconsTierTwo(main, middleX, middleY);
 		stateIcons = new StateIcons(main, middleX, middleY);
-		unitIcons = new UnitIcons(main, middleX, middleY);
 		
 		fieldInfo = new FieldInfo(main);
 		unitInfo = new UnitInfo(main);
@@ -98,7 +96,7 @@ public class UIHandler {
 		// ---- Building Menu ----
 		else if(main.getMH().isBuildUpon()){
 			Building building = main.getMH().getMarked().getBuilding();
-			unitIcons.drawMenuOfBuilding(g2d, middleX, middleY, building);
+			getBuildingMenu().drawMenuOfBuilding(g2d, middleX, middleY, building);
 		}
 	}
 	
@@ -183,18 +181,15 @@ public class UIHandler {
 	
 	public boolean cursorInIconArea(double x, double y){
 		if(isBuilderSelected()) return getBuildingIcons().cursorInBuildingIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
-		else if(isBuildingSelected()) return unitIcons.cursorInUnitIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
+		else if(isBuildingSelected()) return getBuildingMenu().cursorInUnitIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
 		return false;
 	}
 	
 	public void resetAllIcons(){
 		getBuildingIcons().resetBuildingIconNr();
-		unitIcons.resetUnitIconNr();
+		if(getBuildingMenu() != null)
+			getBuildingMenu().resetUnitIconNr();
 		stateIcons.resetStateIconNr();
-	}
-	
-	public UnitIcons getUnitIcons(){
-		return unitIcons;
 	}
 	
 	public BuildingIconTier getBuildingIcons(){
@@ -213,6 +208,10 @@ public class UIHandler {
 	public void resetHoveringInformation() {
 		getBuildingIcons().resetHoveringNr();
 		stateIcons.resetHoveringNr();
+	}
+	
+	public Building getBuildingMenu(){
+		return main.getCurrentBuilding();
 	}
 	
 }

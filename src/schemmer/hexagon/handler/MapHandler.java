@@ -330,11 +330,11 @@ public class MapHandler {
 	
 	public boolean produce(int nr){
 		if(isMarked()){
-			Costs co = main.getUIH().getUnitIcons().getCurrentUnitIconCosts();
+			Costs co = main.getUIH().getBuildingMenu().getCurrentUnitIconCosts();
 			if(main.getCurrentPlayer().getRessources().isHigherThan(co) && main.getCurrentPlayer().getPopCount() <= main.getCurrentPlayer().getMaxPop()){
 				main.getCurrentPlayer().substractCostFromRessources(co);
 				marked.getBuilding().produce(nr);
-				main.getUIH().getUnitIcons().resetUnitIconNr();
+				main.getUIH().getBuildingMenu().resetUnitIconNr();
 				return true;
 			} else{
 				System.out.println("Needz more money!");

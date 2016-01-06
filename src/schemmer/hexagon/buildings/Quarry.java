@@ -4,16 +4,17 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.player.Player;
 
 public class Quarry extends Building{
 
-	public Quarry(Player pl, Hexagon h) {
-		super(pl, h);
+	public Quarry(Main m, Hexagon h) {
+		super(m, h);
+		initMenu(0, 0, 0, 1);
+		
 		this.tTB = 1;
 		try {
-			String str = p.getPColor().getColorString();
 			image = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_building.png"));
 		} catch (IOException e) {
 			System.out.println("Couldn't load Quarry-Building image!");
@@ -22,19 +23,21 @@ public class Quarry extends Building{
 
 	
 	public void buildStep(){
-		super.buildStep();
-		if(tTB == 0){
-			try {
-				String str = this.p.getPColor().getColorString();
-				image = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces ("+ str +")/piece"+ str +"_quarry.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load Quarry image!");
-			}
-		}
+		super.buildStep(this);
 	}
 	
 	public static Costs getCosts(){
 		return new Costs(1, 1, 3, 0);
+	}
+	
+	@Override
+	public void unitFinished() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public String getImageName() {
+		return "quarry";
 	}
 
 }

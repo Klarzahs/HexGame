@@ -15,14 +15,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
+import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.handler.UIHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.utils.Conv;
-import schemmer.hexagon.utils.Cube;
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private GUI gui;
@@ -191,9 +190,9 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			}
 			
 			else if (uih.isBuildingSelected() && uih.cursorInIconArea(e)){
-				uih.getUnitIcons().handleUnitSelection(e);
-				if(uih.getUnitIcons().isUnitIconSelected() && uih.getUnitIcons().isUnitPossible()){
-					mh.produce(uih.getUnitIcons().getUnitIconNr());
+				uih.getBuildingMenu().handleUnitSelection(e);
+				if(uih.getBuildingMenu().isUnitIconSelected() && uih.getBuildingMenu().isUnitPossible()){
+					mh.produce(uih.getBuildingMenu().getUnitIconNr());
 				}
 			}
 			
@@ -239,6 +238,12 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	
 	public UIHandler getUIH(){
 		return uih;
+	}
+	
+	public Building getCurrentBuilding(){
+		if(mh.getMarked() == null) 
+			return null;
+		return mh.getMarked().getBuilding();
 	}
 	
 }

@@ -4,16 +4,17 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.player.Player;
 
 public class Hut extends Building{
 
-	public Hut(Player pl, Hexagon h) {
-		super(pl, h);
+	public Hut(Main m, Hexagon h) {
+		super(m, h);
+		initMenu(0, 0, 0, 1);
+		
 		this.tTB = 2;
 		try {
-			String str = p.getPColor().getColorString();
 			image = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_building.png"));
 		} catch (IOException e) {
 			System.out.println("Couldn't load Hut-Building image!");
@@ -21,19 +22,20 @@ public class Hut extends Building{
 	}
 	
 	public void buildStep(){
-		super.buildStep();
-		if(tTB == 0){
-			try {
-				String str = this.p.getPColor().getColorString();
-				image = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces ("+ str +")/piece"+ str +"_hut.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load Hut image!");
-			}
-			this.p.setMaxPop(this.p.getMaxPop() + 3);
-		}
+		super.buildStep(this);
 	}
 	
 	public static Costs getCosts(){
 		return new Costs(0, 2, 2, 0);
+	}
+	
+	@Override
+	public void unitFinished() {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public String getImageName() {
+		return "hut";
 	}
 }

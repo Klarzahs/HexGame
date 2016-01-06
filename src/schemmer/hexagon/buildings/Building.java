@@ -1,12 +1,19 @@
 package schemmer.hexagon.buildings;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
+import schemmer.hexagon.ui.BuildingMenu;
 import schemmer.hexagon.units.UnitState;
+import schemmer.hexagon.units.Villager;
+import schemmer.hexagon.utils.BuildingCallback;
 
-public abstract class Building {
+public abstract class Building extends BuildingMenu implements BuildingCallback{
 	protected BufferedImage image;
 	protected boolean imageLoaded = false;
 	
@@ -26,12 +33,14 @@ public abstract class Building {
 	protected int producableCount = -1;			// how many things can be produced?
 	protected int currentlyProduced = -1;		// which thing is produced (-1 == nothing)?
 	
+	protected Building callback; 				// gets called after buildstep is done
+	
 	protected static BufferedImage[] unitIcons;
 	
-	public Building(Player pl, Hexagon hex){
-		p = pl;
+	public Building(Main m, Hexagon hex){
+		super(m);
+		p = m.getCurrentPlayer();
 		field = hex;
-		System.out.println("New building was created!");
 	}
 	
 	public BufferedImage getImage(){
@@ -51,9 +60,40 @@ public abstract class Building {
 	}
 	
 	public void buildStep(){
+		System.out.println("this should NOT be called! Instead use extending class");
+	}
+	
+	public void buildStep(Building b){
 		if(this.tTB > 0 && field.isOccupiedByBuilder() && field.getUnit().getState() == UnitState.STATE_BUILDING)
 			this.tTB = this.tTB - 1;
 		else if(this.tTB > 0 ) System.out.println("Building needs a builder!");
+		
+		if(tTB == 0){
+			if(!imageLoaded){
+				try {
+					//set callback
+					callback = b;
+					
+					String str = this.p.getPColor().getColorString();
+					image = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces ("+ str +")/piece"+ str +"_"+callback.getImageName()+".png"));
+					imageLoaded = true;
+					System.out.println("Updated image");
+				} catch (IOException e) {
+					System.out.println("Couldn't load "+callback.getImageName()+" image!");
+				}
+				this.p.setMaxPop(this.p.getMaxPop() + 5);
+			}else{
+				if(currentlyProduced != -1){
+					producingCount += producingStep;
+					
+					if(producingCount >= 100){
+						//callbck to execute class specific code
+						callback.unitFinished();
+					}
+				}	
+			}
+			
+		}
 	}
 	
 	public int gettTB(){
