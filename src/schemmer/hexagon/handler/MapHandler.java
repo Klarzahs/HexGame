@@ -347,4 +347,8 @@ public class MapHandler {
 		if(marked == null) return false;
 		return marked.isBuildUpon();
 	}
+	
+	public void resetMarked(){
+		marked = null;
+	}
 }

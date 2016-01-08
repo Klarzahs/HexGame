@@ -45,6 +45,7 @@ public class RoundHandler {
 	}
 	
 	public void nextPlayer(){
+		mh.resetMarked();
 		getCurrentPlayer().refreshAll();
 		currentPlayer += 1;
 		if(currentPlayer == playerCount)

@@ -134,8 +134,8 @@ public class SimplexNoise {
 		return noiseSum / weightSum;
 	  }
 	  
-	  public static void updateGradients(){
-		  p = PermutationGenerator.generate(size);
+	  public static void updateGradients(String seed){
+		  p = PermutationGenerator.generate(size, seed);
 		  perm = new short[size*2];
 		  permMod12 = new short[size*2];
 		  

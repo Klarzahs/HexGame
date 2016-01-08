@@ -58,6 +58,7 @@ public class Hexagon {
 		this.posX = x;
 		this.posY = y;
 		main = m;
+		
 	}
 	
 	public Point hexCorner(double i){

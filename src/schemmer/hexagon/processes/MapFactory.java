@@ -31,13 +31,16 @@ public class MapFactory {
 	private static Taiga taiga = new Taiga();
 	private static SeasonalForest seasonalForest = new SeasonalForest();
 	
+	private static final String SEED_MAP = "77223344";
+	private static final String SEED_BIOME = "98765432";
+	
 	private static float[][] noise;
 	
 	public static void createTypes(Main m, Hexagon[][] map, int radius){
 		createMap(m, map, radius);
 		
 		// ------- Create terrain -----------
-		SimplexNoise.updateGradients();
+		SimplexNoise.updateGradients(SEED_MAP);
 		noise = MapFactory.generateSimplexNoise(SimplexNoise.size*2, SimplexNoise.size*2, 0.006f);
 		
 		int pixelPerHex = (SimplexNoise.size*2) / (map.length);
@@ -60,7 +63,7 @@ public class MapFactory {
 		}
 		
 		// ------- Create biomes -----------
-		SimplexNoise.updateGradients();
+		SimplexNoise.updateGradients(SEED_BIOME);
 		noise = MapFactory.generateSimplexNoise(SimplexNoise.size*2, SimplexNoise.size*2, 0.05f);
 		
 		for(int x = 0; x < map.length; x++){
