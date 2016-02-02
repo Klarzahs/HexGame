@@ -2,26 +2,24 @@ package schemmer.hexagon.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
+import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.units.Unit;
 
 public class UnitInfo{
-	private BufferedImage panelBeige;
+	@ImageNumber (number = 1)
+	private static BufferedImage panelBeige;
 	private Main main;
 	
 	public UnitInfo (Main m){
 		main = m;
-		try {
-			panelBeige = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/panel_beige.png"));
-			
-		} catch (IOException e) {
-			System.out.println("Couldn't load an UI Image");
-		}
 	}
 
 	public void drawUnitInfo(Graphics2D g2d, int middleX, int middleY){
@@ -44,6 +42,17 @@ public class UnitInfo{
 				
 				str = "Defense: "+u.getDefense();
 				g2d.drawString(str, main.getGUI().getWidth() - 290, middleY + 60);
+			}
+		}
+	}
+	
+	@Image
+	public static void loadImages(GraphicsConfiguration gc){
+		if(gc != null){
+			try {
+				panelBeige = ImageIO.read(UnitInfo.class.getResourceAsStream("/png/etc/panel_beige.png"));
+			} catch (IOException e) {
+				System.out.println("Couldn't load an UI Image");
 			}
 		}
 	}

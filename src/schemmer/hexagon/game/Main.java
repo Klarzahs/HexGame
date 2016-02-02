@@ -20,8 +20,12 @@ import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.handler.UIHandler;
+import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageLoader;
+import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
+import schemmer.hexagon.utils.Log;
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private GUI gui;
@@ -42,6 +46,15 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	}
 	
 	public Main (){
+		try{
+			ImageLoader il = new ImageLoader(this);
+			il.runAllAnnotatedWith(Image.class);
+			il.getNumberOfAllImagesAnnotatedWith(ImageNumber.class);
+		}
+		catch(Exception e){
+			Log.e(e.getCause().getMessage());
+		}
+		
 		eh = new EntityHandler();
 		mh = new MapHandler(this);
 		

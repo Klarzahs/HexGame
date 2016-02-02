@@ -2,6 +2,7 @@ package schemmer.hexagon.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -19,10 +20,13 @@ import schemmer.hexagon.buildings.Quarry;
 import schemmer.hexagon.buildings.Stable;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Main;
+import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageNumber;
 
 public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconTier{
 	
-	private BufferedImage[] buildingIcons = new BufferedImage[8];  		// farm, lumbermill, hut, main building
+	@ImageNumber(number = 8)
+	private static BufferedImage[] buildingIcons = new BufferedImage[8];  		// farm, lumbermill, hut, main building
 	private int selectedBuildingNr = -1;
 	private static int div = 5;
 	
@@ -32,18 +36,6 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 		super(middleX, middleY, 8, 20, 10, div);
 		super.setMessages(new String[]{"Farm", "Lumbermill", "Quarry",  "Hut", "Towncenter", "Forge", "Barracks", "Stable"});
 		main = m;
-		try {
-			buildingIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_farm.png"));
-			buildingIcons[1] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_lumbermill.png"));
-			buildingIcons[2] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_quarry.png"));
-			buildingIcons[3] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_hut.png"));
-			buildingIcons[4] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_towncenter.png"));
-			buildingIcons[5] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_forge.png"));
-			buildingIcons[6] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_barracks.png"));
-			buildingIcons[7] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/iconBuilding_stable.png"));
-		} catch (IOException e) {
-			System.out.println("Couldn't load an UI Image");
-		}
 	}
 	
 	public void drawIcons(Graphics2D g2d){
@@ -130,5 +122,23 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 	
 	public int getBuildingIconNr(){
 		return selectedBuildingNr;
+	}
+	
+	@Image
+	public static void loadImages(GraphicsConfiguration gc){
+		if(gc != null){
+			try {
+				buildingIcons[0] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_farm.png"));
+				buildingIcons[1] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_lumbermill.png"));
+				buildingIcons[2] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_quarry.png"));
+				buildingIcons[3] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_hut.png"));
+				buildingIcons[4] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_towncenter.png"));
+				buildingIcons[5] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_forge.png"));
+				buildingIcons[6] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_barracks.png"));
+				buildingIcons[7] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_stable.png"));
+			} catch (IOException e) {
+				System.out.println("Couldn't load an UI Image");
+			}
+		}
 	}
 }

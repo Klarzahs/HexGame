@@ -2,6 +2,7 @@ package schemmer.hexagon.ui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -10,11 +11,13 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
+import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.units.UnitState;
 
 public class StateIcons extends HoverableIcon{
-	
-	private BufferedImage[] stateIcons = new BufferedImage[6];  		// food, wood, stone, gold, building, none
+	@ImageNumber(number = 6)
+	private static BufferedImage[] stateIcons = new BufferedImage[6];  		// food, wood, stone, gold, building, none
 	private int selectedStateNr = -1;
 	private static int div = 3;
 	
@@ -24,17 +27,6 @@ public class StateIcons extends HoverableIcon{
 		super(middleX, middleY, 6, 390, 10, div);
 		super.setMessages(new String[]{"Gather Food", "Gather Wood", "Gather Stone", "Gather Gold", "Build", "Idle"});
 		main = m;
-		
-		try {
-			stateIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_food.png"));
-			stateIcons[1] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_wood.png"));
-			stateIcons[2] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_stone.png"));
-			stateIcons[3] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_gold.png"));
-			stateIcons[4] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_build.png"));
-			stateIcons[5] = ImageIO.read(this.getClass().getResourceAsStream("/png/etc/icon_none.png"));
-		} catch (IOException e) {
-			System.out.println("Couldn't load an UI Image");
-		}
 	}
 	
 	public void drawIcons(Graphics2D g2d){
@@ -74,5 +66,21 @@ public class StateIcons extends HoverableIcon{
 	
 	public void resetStateIconNr(){
 		selectedStateNr = -1;
+	}
+	
+	@Image
+	public static void loadImages(GraphicsConfiguration gc){
+		if(gc != null){
+			try {
+				stateIcons[0] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_food.png"));
+				stateIcons[1] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_wood.png"));
+				stateIcons[2] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_stone.png"));
+				stateIcons[3] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_gold.png"));
+				stateIcons[4] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_build.png"));
+				stateIcons[5] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_none.png"));
+			} catch (IOException e) {
+				System.out.println("Couldn't load an UI Image");
+			}
+		}
 	}
 }

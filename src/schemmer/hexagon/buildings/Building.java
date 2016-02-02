@@ -6,14 +6,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
+import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.ui.BuildingMenu;
 import schemmer.hexagon.units.UnitState;
-import schemmer.hexagon.units.Villager;
 import schemmer.hexagon.utils.BuildingCallback;
 
+
 public abstract class Building extends BuildingMenu implements BuildingCallback{
+
 	protected BufferedImage image;
 	protected boolean imageLoaded = false;
 	
@@ -130,4 +132,5 @@ public abstract class Building extends BuildingMenu implements BuildingCallback{
 	public Hexagon getField(){
 		return field;
 	}
+	
 }
