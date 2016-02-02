@@ -2,8 +2,10 @@ package schemmer.hexagon.map;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -19,7 +21,12 @@ import schemmer.hexagon.buildings.Stable;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.game.Screen;
+import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageLoader;
+import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.player.Player;
+import schemmer.hexagon.ui.BuildingIconsTierOne;
+import schemmer.hexagon.ui.RessourceInfo;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.utils.Conv;
@@ -27,6 +34,10 @@ import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Point;
 
 public class Hexagon {
+	@ImageNumber(number = 34)
+	private static BufferedImage[] additions = new BufferedImage[12];
+	private static BufferedImage[] images = new BufferedImage[22];
+	
 	public final static double CORNERS = 6;	// # Corners
 	private static int SIZE = 30;			// in Pixel
 	private static float widthFactor = (float) (Math.sqrt(3)/2f);
@@ -58,7 +69,47 @@ public class Hexagon {
 		this.posX = x;
 		this.posY = y;
 		main = m;
-		
+	}
+	
+	@Image
+	public static void loadImages(GraphicsConfiguration gc){
+		if(gc != null){
+			images[0] = ImageLoader.loadImage("/png/images/tileAutumn.png");
+			//images[1] = ImageLoader.loadImage("/png/images/tileDeepwater.png");  -- non existent
+			images[2] = ImageLoader.loadImage("/png/images/tileDirt.png");
+			images[3] = ImageLoader.loadImage("/png/images/tileGrass.png");
+			images[4] = ImageLoader.loadImage("/png/images/tileLava.png");
+			images[5] = ImageLoader.loadImage("/png/images/tileMagic.png");
+			images[6] = ImageLoader.loadImage("/png/images/tileRock.png");
+			images[7] = ImageLoader.loadImage("/png/images/tileSand.png");
+			images[8] = ImageLoader.loadImage("/png/images/tileSnow.png");
+			images[9] = ImageLoader.loadImage("/png/images/tileStone.png");
+			images[10] = ImageLoader.loadImage("/png/images/tileWater.png");
+			images[11] = ImageLoader.loadImage("/png/images/tileAutumn_tile.png");
+			images[12] = ImageLoader.loadImage("/png/images/tileDeepwater_tile.png");
+			images[13] = ImageLoader.loadImage("/png/images/tileDirt_tile.png");
+			images[14] = ImageLoader.loadImage("/png/images/tileGrass_tile.png");
+			//images[15] = ImageLoader.loadImage("/png/images/tileLava_tile.png");  -- non existent
+			images[16] = ImageLoader.loadImage("/png/images/tileMagic_tile.png");
+			images[17] = ImageLoader.loadImage("/png/images/tileRock_tile.png");
+			images[18] = ImageLoader.loadImage("/png/images/tileSand_tile.png");
+			images[19] = ImageLoader.loadImage("/png/images/tileSnow_tile.png");
+			images[20] = ImageLoader.loadImage("/png/images/tileStone_tile.png");
+			images[21] = ImageLoader.loadImage("/png/images/tileWater_tile.png");
+			
+			additions[0] = ImageLoader.loadImage("/png/additions/addDeepwater.png");
+			additions[1] = ImageLoader.loadImage("/png/additions/addDesert.png");
+			additions[2] = ImageLoader.loadImage("/png/additions/addForest.png");
+			additions[3] = ImageLoader.loadImage("/png/additions/addGrassdesert.png");
+			additions[4] = ImageLoader.loadImage("/png/additions/addRainforest.png");
+			additions[5] = ImageLoader.loadImage("/png/additions/addSavanna.png");
+			additions[6] = ImageLoader.loadImage("/png/additions/addSeasonalforest.png");
+			additions[7] = ImageLoader.loadImage("/png/additions/addSwamp.png");
+			additions[8] = ImageLoader.loadImage("/png/additions/addTaiga.png");
+			additions[9] = ImageLoader.loadImage("/png/additions/addTundra.png");
+			additions[10] = ImageLoader.loadImage("/png/additions/addWater.png");
+			additions[11] = ImageLoader.loadImage("/png/additions/addWRocksnow.png");
+		}
 	}
 	
 	public Point hexCorner(double i){
@@ -103,38 +154,35 @@ public class Hexagon {
 	}
 	
 	private void createPicture(){
-		String filepath = "/png/images/tile";
+		int nr = 0;
 		if(biome != null){
-			filepath += biome.getImage();
-			filepath += type.getImage();
+			nr += biome.getImage();
+			nr += type.getImage();
 		} else{
 			if (type.getIndex() == HexTypeInt.TYPE_WATER.getValue())
-				filepath += "Water_tile";
+				nr = 21;
 			if (type.getIndex() == HexTypeInt.TYPE_DEEPWATER.getValue())
-				filepath += "Deepwater_tile";
+				nr = 12;
 			if (type.getIndex() == HexTypeInt.TYPE_MOUNTAIN.getValue())
-				filepath += "Snow";
+				nr += 8;
 		}
-		filepath += ".png";
 		try{
-			image = ImageIO.read(this.getClass().getResourceAsStream(filepath));
+			image = images[nr];
 		} catch (Exception e){
-			System.out.println("Couldn't load picture \""+filepath+"\"");
+			System.out.println("Couldn't load picture \""+nr+"\"");
 		}
 	}
 	
 	private void createAddition(){
-		String filepath = "/png/additions/";
+		int nr = 0;
 		if(biome != null){
-			filepath += "add";
-			filepath += biome.getAddition();
+			nr += biome.getAddition();
 		} else 
-			filepath += type.getAddition();
-		filepath += ".png";
+			nr += type.getAddition();
 		try{
-			addition = ImageIO.read(this.getClass().getResourceAsStream(filepath));
+			addition = additions[nr];
 		} catch (Exception e){
-			System.out.println("Couldn't load picture \""+filepath+"\"");
+			System.out.println("Couldn't load picture \""+nr+"\"");
 		}
 	}
 	

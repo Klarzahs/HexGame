@@ -8,8 +8,8 @@ public class Swamp extends Biome {
 		this.wood = 2;
 		
 		this.name = "Swamp";
-		this.image = "Magic";
-		this.imageAddition = "Swamp";
+		this.image = 16;
+		this.imageAddition = 7;
 		
 		this.movementCosts = 2;
 	}

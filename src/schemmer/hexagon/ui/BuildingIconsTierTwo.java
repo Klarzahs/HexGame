@@ -21,6 +21,7 @@ import schemmer.hexagon.buildings.Stable;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
 
 public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconTier{
@@ -127,18 +128,14 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 	@Image
 	public static void loadImages(GraphicsConfiguration gc){
 		if(gc != null){
-			try {
-				buildingIcons[0] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_farm.png"));
-				buildingIcons[1] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_lumbermill.png"));
-				buildingIcons[2] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_quarry.png"));
-				buildingIcons[3] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_hut.png"));
-				buildingIcons[4] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_towncenter.png"));
-				buildingIcons[5] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_forge.png"));
-				buildingIcons[6] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_barracks.png"));
-				buildingIcons[7] = ImageIO.read(BuildingIconsTierTwo.class.getResourceAsStream("/png/etc/iconBuilding_stable.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load an UI Image");
-			}
+			buildingIcons[0] = ImageLoader.loadImage("/png/etc/iconBuilding_farm.png");
+			buildingIcons[1] = ImageLoader.loadImage("/png/etc/iconBuilding_lumbermill.png");
+			buildingIcons[2] = ImageLoader.loadImage("/png/etc/iconBuilding_quarry.png");
+			buildingIcons[3] = ImageLoader.loadImage("/png/etc/iconBuilding_hut.png");
+			buildingIcons[4] = ImageLoader.loadImage("/png/etc/iconBuilding_towncenter.png");
+			buildingIcons[5] = ImageLoader.loadImage("/png/etc/iconBuilding_forge.png");
+			buildingIcons[6] = ImageLoader.loadImage("/png/etc/iconBuilding_barracks.png");
+			buildingIcons[7] = ImageLoader.loadImage("/png/etc/iconBuilding_stable.png");
 		}
 	}
 }

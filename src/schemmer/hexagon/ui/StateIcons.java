@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.units.UnitState;
 
@@ -71,16 +72,12 @@ public class StateIcons extends HoverableIcon{
 	@Image
 	public static void loadImages(GraphicsConfiguration gc){
 		if(gc != null){
-			try {
-				stateIcons[0] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_food.png"));
-				stateIcons[1] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_wood.png"));
-				stateIcons[2] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_stone.png"));
-				stateIcons[3] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_gold.png"));
-				stateIcons[4] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_build.png"));
-				stateIcons[5] = ImageIO.read(StateIcons.class.getResourceAsStream("/png/etc/icon_none.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load an UI Image");
-			}
+			stateIcons[0] = ImageLoader.loadImage("/png/etc/icon_food.png");
+			stateIcons[1] = ImageLoader.loadImage("/png/etc/icon_wood.png");
+			stateIcons[2] = ImageLoader.loadImage("/png/etc/icon_stone.png");
+			stateIcons[3] = ImageLoader.loadImage("/png/etc/icon_gold.png");
+			stateIcons[4] = ImageLoader.loadImage("/png/etc/icon_build.png");
+			stateIcons[5] = ImageLoader.loadImage("/png/etc/icon_none.png");
 		}
 	}
 }

@@ -33,6 +33,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private EntityHandler eh;
 	private MapHandler mh;
 	private RoundHandler rh;
+	private ImageLoader il;
 	private final int HEIGHT = 1080;
 	private final int WIDTH = 1920;
 	
@@ -46,15 +47,6 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	}
 	
 	public Main (){
-		try{
-			ImageLoader il = new ImageLoader(this);
-			il.runAllAnnotatedWith(Image.class);
-			il.getNumberOfAllImagesAnnotatedWith(ImageNumber.class);
-		}
-		catch(Exception e){
-			Log.e(e.getCause().getMessage());
-		}
-		
 		eh = new EntityHandler();
 		mh = new MapHandler(this);
 		
@@ -73,6 +65,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		
 		gl = new GameLoop(this);
 		gl.run();
+		
+		il = new ImageLoader(this, Image.class, ImageNumber.class);
 	}
 	
 	
@@ -257,6 +251,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		if(mh.getMarked() == null) 
 			return null;
 		return mh.getMarked().getBuilding();
+	}
+	
+	public ImageLoader getIL(){
+		return il;
 	}
 	
 }

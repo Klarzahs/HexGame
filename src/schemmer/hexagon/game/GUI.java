@@ -22,7 +22,7 @@ public class GUI extends JFrame{
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 		
-		screen = new Screen(main.getEH(), main.getMH());
+		screen = new Screen(main);
 		screen.setSize(this.getSize());
 		screen.setVisible(true);
 		this.add(screen);

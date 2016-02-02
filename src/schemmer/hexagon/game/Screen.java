@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -14,7 +13,9 @@ import javax.swing.JPanel;
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.UIHandler;
+import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.utils.Log;
 
 public class Screen extends JPanel{
 	
@@ -24,6 +25,7 @@ public class Screen extends JPanel{
 	public final static int WIDTH = 1920;
 	public final static int HEIGHT = 1080;
 
+	private Main main;
 	private BufferedImage offImg;
 	private EntityHandler eh;
 	private MapHandler mh;
@@ -34,9 +36,10 @@ public class Screen extends JPanel{
 	private int offX = 0, offY = 0;
 	private int maxOffX, maxOffY;
 	
-	public Screen(EntityHandler meh, MapHandler mmh){
-		eh = meh;
-		mh = mmh;
+	public Screen(Main main){
+		this.main = main;
+		eh = main.getEH();
+		mh = main.getMH();
 		debug = "";
 		offX = 0;
 		offY = 0;
@@ -55,10 +58,16 @@ public class Screen extends JPanel{
 		g2d.setColor( Color.LIGHT_GRAY ); g.fillRect( 0, 0, getWidth(), getHeight() );
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		mh.draw(g2d, offX, offY);
-		eh.draw(g2d, offX, offY);
-		if(uih != null) uih.draw(g2d);
-		
+		if(main.getIL() != null && !main.getIL().isFinishedLoading()){
+			g2d.setColor(Color.BLUE);
+			Log.d(((ImageLoader.progress) * (200f / ImageLoader.maxProgress))+"");
+			g2d.drawRect(WIDTH/2, HEIGHT/2, (int) ((ImageLoader.progress) * (200f / ImageLoader.maxProgress)), 50);
+			g2d.drawRect(WIDTH/2, HEIGHT/2, 200, 50);
+		}else if(main.getRH() != null){
+			mh.draw(g2d, offX, offY);
+			eh.draw(g2d, offX, offY);
+			if(uih != null) uih.draw(g2d);
+		}
 		g2d.setColor(Color.YELLOW);
 		g2d.drawString(debug, WIDTH/2, HEIGHT-100);
 		g2d.drawString(fps, WIDTH-100, 20);

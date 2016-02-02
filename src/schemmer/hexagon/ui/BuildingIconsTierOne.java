@@ -6,12 +6,9 @@ import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.buildings.Farm;
 import schemmer.hexagon.buildings.Hut;
@@ -20,7 +17,9 @@ import schemmer.hexagon.buildings.Quarry;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
+import schemmer.hexagon.utils.Log;
 
 public class BuildingIconsTierOne extends HoverableIcon implements BuildingIconTier{
 	
@@ -117,15 +116,12 @@ public class BuildingIconsTierOne extends HoverableIcon implements BuildingIconT
 	@Image
 	public static void loadImages(GraphicsConfiguration gc){
 		if(gc != null){
-			try {
-				buildingIcons[0] = ImageIO.read(BuildingIconsTierOne.class.getResourceAsStream("/png/etc/iconBuilding_farm.png"));
-				buildingIcons[1] = ImageIO.read(BuildingIconsTierOne.class.getResourceAsStream("/png/etc/iconBuilding_lumbermill.png"));
-				buildingIcons[2] = ImageIO.read(BuildingIconsTierOne.class.getResourceAsStream("/png/etc/iconBuilding_quarry.png"));
-				buildingIcons[3] = ImageIO.read(BuildingIconsTierOne.class.getResourceAsStream("/png/etc/iconBuilding_hut.png"));
-				buildingIcons[4] = ImageIO.read(BuildingIconsTierOne.class.getResourceAsStream("/png/etc/iconBuilding_towncenter.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load an UI Image");
-			}
+			Log.d("Invoked");
+			buildingIcons[0] = ImageLoader.loadImage("/png/etc/iconBuilding_farm.png");
+			buildingIcons[1] = ImageLoader.loadImage("/png/etc/iconBuilding_lumbermill.png");
+			buildingIcons[2] = ImageLoader.loadImage("/png/etc/iconBuilding_quarry.png");
+			buildingIcons[3] = ImageLoader.loadImage("/png/etc/iconBuilding_hut.png");
+			buildingIcons[4] = ImageLoader.loadImage("/png/etc/iconBuilding_towncenter.png");
 		}
 	}
 }

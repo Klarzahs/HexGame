@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.player.Player;
 
@@ -32,11 +33,7 @@ public class RessourceInfo {
 	@Image
 	public static void loadImages(GraphicsConfiguration gc){
 		if(gc != null){
-			try {
-				buttonBeigePressed = ImageIO.read(RessourceInfo.class.getResourceAsStream("/png/etc/buttonLong_beige_pressed.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load an UI Image");
-			}
+			buttonBeigePressed = ImageLoader.loadImage("/png/etc/buttonLong_beige_pressed.png");
 		}
 	}
 }

@@ -8,8 +8,8 @@ public class Savanna extends Biome{
 		this.wood = 1;
 		
 		this.name = "Savanna";
-		this.image = "Autumn";
-		this.imageAddition = "Savanna";
+		this.image = 11;
+		this.imageAddition = 5;
 		
 		this.movementCosts = 1;
 	}

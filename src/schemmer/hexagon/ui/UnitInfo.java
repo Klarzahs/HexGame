@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.loader.Image;
+import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.units.Unit;
 
@@ -49,11 +50,7 @@ public class UnitInfo{
 	@Image
 	public static void loadImages(GraphicsConfiguration gc){
 		if(gc != null){
-			try {
-				panelBeige = ImageIO.read(UnitInfo.class.getResourceAsStream("/png/etc/panel_beige.png"));
-			} catch (IOException e) {
-				System.out.println("Couldn't load an UI Image");
-			}
+			panelBeige = ImageLoader.loadImage("/png/etc/panel_beige.png");
 		}
 	}
 }

@@ -10,18 +10,18 @@ public abstract class Biome {
 	protected int movementCosts;
 	
 	protected String name = "";
-	protected String imageAddition = "";
-	protected String image = "";
+	protected int imageAddition = 0;
+	protected int image = 0;
 	
 	public String getName(){
 		return name;
 	}
 	
-	public String getImage(){
+	public int getImage(){
 		return image;
 	}
 	
-	public String getAddition(){
+	public int getAddition(){
 		return imageAddition;
 	}
 	

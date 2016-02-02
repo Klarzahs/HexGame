@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 public class HexType {
 	private HexTypeInt index;
 	private HexTypeColor color;
-	private String image;
 	
 	public HexType(int i){
 		index = HexTypeInt.values()[i];
@@ -21,29 +20,29 @@ public class HexType {
 		return index.getValue();
 	}
 	
-	public String getImage(){
+	public int getImage(){
 		switch (index){
 		case TYPE_FIELD:
-			return "_tile";
+			return 0;
 		case TYPE_HILL:
-			return "";
+			return -11;
 		case TYPE_MOUNTAIN:
-			return "";
+			return -11;
 		default:
-			return "_tile";
+			return 0;
 		}
 	}
 	
-	public String getAddition(){
+	public int getAddition(){
 		switch (index){
 		case TYPE_MOUNTAIN:
-			return "rockSnow_2";
+			return 11;
 		case TYPE_DEEPWATER:
-			return "addDeepwater";
+			return 0;
 		case TYPE_WATER:
-			return "addWater";
+			return 10;
 		default:
-			return "";
+			return 0;
 		}
 	}
 	
