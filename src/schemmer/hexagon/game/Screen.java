@@ -58,15 +58,19 @@ public class Screen extends JPanel{
 		g2d.setColor( Color.LIGHT_GRAY ); g.fillRect( 0, 0, getWidth(), getHeight() );
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		if(main.getIL() != null && !main.getIL().isFinishedLoading()){
+		if(main.getPhase() == 0){
 			g2d.setColor(Color.BLUE);
-			Log.d(((ImageLoader.progress) * (200f / ImageLoader.maxProgress))+"");
-			g2d.drawRect(WIDTH/2, HEIGHT/2, (int) ((ImageLoader.progress) * (200f / ImageLoader.maxProgress)), 50);
-			g2d.drawRect(WIDTH/2, HEIGHT/2, 200, 50);
-		}else if(main.getRH() != null){
+			g2d.drawRect(WIDTH/2-100, HEIGHT/2-25, 200, 50);
+		}else if(main.getPhase() == 1 || (main.getPhase() == 2 && !ImageLoader.isFinishedLoading())){
+			g2d.setColor(Color.BLUE);
+			g2d.fillRect(WIDTH/2-100, HEIGHT/2-25, (int) ((ImageLoader.progress) * (200f / ImageLoader.maxProgress)), 50);
+			g2d.drawRect(WIDTH/2-100, HEIGHT/2-25, 200, 50);
+		}else if(main.getPhase() == 2){
 			mh.draw(g2d, offX, offY);
 			eh.draw(g2d, offX, offY);
 			if(uih != null) uih.draw(g2d);
+		}else{
+			Log.d("somethings wrong!"+(main.getRH() == null)+" "+(main.getIL() == null));
 		}
 		g2d.setColor(Color.YELLOW);
 		g2d.drawString(debug, WIDTH/2, HEIGHT-100);

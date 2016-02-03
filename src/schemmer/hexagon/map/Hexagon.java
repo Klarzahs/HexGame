@@ -34,7 +34,7 @@ import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Point;
 
 public class Hexagon {
-	@ImageNumber(number = 34)
+	@ImageNumber(number = 32)	// 2 are non existent in images[]
 	private static BufferedImage[] additions = new BufferedImage[12];
 	private static BufferedImage[] images = new BufferedImage[22];
 	

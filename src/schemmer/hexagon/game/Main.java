@@ -37,6 +37,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private final int HEIGHT = 1080;
 	private final int WIDTH = 1920;
 	
+	private int phase = 0;
+	
 	// ------ UI -------
 	private Cursor rightClick, normalClick, leftClick;
 	BufferedImage rightClickImage, normalClickImage, leftClickImage;
@@ -63,10 +65,13 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		
 		createUI();
 		
+		phase = 1;
+		il = new ImageLoader(this, Image.class, ImageNumber.class);
+		
+		phase = 2;
 		gl = new GameLoop(this);
 		gl.run();
 		
-		il = new ImageLoader(this, Image.class, ImageNumber.class);
 	}
 	
 	
@@ -255,6 +260,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	
 	public ImageLoader getIL(){
 		return il;
+	}
+	
+	public int getPhase(){
+		return phase;
 	}
 	
 }

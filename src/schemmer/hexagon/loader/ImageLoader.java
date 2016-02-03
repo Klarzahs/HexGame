@@ -19,18 +19,29 @@ import org.reflections.util.ConfigurationBuilder;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.utils.Log;
 
-public class ImageLoader {
+public class ImageLoader extends Thread{
 	private GraphicsConfiguration gc;
 	
 	public static int progress = -1;
 	public static int maxProgress = 0;
 	public static int[] progressArr;
+	private Class<? extends Annotation> annotation; 
+	private Class<? extends Annotation> annotation2;
 	
 	public ImageLoader(Main main, Class<? extends Annotation> annotation, Class<? extends Annotation> annotation2){
+		this.annotation = annotation;
+		this.annotation2 = annotation2;
+		this.start();
+	}
+	
+	@Override
+	public void run(){
+		Log.d("ImageLoader", "Starting..");
 		gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 		try{
-			this.runAllAnnotatedWith(annotation);
 			this.getNumberOfAllImagesAnnotatedWith(annotation2);
+			this.runAllAnnotatedWith(annotation);
+			Log.d("Finished loading images");
 		}
 		catch(Exception e){
 			Log.e(e.getCause().getMessage());
@@ -48,7 +59,7 @@ public class ImageLoader {
         	ImageNumber an = fieldsArr[i].getAnnotation(ImageNumber.class);
         	progressArr[i] = an.number();
         	maxProgress += an.number();
-            //Log.d(""+an.number());
+        	Log.d(fieldsArr[i].getDeclaringClass().getName()+"  "+an.number());
         }
         Log.d("Max Progress: "+maxProgress);
 	}
@@ -75,6 +86,7 @@ public class ImageLoader {
 	public static BufferedImage loadImage(String s){
 		try{
 			progress = progress + 1;
+			Log.d("("+progress+"/"+maxProgress+") Loaded image "+s);
 			return ImageIO.read(ImageLoader.class.getResourceAsStream(s));
 		}catch(Exception e){
 			Log.d("Couldn't load "+e.getMessage());
@@ -82,7 +94,7 @@ public class ImageLoader {
 		}
 	}
 	
-	public boolean isFinishedLoading(){
+	public static boolean isFinishedLoading(){
 		if(progress == maxProgress) return true;
 		return false;
 	}

@@ -116,7 +116,6 @@ public class BuildingIconsTierOne extends HoverableIcon implements BuildingIconT
 	@Image
 	public static void loadImages(GraphicsConfiguration gc){
 		if(gc != null){
-			Log.d("Invoked");
 			buildingIcons[0] = ImageLoader.loadImage("/png/etc/iconBuilding_farm.png");
 			buildingIcons[1] = ImageLoader.loadImage("/png/etc/iconBuilding_lumbermill.png");
 			buildingIcons[2] = ImageLoader.loadImage("/png/etc/iconBuilding_quarry.png");
