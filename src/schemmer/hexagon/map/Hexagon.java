@@ -5,11 +5,17 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Stroke;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import schemmer.hexagon.biomes.Biome;
+import schemmer.hexagon.biomes.Desert;
+import schemmer.hexagon.biomes.Forest;
+import schemmer.hexagon.biomes.GrassDesert;
+import schemmer.hexagon.biomes.RainForest;
+import schemmer.hexagon.biomes.Savanna;
+import schemmer.hexagon.biomes.SeasonalForest;
+import schemmer.hexagon.biomes.Swamp;
+import schemmer.hexagon.biomes.Taiga;
+import schemmer.hexagon.biomes.Tundra;
 import schemmer.hexagon.buildings.Barracks;
 import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Farm;
@@ -25,8 +31,6 @@ import schemmer.hexagon.loader.Image;
 import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.ui.BuildingIconsTierOne;
-import schemmer.hexagon.ui.RessourceInfo;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.utils.Conv;
@@ -70,6 +74,7 @@ public class Hexagon {
 		this.posY = y;
 		main = m;
 	}
+	
 	
 	@Image
 	public static void loadImages(GraphicsConfiguration gc){
@@ -439,6 +444,24 @@ public class Hexagon {
 		if(cnew != null)
 			return main.getMH().getInArray(cnew);
 		return null;
+	}
+	
+	public Byte getAsByte(){
+		byte b = 0;
+		if(type != null && type.getIndex() == HexTypeInt.TYPE_HILL.getValue()) b = 20; 
+		if(biome instanceof Desert) return (byte) (0 + b);
+		if(biome instanceof Forest) return (byte) (1 + b);
+		if(biome instanceof GrassDesert) return (byte) (2 + b);
+		if(biome instanceof RainForest) return (byte) (3 + b);
+		if(biome instanceof Savanna) return (byte) (4 + b);
+		if(biome instanceof SeasonalForest) return (byte) (5 + b);
+		if(biome instanceof Swamp) return (byte) (6 + b);
+		if(biome instanceof Taiga) return (byte) (7 + b);
+		if(biome instanceof Tundra) return (byte) (8 + b);
+		if(type.getIndex() == HexTypeInt.TYPE_DEEPWATER.getValue()) return (byte) (9 + b);
+		if(type.getIndex() == HexTypeInt.TYPE_WATER.getValue()) return (byte) (10 + b);
+		if(type.getIndex() == HexTypeInt.TYPE_MOUNTAIN.getValue()) return (byte) (11 + b);
+		return -1;
 	}
 }
 

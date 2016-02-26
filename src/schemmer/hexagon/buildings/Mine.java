@@ -2,7 +2,6 @@ package schemmer.hexagon.buildings;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.player.Player;
 
 public class Mine extends Building{
 

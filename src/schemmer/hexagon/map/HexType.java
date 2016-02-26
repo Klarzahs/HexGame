@@ -1,7 +1,6 @@
 package schemmer.hexagon.map;
 
 import java.awt.Color;
-import java.awt.image.BufferedImage;
 
 public class HexType {
 	private HexTypeInt index;

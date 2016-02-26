@@ -1,5 +1,6 @@
 package schemmer.hexagon.loader;
 
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
@@ -20,7 +21,7 @@ import schemmer.hexagon.game.Main;
 import schemmer.hexagon.utils.Log;
 
 public class ImageLoader extends Thread{
-	private GraphicsConfiguration gc;
+	private static GraphicsConfiguration gc;
 	
 	public static int progress = -1;
 	public static int maxProgress = 0;
@@ -87,7 +88,15 @@ public class ImageLoader extends Thread{
 		try{
 			progress = progress + 1;
 			Log.d("("+progress+"/"+maxProgress+") Loaded image "+s);
-			return ImageIO.read(ImageLoader.class.getResourceAsStream(s));
+			BufferedImage im = ImageIO.read(ImageLoader.class.getResourceAsStream(s));
+			int transparency = im.getColorModel().getTransparency();
+			BufferedImage copy = gc.createCompatibleImage(im.getWidth(), im.getHeight(), transparency);
+			
+			Graphics2D g2d = copy.createGraphics();
+			g2d.drawImage(im, 0, 0, null);
+			g2d.dispose();
+			
+			return copy;
 		}catch(Exception e){
 			Log.d("Couldn't load "+e.getMessage());
 			return null;

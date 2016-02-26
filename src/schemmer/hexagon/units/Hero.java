@@ -1,17 +1,10 @@
 package schemmer.hexagon.units;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import schemmer.hexagon.buildings.Building;
-import schemmer.hexagon.buildings.Farm;
-import schemmer.hexagon.buildings.Lumbermill;
-import schemmer.hexagon.buildings.Mine;
-import schemmer.hexagon.buildings.Quarry;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.utils.Cube;
 
 public class Hero extends Builder {
 	

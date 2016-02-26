@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -25,17 +26,20 @@ import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.utils.Log;
+import schemmer.hexagon.server.Client;
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private GUI gui;
-	private GameLoop gl;
-	private EntityHandler eh;
-	private MapHandler mh;
-	private RoundHandler rh;
+	protected GameLoop gl;
+	protected EntityHandler eh;
+	protected MapHandler mh;
+	protected RoundHandler rh;
 	private ImageLoader il;
-	private final int HEIGHT = 1080;
-	private final int WIDTH = 1920;
+	protected final int HEIGHT = 1080;
+	protected final int WIDTH = 1920;
+	
+	private Client client;
+	public boolean isLocal;
 	
 	private int phase = 0;
 	
@@ -44,34 +48,53 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	BufferedImage rightClickImage, normalClickImage, leftClickImage;
 	private UIHandler uih;
 	
-	public static void main (String [] args) {
-		new Main();
-	}
 	
-	public Main (){
-		eh = new EntityHandler();
-		mh = new MapHandler(this);
+	public Main (boolean isLocal, int player, int ai){
+		this.isLocal = isLocal;
+		if(!isLocal) {
+			client = new Client();
+			
+			eh = new EntityHandler(client);
+			mh = new MapHandler(this, client);
+			mh.printMap();
+			System.exit(1);
+			
+			
+			gui = new GUI(WIDTH, HEIGHT, true, this);
+			gui.addMouseListener(this);
+			gui.addMouseMotionListener(this);
+			gui.addKeyListener(this);
+			
+			mh.addScreen();
 		
-		gui = new GUI(WIDTH, HEIGHT, true, this);
-		gui.addMouseListener(this);
-		gui.addMouseMotionListener(this);
-		gui.addKeyListener(this);
+			rh = new RoundHandler(mh, client);
+			rh.createAllPlayers(player);
+			
+		}else{
+			
+			eh = new EntityHandler();
+			mh = new MapHandler(this);
+			
+			gui = new GUI(WIDTH, HEIGHT, true, this);
+			gui.addMouseListener(this);
+			gui.addMouseMotionListener(this);
+			gui.addKeyListener(this);
+			
+			mh.addScreen();
 		
-		mh.addScreen();
-		
-		rh = new RoundHandler(mh);
-		rh.createAllPlayers(3);
-		rh.startRound();
+			rh = new RoundHandler(mh);
+			rh.createAllPlayers(player);
+			rh.startRound();
+		}
 		
 		createUI();
 		
 		phase = 1;
 		il = new ImageLoader(this, Image.class, ImageNumber.class);
-		
 		phase = 2;
+		
 		gl = new GameLoop(this);
 		gl.run();
-		
 	}
 	
 	
@@ -266,4 +289,9 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		return phase;
 	}
 	
+	public Client getClient(){
+		return client;
+	}
+	
+	public Main(){} //dead constructor for Server
 }

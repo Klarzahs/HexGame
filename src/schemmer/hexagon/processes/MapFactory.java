@@ -12,6 +12,7 @@ import schemmer.hexagon.biomes.Tundra;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.server.Client;
 import schemmer.hexagon.utils.Cube;
 
 public class MapFactory {
@@ -21,15 +22,15 @@ public class MapFactory {
 	private final static float hillWeight = 0.80f;
 	private final static float mountainWeight = 1f;
 	
-	private static Tundra tundra = new Tundra();
-	private static Desert desert = new Desert();
-	private static Forest forest = new Forest();
-	private static GrassDesert grassDesert = new GrassDesert();
-	private static RainForest rainForest = new RainForest();
-	private static Savanna savanna = new Savanna();
-	private static Swamp swamp = new Swamp();
-	private static Taiga taiga = new Taiga();
-	private static SeasonalForest seasonalForest = new SeasonalForest();
+	public static Tundra tundra = new Tundra();
+	public static Desert desert = new Desert();
+	public static Forest forest = new Forest();
+	public static GrassDesert grassDesert = new GrassDesert();
+	public static RainForest rainForest = new RainForest();
+	public static Savanna savanna = new Savanna();
+	public static Swamp swamp = new Swamp();
+	public static Taiga taiga = new Taiga();
+	public static SeasonalForest seasonalForest = new SeasonalForest();
 	
 	private static final String SEED_MAP = "77223344";
 	private static final String SEED_BIOME = "98765432";

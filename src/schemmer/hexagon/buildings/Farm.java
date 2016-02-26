@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.player.Player;
 
 public class Farm extends Building{
 

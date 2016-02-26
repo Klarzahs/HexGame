@@ -7,8 +7,6 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-import javax.imageio.ImageIO;
-
 import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.buildings.Farm;
 import schemmer.hexagon.buildings.Hut;
@@ -19,7 +17,6 @@ import schemmer.hexagon.game.Main;
 import schemmer.hexagon.loader.Image;
 import schemmer.hexagon.loader.ImageLoader;
 import schemmer.hexagon.loader.ImageNumber;
-import schemmer.hexagon.utils.Log;
 
 public class BuildingIconsTierOne extends HoverableIcon implements BuildingIconTier{
 	

@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import schemmer.hexagon.game.Main;
-import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.ui.BuildingMenu;
