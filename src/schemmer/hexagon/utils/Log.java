@@ -16,6 +16,6 @@ public class Log {
 	}
 	
 	public static void e(String log){
-		System.out.println(log);
+		System.err.println(log);
 	}
 }

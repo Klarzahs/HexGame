@@ -7,13 +7,16 @@ import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.buildings.TownCenter;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.server.Server;
 import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.units.Fighter;
 import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.units.Villager;
+import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
+import schemmer.hexagon.utils.Log;
 
 public class Player {
 	private ArrayList<Fighter> fighters = new ArrayList<Fighter>();
@@ -40,12 +43,28 @@ public class Player {
 		//create starting location and add hero
 		startingPoint = mh.getStartingLocation();
 		startingPoint.moveTo(getHero());
+		if(mh.getMain() instanceof Server)
+			((Server)mh.getMain()).append("SP("+i+"): "+startingPoint.getX()+" "+startingPoint.getY());
 		
 		//create and init the visibleMap, startingPos + ~4 Hexs
 		visibleMap = new boolean[2*mh.RADIUS+1][2*mh.RADIUS+1];
 		updateVisibleMap(mh, startingPoint, visibleRadius);
 	}
-	
+
+	public Player(boolean isAI, int i, MapHandler mh, int x, int y){
+		color = new PlayerColor(i);
+		setHero(new Hero(this));
+		
+		startingPoint = mh.getInArray(Conv.pointToCube(x, y));				// TODO: check if right
+		startingPoint.moveTo(getHero());
+		
+		Log.d("SP("+i+"): "+startingPoint.getX()+" "+startingPoint.getY());
+		
+		//create and init the visibleMap, startingPos + ~4 Hexs
+		visibleMap = new boolean[2*mh.RADIUS+1][2*mh.RADIUS+1];
+		updateVisibleMap(mh, startingPoint, visibleRadius);
+	}
+
 	public void updateVisibleMap(MapHandler mh, Hexagon hex, Unit u){
 		updateVisibleMap(mh, hex, u.getMaxMovementSpeed()+1);
 	}
@@ -305,5 +324,9 @@ public class Player {
 	public int getTier(){
 		if(hasTownCenter()) return 2;
 		return 1;
+	}
+	
+	public Hexagon getStartingPosition(){
+		return startingPoint;
 	}
 }

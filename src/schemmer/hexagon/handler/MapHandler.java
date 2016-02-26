@@ -19,6 +19,7 @@ import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Dijkstra;
+import schemmer.hexagon.utils.Log;
 import schemmer.hexagon.utils.Point;
 
 public class MapHandler {
@@ -43,6 +44,7 @@ public class MapHandler {
 	private final Color fogColor = new Color(175,175,175);
 	
 	private Client client;
+	private boolean mapLoaded = false;
 	
 	public MapHandler(Main main){
 		this.main = main;
@@ -399,5 +401,14 @@ public class MapHandler {
 			}
 			System.out.println();
 		}
+	}
+	
+	public void setMapLoaded(){
+		Log.d("Map loaded = true");
+		mapLoaded = true;
+	}
+	
+	public boolean mapLoaded() {
+		return mapLoaded;
 	}
 }

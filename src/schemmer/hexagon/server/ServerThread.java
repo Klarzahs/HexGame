@@ -5,6 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import schemmer.hexagon.player.Player;
+import schemmer.hexagon.player.PlayerColor;
+import schemmer.hexagon.units.Hero;
+
 public class ServerThread extends Thread{
 	private Server server;
 	private Socket client;
@@ -42,6 +46,13 @@ public class ServerThread extends Thread{
 		writeInt(server.getMH().RADIUS);
 		writeInt(message.length);
 		write(message);
+	}
+	
+	public void sendPlayer(Player pl, int i){
+		send("player");
+		writeInt(i);
+		writeInt(pl.getStartingPosition().getX());
+		writeInt(pl.getStartingPosition().getY());
 	}
 	
 	public void send(String s){

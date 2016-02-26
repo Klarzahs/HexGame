@@ -8,17 +8,18 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
-import javax.swing.JFrame;
-
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
+import schemmer.hexagon.player.Player;
+import schemmer.hexagon.utils.Log;
 
 public class Server extends Main{
 	private ServerSocket serverSocket;
 	private ArrayList<ServerThread> clients = new ArrayList<ServerThread>();
 	private int maxPlayerCount;
+	private int maxAICount;
 	private boolean isLocal = true;
 	private int clientReady = 0;
 	
@@ -26,32 +27,25 @@ public class Server extends Main{
 
 	public Server(int port, int player, int ai) throws IOException
 	{
-		window = new ServerWindow();
-		window.setSize(800, 640);
-        window.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }//windowClosing
-        });
-        window.setVisible(true);
-		
+		createUI();
 		
 		serverSocket = new ServerSocket(port);
 		serverSocket.setSoTimeout(10000);
 		this.maxPlayerCount = player;
+		this.maxAICount = ai;
 
 		eh = new EntityHandler();
 		mh = new MapHandler(this);
 		
-		mh.printMap(this);
-		
 		acceptClients();
 
-		sendMap();
-		
 		rh = new RoundHandler(mh);
-		rh.createAllPlayers(player);
-		while(clientReady < maxPlayerCount){}
+		rh.createAllPlayers(player, ai);
+		
+		sendPlayerCount();
+		sendPlayers();
+		
+		while(clientReady < maxPlayerCount){}		// wait
 		rh.startRound();
 	}
 
@@ -90,6 +84,7 @@ public class Server extends Main{
 		}
 	}
 	
+	@Deprecated
 	private void sendMap(){
 		byte message[] = mh.getMapAsByte();
 		for(int i = 0; i < clients.size(); i++){
@@ -100,7 +95,48 @@ public class Server extends Main{
 		}
 	}
 	
+	public void sendPlayers(){
+		for(int i = 0; i < clients.size(); i++){
+			for(int p = 0; p < (maxPlayerCount + maxAICount); p++){
+				clients.get(i).sendPlayer(rh.getPlayer(p), p);
+			}
+		}
+	}
+	
+	public void sendPlayer(Player pl, int i){
+		clients.get(i).sendPlayer(pl, i);
+	}
+	
+	public void sendPlayerCount(){
+		for(int i = 0; i < clients.size(); i++){
+			sendPlayerCount(i);
+		}
+	}
+	
+	public void nextPlayer(){
+		//TODO: 
+	}
+	
+	public void sendPlayerCount(int i){
+		Log.d("Sending playerCount..");
+		clients.get(i).send("playerCount");
+		clients.get(i).writeInt(maxPlayerCount);
+		clients.get(i).writeInt(maxAICount);
+		Log.d("finished sending!");
+	}
+	
 	public void addReady(){
 		clientReady++;
+	}
+	
+	private void createUI(){
+		window = new ServerWindow();
+		window.setSize(800, 640);
+        window.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }//windowClosing
+        });
+        window.setVisible(true);
 	}
 }

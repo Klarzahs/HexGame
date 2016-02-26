@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -27,6 +26,8 @@ import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.server.Client;
+import schemmer.hexagon.server.Server;
+import schemmer.hexagon.utils.Log;
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private GUI gui;
@@ -39,7 +40,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	protected final int WIDTH = 1920;
 	
 	private Client client;
-	public boolean isLocal;
+	public boolean isLocal = true;
+	public boolean receivedMap = false;
 	
 	private int phase = 0;
 	
@@ -52,13 +54,10 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	public Main (boolean isLocal, int player, int ai){
 		this.isLocal = isLocal;
 		if(!isLocal) {
-			client = new Client();
+			client = new Client(this);
 			
 			eh = new EntityHandler(client);
-			mh = new MapHandler(this, client);
-			mh.printMap();
-			System.exit(1);
-			
+			mh = new MapHandler(this, client);					// map is queried when connection was made
 			
 			gui = new GUI(WIDTH, HEIGHT, true, this);
 			gui.addMouseListener(this);
@@ -66,10 +65,12 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			gui.addKeyListener(this);
 			
 			mh.addScreen();
-		
-			rh = new RoundHandler(mh, client);
-			rh.createAllPlayers(player);
 			
+			while(!receivedMap){}
+			
+			rh = new RoundHandler(mh, client);
+			rh.createAllPlayers(player, ai);
+			while(true){}
 		}else{
 			
 			eh = new EntityHandler();
@@ -83,7 +84,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			mh.addScreen();
 		
 			rh = new RoundHandler(mh);
-			rh.createAllPlayers(player);
+			rh.createAllPlayers(player, ai);
 			rh.startRound();
 		}
 		
@@ -95,6 +96,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		
 		gl = new GameLoop(this);
 		gl.run();
+		
+		
 	}
 	
 	
@@ -129,6 +132,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	}
 	
 	public MapHandler getMH(){
+		if(this instanceof Main) return ((Main)this).mh;
 		return mh;
 	}
 	

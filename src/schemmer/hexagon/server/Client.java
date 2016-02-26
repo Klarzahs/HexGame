@@ -11,8 +11,11 @@ import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
+import schemmer.hexagon.player.PlayerColor;
 import schemmer.hexagon.processes.MapFactory;
+import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.utils.Cube;
+import schemmer.hexagon.utils.Log;
 
 public class Client {
 	private Socket client;
@@ -20,10 +23,14 @@ public class Client {
 	private DataOutputStream out;
 	private InputStream inFromServer;
 	private DataInputStream in;
+	private Main main;
 	
-	public Client(){
+	public Client(Main main){
 		String serverName = "localhost";
 		int port = 5555;
+		
+		this.main = main;
+		
 	    try
 	    {
 	       client = new Socket(serverName, port);
@@ -50,13 +57,22 @@ public class Client {
 	}
 
 	public void getPlayersFromServer() {
-		// TODO Auto-generated method stub
-		
+		for(int i = 0; i < (main.getRH().getPlayerCount() + main.getRH().getAICount()); i++){
+			getPlayerFromServer();
+		}
 	}
-
-	public Player getCurrentPlayer() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public void getPlayerFromServer(){
+		try{
+			if(in.available() > 0 && in.readUTF().equals("player")){
+				int i = in.readInt();
+				int x = in.readInt();
+				int y = in.readInt();
+				main.getRH().addServerCreatedPlayer(i, x, y);
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 
 	public void nextPlayer() {
@@ -69,27 +85,44 @@ public class Client {
 		return 0;
 	}
 
-	public int getPlayerCount() {
-		// TODO Auto-generated method stub
+	public int setPlayerCount() {
+		boolean readSuccess = false;
+		try{
+			while(!readSuccess){
+				if(in.available() > 0){
+					if(in.readUTF().equals("playerCount")){
+						main.getRH().setMaxPlayers(in.readInt());
+						main.getRH().setMaxAIs(in.readInt());
+						readSuccess = true;
+					}
+				}
+			}
+		}catch(IOException e){
+			Log.d("IO Error");
+			e.printStackTrace();
+		}
 		return 0;
 	}
 
 	public Hexagon[][] getMapFromServer(Main main) {
+		boolean received = false;
 		byte[] message = new byte[0];
 		Hexagon[][] map;
 		int radius = -1;
 		try{
-			if(in.available() > 0){
-				//while(true){							  // query until you get the map message
-				if(in.readUTF().equals("map")){
-					radius = in.readInt();
-					int length = in.readInt();                    // read length of incoming message
-					if(length>0) {
-						message = new byte[length];
-						in.readFully(message, 0, message.length); // read the message
+			while(!received){
+				if(in.available() > 0){
+					//while(true){							  // query until you get the map message
+					if(in.readUTF().equals("map")){
+						radius = in.readInt();
+						int length = in.readInt();                    // read length of incoming message
+						if(length>0) {
+							message = new byte[length];
+							in.readFully(message, 0, message.length); // read the message
+							received = true;
+						}
 					}
 				}
-				//}
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -111,7 +144,7 @@ public class Client {
 		    	setHexType(map[x][y], message[(radius * 2 + 1) * x + y]);
 		    }
 		}
-		
+		main.receivedMap = true;
 		return map;
 	}
 	
