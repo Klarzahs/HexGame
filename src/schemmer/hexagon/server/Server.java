@@ -13,15 +13,16 @@ import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.utils.Log;
 
 public class Server extends Main{
 	private ServerSocket serverSocket;
 	private ArrayList<ServerThread> clients = new ArrayList<ServerThread>();
 	private int maxPlayerCount;
 	private int maxAICount;
-	private boolean isLocal = true;
 	private int clientReady = 0;
+	
+	private final static int PLAYER_COUNT = 2;
+	private final static int AI_COUNT = 0;
 	
 	private ServerWindow window;
 
@@ -57,12 +58,13 @@ public class Server extends Main{
 		while(nr < maxPlayerCount){
 			try{
 				Socket client = serverSocket.accept();
-				clients.add(new ServerThread(this, client));
+				clients.add(new ServerThread(this, client, nr));
 				nr++;
 				log("Nr "+nr +" connected!");
 			}catch(SocketTimeoutException e){
 			}catch(Exception e){
 				e.printStackTrace();
+				log(e.getMessage());
 			}
 		}
 	}
@@ -78,7 +80,7 @@ public class Server extends Main{
 	
 	public static void main (String [] args) {
 		try{
-			new Server(5555, 3, 0);
+			new Server(5555, PLAYER_COUNT, AI_COUNT);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -118,15 +120,14 @@ public class Server extends Main{
 	}
 	
 	public void sendPlayerCount(int i){
-		Log.d("Sending playerCount..");
 		clients.get(i).send("playerCount");
 		clients.get(i).writeInt(maxPlayerCount);
 		clients.get(i).writeInt(maxAICount);
-		Log.d("finished sending!");
 	}
 	
-	public void addReady(){
+	public void clientReady(){
 		clientReady++;
+		log("Client is ready");
 	}
 	
 	private void createUI(){

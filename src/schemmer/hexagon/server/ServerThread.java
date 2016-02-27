@@ -15,9 +15,12 @@ public class ServerThread extends Thread{
 	private DataInputStream in;
 	private DataOutputStream out;
 	
-	public ServerThread(Server server, Socket sck){
+	private int nr;
+	
+	public ServerThread(Server server, Socket sck, int i){
 		try{
 			this.server = server;
+			nr = i;
 			client = sck;
 			in = new DataInputStream(client.getInputStream());
 			out = new DataOutputStream(client.getOutputStream());
@@ -32,9 +35,18 @@ public class ServerThread extends Thread{
 	
 	@Override
 	public void run(){
+		String message;
 		try{
-			while(in.available() > 0)
-				server.log(in.readUTF());
+			while(true){
+				if(in.available() > 0){
+					message = in.readUTF();
+					server.log("Received: "+message);
+					if(message != null && message.equals("clientReady"))
+						server.clientReady();
+					message = null;
+				}
+			}
+				
 		}catch(Exception e){
 			e.printStackTrace();
 		}

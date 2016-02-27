@@ -14,7 +14,6 @@ import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.units.Villager;
-import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Log;
 
@@ -43,8 +42,6 @@ public class Player {
 		//create starting location and add hero
 		startingPoint = mh.getStartingLocation();
 		startingPoint.moveTo(getHero());
-		if(mh.getMain() instanceof Server)
-			((Server)mh.getMain()).append("SP("+i+"): "+startingPoint.getX()+" "+startingPoint.getY());
 		
 		//create and init the visibleMap, startingPos + ~4 Hexs
 		visibleMap = new boolean[2*mh.RADIUS+1][2*mh.RADIUS+1];
@@ -55,10 +52,8 @@ public class Player {
 		color = new PlayerColor(i);
 		setHero(new Hero(this));
 		
-		startingPoint = mh.getInArray(Conv.pointToCube(x, y));				// TODO: check if right
+		startingPoint = mh.getMap()[x][y];				// TODO: check if right
 		startingPoint.moveTo(getHero());
-		
-		Log.d("SP("+i+"): "+startingPoint.getX()+" "+startingPoint.getY());
 		
 		//create and init the visibleMap, startingPos + ~4 Hexs
 		visibleMap = new boolean[2*mh.RADIUS+1][2*mh.RADIUS+1];

@@ -39,9 +39,11 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	protected final int HEIGHT = 1080;
 	protected final int WIDTH = 1920;
 	
+	// ------ Client -----
 	private Client client;
 	public boolean isLocal = true;
 	public boolean receivedMap = false;
+	public boolean receivedPlayers = false;
 	
 	private int phase = 0;
 	
@@ -70,7 +72,9 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			
 			rh = new RoundHandler(mh, client);
 			rh.createAllPlayers(player, ai);
-			while(true){}
+			while(!receivedPlayers){}
+			
+			client.receivedPlayers();
 		}else{
 			
 			eh = new EntityHandler();
@@ -96,8 +100,6 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 		
 		gl = new GameLoop(this);
 		gl.run();
-		
-		
 	}
 	
 	

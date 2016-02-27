@@ -42,6 +42,7 @@ public class RoundHandler {
 		if(!main.isLocal){
 			client.setPlayerCount();												//fetch player/AI count from server
 			client.getPlayersFromServer();
+			main.receivedPlayers = true;
 		}else{
 			if(playerCount < 1)
 				Log.e("RoundHandler", "Max Players below 1!");

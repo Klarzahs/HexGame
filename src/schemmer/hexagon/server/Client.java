@@ -103,6 +103,14 @@ public class Client {
 		}
 		return 0;
 	}
+	
+	public void receivedPlayers(){
+		try{
+			out.writeUTF("clientReady");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	public Hexagon[][] getMapFromServer(Main main) {
 		boolean received = false;
@@ -149,6 +157,7 @@ public class Client {
 	}
 	
 	private void setHexType(Hexagon hex, byte b){
+		hex.setType(HexTypeInt.TYPE_FIELD.getValue());
 		if(b >= 20){
 			hex.setType(HexTypeInt.TYPE_HILL.getValue());
 			b = (byte) (b - 20);
