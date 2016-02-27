@@ -12,7 +12,9 @@ import schemmer.hexagon.game.Main;
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
+import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
+import schemmer.hexagon.units.Unit;
 
 public class Server extends Main{
 	private ServerSocket serverSocket;
@@ -139,5 +141,27 @@ public class Server extends Main{
             }//windowClosing
         });
         window.setVisible(true);
+	}
+	
+	public void attack(int x, int y, int ex, int ey){
+		Hexagon fhex = mh.getMap()[x][y];
+		Hexagon ehex = mh.getMap()[ex][ey];
+		Unit friend = fhex.getUnit();
+		Unit enemy = ehex.getUnit();
+		if(friend == null || enemy == null){
+			log("State missmatch, attack canceled!");
+			System.err.println("State missmatch, attack canceled!");
+		}
+		float dmgToEnemy = friend.getAttack() - enemy.getDefense() * ehex.getMovementCosts() / 2f;
+		float dmgToYou = enemy.getAttack() - friend.getDefense() * fhex.getMovementCosts() / 2f;
+		friend.setHealth(friend.getHealth() - (int)(dmgToYou * 10));
+		enemy.setHealth(enemy.getHealth() - (int)(dmgToEnemy * 10));
+		confirmAttack(x, y, ex, ey, dmgToYou, dmgToEnemy);
+	}
+	
+	public void confirmAttack(int x, int y, int ex, int ey, float dmgToYou, float dmgToEnemy){
+		for(int i = 0; i < clients.size(); i++){
+			clients.get(i).confirmAttack(x, y, ex, ey, dmgToYou, dmgToEnemy);
+		}
 	}
 }

@@ -10,10 +10,7 @@ import java.net.Socket;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.player.Player;
-import schemmer.hexagon.player.PlayerColor;
 import schemmer.hexagon.processes.MapFactory;
-import schemmer.hexagon.units.Hero;
 import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Log;
 
@@ -24,6 +21,7 @@ public class Client {
 	private InputStream inFromServer;
 	private DataInputStream in;
 	private Main main;
+	private ClientThread thread;
 	
 	public Client(Main main){
 		String serverName = "localhost";
@@ -42,6 +40,7 @@ public class Client {
 	       inFromServer = client.getInputStream();
 	       in = new DataInputStream(inFromServer);
 	       
+	       thread = new ClientThread(this, out, in);
 	    }catch(IOException e)
 	    {
 	       e.printStackTrace();
@@ -200,5 +199,25 @@ public class Client {
 			hex.setType(HexTypeInt.TYPE_MOUNTAIN.getValue());
 			break;
 		}
+	}
+	
+	public void attack(Hexagon field, Hexagon fieldEnemy){
+		try{
+			out.writeUTF("attack");
+			out.writeInt(field.getX());
+			out.writeInt(field.getY());
+			out.writeInt(fieldEnemy.getX());
+			out.writeInt(fieldEnemy.getY());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void startListening(){
+		thread.start();
+	}
+	
+	public Main getMain(){
+		return main;
 	}
 }

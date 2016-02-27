@@ -52,6 +52,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	BufferedImage rightClickImage, normalClickImage, leftClickImage;
 	private UIHandler uih;
 	
+	//TODO: main etc linker class !
 	
 	public Main (boolean isLocal, int player, int ai){
 		this.isLocal = isLocal;

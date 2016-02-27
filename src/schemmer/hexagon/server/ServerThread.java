@@ -41,8 +41,10 @@ public class ServerThread extends Thread{
 				if(in.available() > 0){
 					message = in.readUTF();
 					server.log("Received: "+message);
-					if(message != null && message.equals("clientReady"))
+					if(message.equals("clientReady"))
 						server.clientReady();
+					if(message.equals("attack"))
+						server.attack(in.readInt(), in.readInt(), in.readInt(), in.readInt());
 					message = null;
 				}
 			}
@@ -67,6 +69,16 @@ public class ServerThread extends Thread{
 		writeInt(pl.getStartingPosition().getY());
 	}
 	
+	public void confirmAttack(int x, int y, int ex, int ey, float dmgToYou, float dmgToEnemy){
+		send("attackConfirm");
+		writeInt(x);
+		writeInt(y);
+		writeInt(ex);
+		writeInt(ey);
+		writeFloat(dmgToYou);
+		writeFloat(dmgToEnemy);
+	}
+	
 	public void send(String s){
 		try {
 			out.writeUTF(s);
@@ -79,6 +91,14 @@ public class ServerThread extends Thread{
 		try {
 			out.writeInt(i);
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void writeFloat(float f){
+		try{
+			out.writeFloat(f);
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}

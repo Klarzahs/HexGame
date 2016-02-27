@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import schemmer.hexagon.buildings.Building;
 import schemmer.hexagon.buildings.Costs;
 import schemmer.hexagon.buildings.TownCenter;
+import schemmer.hexagon.game.Main;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.server.Server;
 import schemmer.hexagon.ui.PlayerIcon;
 import schemmer.hexagon.units.Fighter;
 import schemmer.hexagon.units.Hero;
@@ -15,7 +15,6 @@ import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.units.Villager;
 import schemmer.hexagon.utils.Cube;
-import schemmer.hexagon.utils.Log;
 
 public class Player {
 	private ArrayList<Fighter> fighters = new ArrayList<Fighter>();
@@ -28,6 +27,7 @@ public class Player {
 	private Hero hero;
 	private Hexagon startingPoint;
 	private PlayerIcon icon;
+	private Main main;
 	
 	private int woodCount = 20, foodCount = 20, stoneCount = 20, goldCount = 20, maxPop = 0;
 	private int woodPR = 0, foodPR = 0, stonePR = 0, goldPR = 0;		//PR = per round
@@ -42,6 +42,7 @@ public class Player {
 		//create starting location and add hero
 		startingPoint = mh.getStartingLocation();
 		startingPoint.moveTo(getHero());
+		main = mh.getMain();
 		
 		//create and init the visibleMap, startingPos + ~4 Hexs
 		visibleMap = new boolean[2*mh.RADIUS+1][2*mh.RADIUS+1];
@@ -323,5 +324,9 @@ public class Player {
 	
 	public Hexagon getStartingPosition(){
 		return startingPoint;
+	}
+	
+	public Main getMain(){
+		return main;
 	}
 }
