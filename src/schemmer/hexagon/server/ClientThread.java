@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.utils.Log;
 
 public class ClientThread extends Thread{
 	private Client client;
@@ -16,6 +17,7 @@ public class ClientThread extends Thread{
 		this.client = c;
 		this.out = out;
 		this.in = in;
+		Log.d("ClientThread created");
 	}
 	
 	@Override
@@ -25,10 +27,12 @@ public class ClientThread extends Thread{
 			while(true){
 				if(in.available() > 0){
 					message = in.readUTF();
-					if(message.equals("confirmAttack")){
+					if(message.equals("confirmAttack"))
 						confirmAttack(in.readInt(), in.readInt(),in.readInt(), in.readInt(), in.readFloat(), in.readFloat());
-					}
+					if(message.equals("confirmMove"))
+						confirmMove(in.readInt(), in.readInt(),in.readInt(), in.readInt());
 				}
+				Log.d("CThread: Waiting for message");
 			}
 		}catch(Exception e){
 			e.printStackTrace();

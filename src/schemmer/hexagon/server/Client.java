@@ -214,13 +214,14 @@ public class Client {
 		}
 	}
 	
-	public void moveTo(Hexagon hex, Unit u){
+	public void moveTo(Hexagon before, Hexagon after){
 		try{
+			main.getGUI().getScreen().setDebug(before.getX()+" "+before.getY());
 			out.writeUTF("move");
-			out.writeInt(u.getField().getX());
-			out.writeInt(u.getField().getY());
-			out.writeInt(hex.getX());
-			out.writeInt(hex.getY());
+			out.writeInt(before.getX());
+			out.writeInt(before.getY());
+			out.writeInt(after.getX());
+			out.writeInt(after.getY());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

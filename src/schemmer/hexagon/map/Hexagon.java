@@ -311,6 +311,8 @@ public class Hexagon {
 	}
 	
 	public void moveTo(Unit u){
+		Hexagon before = u.getField();
+		// move unit locally
 		this.unit = u;
 		u.setField(this);
 		u.getPlayer().setRessourcesChanged(true);
@@ -323,8 +325,9 @@ public class Hexagon {
 		}else if (this.getUnit() != null){
 			this.unit.setState(UnitState.STATE_NONE);
 		}
+		// send info to server
 		if(!Main.isLocal){
-			main.getClient().moveTo(this, u);
+			main.getClient().moveTo(before, this);
 		}
 	}
 	

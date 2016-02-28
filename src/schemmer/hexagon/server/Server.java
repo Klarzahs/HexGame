@@ -156,6 +156,7 @@ public class Server extends Main{
 	}
 	
 	public void move(int nr, int fx, int fy, int tx, int ty){
+		log("move: "+fx+" "+fy+" to "+tx+" "+ty+" ("+nr+")");
 		Hexagon from = mh.getMap()[fx][fy];
 		Hexagon to = mh.getMap()[tx][ty];
 		Unit u = from.getUnit();
