@@ -58,11 +58,11 @@ public class GameLoop extends Thread{
 				mh.update(delta);
 		      
 				// draw everyting
-				screen.repaint();
-		      
-				moveScreen();
-				
 				try{
+					screen.repaint();
+			      
+					moveScreen();
+				
 					Thread.sleep(lastLoopTime-System.currentTimeMillis() + OPTIMAL_TIME);
 				} 
 				catch(Exception e){

@@ -43,7 +43,6 @@ public class MapHandler {
 	private final Color markedColor = new Color(0,0,255);
 	private final Color fogColor = new Color(175,175,175);
 	
-	private Client client;
 	private boolean mapLoaded = false;
 	
 	public MapHandler(Main main){
@@ -53,7 +52,6 @@ public class MapHandler {
 	
 	public MapHandler(Main main, Client client){
 		this.main = main;
-		this.client = client;
 		map = client.getMapFromServer(main);
 	}
 	

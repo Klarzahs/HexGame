@@ -33,7 +33,6 @@ public class UIHandler {
 	private BuildingIconsTierOne buildingIconsOne;
 	private BuildingIconsTierTwo buildingIconsTwo;
 	private StateIcons stateIcons;
-	private Building buildingMenuIcons;
 	
 	private FieldInfo fieldInfo;
 	private UnitInfo unitInfo;

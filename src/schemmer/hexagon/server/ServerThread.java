@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.net.Socket;
 
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.player.PlayerColor;
-import schemmer.hexagon.units.Hero;
 
 public class ServerThread extends Thread{
 	private Server server;
@@ -44,7 +42,9 @@ public class ServerThread extends Thread{
 					if(message.equals("clientReady"))
 						server.clientReady();
 					if(message.equals("attack"))
-						server.attack(in.readInt(), in.readInt(), in.readInt(), in.readInt());
+						server.attack(nr, in.readInt(), in.readInt(), in.readInt(), in.readInt());
+					if(message.equals("move"))
+						server.move(nr, in.readInt(), in.readInt(), in.readInt(), in.readInt());
 					message = null;
 				}
 			}
@@ -77,6 +77,14 @@ public class ServerThread extends Thread{
 		writeInt(ey);
 		writeFloat(dmgToYou);
 		writeFloat(dmgToEnemy);
+	}
+	
+	public void confirmMove(int fx, int fy, int tx, int ty){
+		send("moveConfirm");
+		writeInt(fx);
+		writeInt(fy);
+		writeInt(tx);
+		writeInt(ty);
 	}
 	
 	public void send(String s){

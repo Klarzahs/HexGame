@@ -12,7 +12,6 @@ import schemmer.hexagon.biomes.Tundra;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.server.Client;
 import schemmer.hexagon.utils.Cube;
 
 public class MapFactory {
@@ -20,7 +19,7 @@ public class MapFactory {
 	private final static float waterWeight = 0.35f;
 	private final static float fieldWeight = 0.70f;
 	private final static float hillWeight = 0.80f;
-	private final static float mountainWeight = 1f;
+	//private final static float mountainWeight = 1f; - implicit
 	
 	public static Tundra tundra = new Tundra();
 	public static Desert desert = new Desert();

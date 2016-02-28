@@ -11,6 +11,7 @@ import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.processes.MapFactory;
+import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.utils.Cube;
 import schemmer.hexagon.utils.Log;
 
@@ -208,6 +209,18 @@ public class Client {
 			out.writeInt(field.getY());
 			out.writeInt(fieldEnemy.getX());
 			out.writeInt(fieldEnemy.getY());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void moveTo(Hexagon hex, Unit u){
+		try{
+			out.writeUTF("move");
+			out.writeInt(u.getField().getX());
+			out.writeInt(u.getField().getY());
+			out.writeInt(hex.getX());
+			out.writeInt(hex.getY());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

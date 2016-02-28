@@ -106,16 +106,15 @@ public class SimplexNoise {
 		    return 70.0 * (n0 + n1 + n2);
 	  }
 	
-	  // Inner class to speed upp gradient computations
+	  // Inner class to speed up gradient computations
 	  private static class Grad
 	  {
-		    double x, y, z, w;
+		    double x, y;
 		
 		    Grad(double x, double y, double z)
 		    {
 		      this.x = x;
 		      this.y = y;
-		      this.z = z;
 		    }
 	  }
 	  

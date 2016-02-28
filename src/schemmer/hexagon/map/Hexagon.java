@@ -302,16 +302,6 @@ public class Hexagon {
 		return biome;
 	}
 	
-	public boolean moveTo(Hexagon hex){
-		if(hex.getType().isMoveable()){
-			hex.moveTo(this.unit);
-			this.unit.moved(hex.getMovementCosts());
-			this.unit = null;
-			return true;
-		}
-		return false;
-	}
-	
 	public static boolean moveUnitTo(Unit u, Hexagon to){
 		if(to.getType().isMoveable()){
 			to.moveTo(u);
@@ -324,7 +314,7 @@ public class Hexagon {
 		this.unit = u;
 		u.setField(this);
 		u.getPlayer().setRessourcesChanged(true);
-		
+
 		if(this.getBuilding() != null && this.getUnit() != null){
 			if(this.getBuilding().gettTB() > 0 && this.getUnit().isBuilder()) 
 				this.unit.setState(UnitState.STATE_BUILDING);
@@ -333,8 +323,11 @@ public class Hexagon {
 		}else if (this.getUnit() != null){
 			this.unit.setState(UnitState.STATE_NONE);
 		}
+		if(!Main.isLocal){
+			main.getClient().moveTo(this, u);
+		}
 	}
-
+	
 	public boolean isMoveable(){
 		return type.isMoveable();
 	}

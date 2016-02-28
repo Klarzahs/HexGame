@@ -23,7 +23,7 @@ public class Server extends Main{
 	private int maxAICount;
 	private int clientReady = 0;
 	
-	private final static int PLAYER_COUNT = 2;
+	private final static int PLAYER_COUNT = 1;
 	private final static int AI_COUNT = 0;
 	
 	private ServerWindow window;
@@ -88,17 +88,6 @@ public class Server extends Main{
 		}
 	}
 	
-	@Deprecated
-	private void sendMap(){
-		byte message[] = mh.getMapAsByte();
-		for(int i = 0; i < clients.size(); i++){
-			clients.get(i).send("map");
-			clients.get(i).writeInt(mh.RADIUS);
-			clients.get(i).writeInt(message.length);
-			clients.get(i).write(message);
-		}
-	}
-	
 	public void sendPlayers(){
 		for(int i = 0; i < clients.size(); i++){
 			for(int p = 0; p < (maxPlayerCount + maxAICount); p++){
@@ -129,7 +118,7 @@ public class Server extends Main{
 	
 	public void clientReady(){
 		clientReady++;
-		log("Client is ready");
+		log("Client is ready: "+ clientReady);
 	}
 	
 	private void createUI(){
@@ -143,7 +132,7 @@ public class Server extends Main{
         window.setVisible(true);
 	}
 	
-	public void attack(int x, int y, int ex, int ey){
+	public void attack(int nr, int x, int y, int ex, int ey){
 		Hexagon fhex = mh.getMap()[x][y];
 		Hexagon ehex = mh.getMap()[ex][ey];
 		Unit friend = fhex.getUnit();
@@ -156,12 +145,28 @@ public class Server extends Main{
 		float dmgToYou = enemy.getAttack() - friend.getDefense() * fhex.getMovementCosts() / 2f;
 		friend.setHealth(friend.getHealth() - (int)(dmgToYou * 10));
 		enemy.setHealth(enemy.getHealth() - (int)(dmgToEnemy * 10));
-		confirmAttack(x, y, ex, ey, dmgToYou, dmgToEnemy);
+		confirmAttack(nr, x, y, ex, ey, dmgToYou, dmgToEnemy);
 	}
 	
-	public void confirmAttack(int x, int y, int ex, int ey, float dmgToYou, float dmgToEnemy){
+	public void confirmAttack(int nr, int x, int y, int ex, int ey, float dmgToYou, float dmgToEnemy){
 		for(int i = 0; i < clients.size(); i++){
-			clients.get(i).confirmAttack(x, y, ex, ey, dmgToYou, dmgToEnemy);
+			if(i != nr)
+				clients.get(i).confirmAttack(x, y, ex, ey, dmgToYou, dmgToEnemy);
+		}
+	}
+	
+	public void move(int nr, int fx, int fy, int tx, int ty){
+		Hexagon from = mh.getMap()[fx][fy];
+		Hexagon to = mh.getMap()[tx][ty];
+		Unit u = from.getUnit();
+		to.moveTo(u);
+		confirmMove(nr, fx, fy, tx, ty);
+	}
+	
+	public void confirmMove(int nr, int fx, int fy, int tx, int ty){
+		for(int i = 0; i < clients.size(); i++){
+			if(i != nr)
+				clients.get(i).confirmMove(fx, fy, tx, ty);
 		}
 	}
 }

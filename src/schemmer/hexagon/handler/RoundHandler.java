@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.player.PlayerColor;
 import schemmer.hexagon.server.Client;
 import schemmer.hexagon.server.Server;
 import schemmer.hexagon.utils.Log;
@@ -39,7 +38,7 @@ public class RoundHandler {
 	}
 	
 	public void createAllPlayers(int playerCount, int AIcount){
-		if(!main.isLocal){
+		if(!Main.isLocal){
 			client.setPlayerCount();												//fetch player/AI count from server
 			client.getPlayersFromServer();
 			main.receivedPlayers = true;
@@ -67,7 +66,7 @@ public class RoundHandler {
 	}
 	
 	public void nextPlayer(){
-		if(!main.isLocal) {
+		if(!Main.isLocal) {
 			client.nextPlayer();
 		}else{
 			mh.resetMarked();
@@ -89,7 +88,7 @@ public class RoundHandler {
 	}
 	
 	public int getCurrentRound(){
-		if(!main.isLocal) return client.getCurrentRound();
+		if(!Main.isLocal) return client.getCurrentRound();
 		return currentRound;
 	}
 	
@@ -120,7 +119,6 @@ public class RoundHandler {
 	}
 	
 	public void addServerCreatedPlayer(int i, int x, int y){
-		PlayerColor color = new PlayerColor(i);
 		boolean isAi = false;
 		if(i > playerCount) isAi = true;
 		Player player = new Player(isAi, i, main.getMH(), x, y);

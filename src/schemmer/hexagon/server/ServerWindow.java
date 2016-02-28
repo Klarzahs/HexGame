@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class ServerWindow extends JFrame{
+	private static final long serialVersionUID = 100L;
 	JTextArea textArea = new JTextArea("Server Output:");
 	JScrollPane scrollPane = new JScrollPane(textArea);
 	JPanel panel = new JPanel(new BorderLayout());

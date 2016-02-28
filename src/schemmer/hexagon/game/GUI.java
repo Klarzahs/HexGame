@@ -3,6 +3,7 @@ package schemmer.hexagon.game;
 import javax.swing.JFrame;
 
 public class GUI extends JFrame{
+	private static final long serialVersionUID = 102L;
 	private int width, height;
 	private Screen screen;
 	
@@ -32,5 +33,11 @@ public class GUI extends JFrame{
 		return screen;
 	}
 	
+	public int getWidth(){
+		return width;
+	}
 	
+	public int getHeight(){
+		return height;
+	}
 }
