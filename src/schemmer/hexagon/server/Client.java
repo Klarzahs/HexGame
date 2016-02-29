@@ -76,8 +76,11 @@ public class Client {
 	}
 
 	public void nextPlayer() {
-		// TODO Auto-generated method stub
-		
+		try{
+			out.writeUTF("nextPlayer");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	public int getCurrentRound() {
@@ -216,7 +219,6 @@ public class Client {
 	
 	public void moveTo(Hexagon before, Hexagon after){
 		try{
-			main.getGUI().getScreen().setDebug(before.getX()+" "+before.getY());
 			out.writeUTF("move");
 			out.writeInt(before.getX());
 			out.writeInt(before.getY());

@@ -27,12 +27,18 @@ public class ClientThread extends Thread{
 			while(true){
 				if(in.available() > 0){
 					message = in.readUTF();
-					if(message.equals("confirmAttack"))
+					if(message.equals("attackConfirm"))
 						confirmAttack(in.readInt(), in.readInt(),in.readInt(), in.readInt(), in.readFloat(), in.readFloat());
-					if(message.equals("confirmMove"))
+					if(message.equals("moveConfirm"))
 						confirmMove(in.readInt(), in.readInt(),in.readInt(), in.readInt());
+					if(message.equals("moveDecline"))
+						declineMove(in.readInt(), in.readInt(),in.readInt(), in.readInt());
+					if(message.equals("nextPlayer"))
+						nextPlayer();
+				} else{
+					ClientThread.sleep(50);
 				}
-				Log.d("CThread: Waiting for message");
+				ClientThread.yield();
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -58,9 +64,25 @@ public class ClientThread extends Thread{
 	}
 	
 	public void confirmMove(int fx, int fy, int tx, int ty){
+		Log.d("received confirm");
 		Hexagon from = client.getMain().getMH().getMap()[fx][fy];
 		Hexagon to = client.getMain().getMH().getMap()[tx][ty];
 		Unit u = from.getUnit();
-		to.moveTo(u);
+		Log.d("Unit is "+(u != null));
+		to.moveToLocal(u);
+		from.unitMoved();
+	}
+	
+	//TODO: fix movement cost
+	public void declineMove(int fx, int fy, int tx, int ty){
+		Hexagon from = client.getMain().getMH().getMap()[fx][fy];
+		Hexagon to = client.getMain().getMH().getMap()[tx][ty];
+		Unit u = to.getUnit();
+		from.moveTo(u);
+		to.unitMoved();
+	}
+	
+	public void nextPlayer(){
+		client.getMain().getRH().nextPlayerLocal();
 	}
 }

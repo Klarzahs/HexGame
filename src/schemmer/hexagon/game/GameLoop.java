@@ -73,14 +73,16 @@ public class GameLoop extends Thread{
 	}
 	
 	private void moveScreen(){
-		Point p = MouseInfo.getPointerInfo().getLocation();
-		double x = p.getX();
-		double y = p.getY();
-		if(!screen.isCursorInIconArea(x, y)){
-			if (x < 200) screen.moveLeft();
-			if (x > Screen.WIDTH - 200) screen.moveRight();
-			if (y < 200) screen.moveUp();
-			if (y > Screen.HEIGHT - 200) screen.moveDown();
+		if(mh.getMain().hasFocus()){
+			Point p = MouseInfo.getPointerInfo().getLocation();
+			double x = p.getX();
+			double y = p.getY();
+			if(!screen.isCursorInIconArea(x, y)){
+				if (x < 200) screen.moveLeft();
+				if (x > Screen.WIDTH - 200) screen.moveRight();
+				if (y < 200) screen.moveUp();
+				if (y > Screen.HEIGHT - 200) screen.moveDown();
+			}
 		}
 	}
 	

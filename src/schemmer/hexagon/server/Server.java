@@ -15,6 +15,7 @@ import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.utils.Log;
 
 public class Server extends Main{
 	private ServerSocket serverSocket;
@@ -23,7 +24,7 @@ public class Server extends Main{
 	private int maxAICount;
 	private int clientReady = 0;
 	
-	private final static int PLAYER_COUNT = 1;
+	private final static int PLAYER_COUNT = 2;
 	private final static int AI_COUNT = 0;
 	
 	private ServerWindow window;
@@ -48,7 +49,7 @@ public class Server extends Main{
 		sendPlayerCount();
 		sendPlayers();
 		
-		while(clientReady < maxPlayerCount){}		// wait
+		while(!clientsReady()){}		// wait
 		rh.startRound();
 	}
 
@@ -156,12 +157,19 @@ public class Server extends Main{
 	}
 	
 	public void move(int nr, int fx, int fy, int tx, int ty){
-		log("move: "+fx+" "+fy+" to "+tx+" "+ty+" ("+nr+")");
-		Hexagon from = mh.getMap()[fx][fy];
-		Hexagon to = mh.getMap()[tx][ty];
-		Unit u = from.getUnit();
-		to.moveTo(u);
-		confirmMove(nr, fx, fy, tx, ty);
+		if(clientsReady()){
+			try{
+				log("move: "+fx+" "+fy+" to "+tx+" "+ty+" ("+nr+")");
+				Hexagon from = mh.getMap()[fx][fy];
+				Hexagon to = mh.getMap()[tx][ty];
+				Unit u = from.getUnit();
+				to.moveTo(u);
+				confirmMove(nr, fx, fy, tx, ty);
+			}catch(Exception e){
+				log(e.getMessage());
+				declineMove(nr, fx, fy, tx, ty);
+			}
+		}
 	}
 	
 	public void confirmMove(int nr, int fx, int fy, int tx, int ty){
@@ -169,5 +177,20 @@ public class Server extends Main{
 			if(i != nr)
 				clients.get(i).confirmMove(fx, fy, tx, ty);
 		}
+	}
+	
+	public void declineMove(int nr, int fx, int fy, int tx, int ty){
+		clients.get(nr).declineMove(fx, fy, tx, ty);
+	}
+	
+	public void nextPlayer(int nr){
+		for(int i = 0; i < clients.size(); i++){
+			if(i != nr)
+				clients.get(i).nextPlayer();
+		}
+	}
+	
+	private boolean clientsReady(){
+		return (clientReady >= maxPlayerCount);
 	}
 }

@@ -9,6 +9,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -28,7 +30,7 @@ import schemmer.hexagon.player.Player;
 import schemmer.hexagon.server.Client;
 import schemmer.hexagon.utils.Log;
 
-public class Main implements MouseListener, MouseMotionListener, KeyListener{
+public class Main implements MouseListener, MouseMotionListener, KeyListener, WindowStateListener{
 
 	private GUI gui;
 	protected GameLoop gl;
@@ -51,6 +53,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private Cursor rightClick, normalClick, leftClick;
 	BufferedImage rightClickImage, normalClickImage, leftClickImage;
 	private UIHandler uih;
+	private boolean hasFocus = true;
 
 	//TODO: main etc linker class !
 
@@ -76,6 +79,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 			while(!receivedPlayers){}
 
 			client.receivedPlayers();
+			client.startListening();
 		}else{
 
 			eh = new EntityHandler();
@@ -316,7 +320,20 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener{
 	private boolean inputAllowed(){
 		if(isLocal || receivedPlayers)
 			return true;
-		Log.d("Input is not allowed "+isLocal+" "+receivedPlayers);
 		return false;
+	}
+
+	@Override
+	public void windowStateChanged(WindowEvent e) {
+		if (e.getNewState() == WindowEvent.WINDOW_LOST_FOCUS) {
+			hasFocus = false;
+        }else if(e.getNewState() == WindowEvent.WINDOW_GAINED_FOCUS){
+        	hasFocus = true;
+        }
+		e.getWindow().setVisible(hasFocus);
+	}
+	
+	public boolean hasFocus(){
+		return hasFocus;
 	}
 }

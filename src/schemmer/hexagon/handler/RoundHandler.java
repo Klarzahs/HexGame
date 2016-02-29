@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.server.Client;
-import schemmer.hexagon.server.Server;
 import schemmer.hexagon.utils.Log;
 
 public class RoundHandler {
@@ -68,15 +67,16 @@ public class RoundHandler {
 	public void nextPlayer(){
 		if(!Main.isLocal) {
 			client.nextPlayer();
-		}else{
-			mh.resetMarked();
-			getCurrentPlayer().refreshAll();
-			currentPlayer += 1;
-			if(currentPlayer == playerCount)
-				startRound();
 		}
-		if(main instanceof Server)
-			((Server)main).nextPlayer();
+		nextPlayerLocal();
+	}
+	
+	public void nextPlayerLocal(){
+		mh.resetMarked();
+		getCurrentPlayer().refreshAll();
+		currentPlayer += 1;
+		if(currentPlayer == playerCount)
+			startRound();
 	}
 
 	public void quicksave(){
@@ -101,6 +101,7 @@ public class RoundHandler {
 	}
 	
 	public Player getPlayer(int i){
+		if(players.size() < i) return null;
 		return players.get(i);
 	}
 	

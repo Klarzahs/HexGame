@@ -312,6 +312,15 @@ public class Hexagon {
 	
 	public void moveTo(Unit u){
 		Hexagon before = u.getField();
+		moveToLocal(u);
+		
+		// send info to server
+		if(!Main.isLocal){
+			main.getClient().moveTo(before, this);
+		}
+	}
+	
+	public void moveToLocal(Unit u){
 		// move unit locally
 		this.unit = u;
 		u.setField(this);
@@ -324,10 +333,6 @@ public class Hexagon {
 				this.unit.setState(UnitState.STATE_NONE);
 		}else if (this.getUnit() != null){
 			this.unit.setState(UnitState.STATE_NONE);
-		}
-		// send info to server
-		if(!Main.isLocal){
-			main.getClient().moveTo(before, this);
 		}
 	}
 	

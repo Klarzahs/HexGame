@@ -45,8 +45,13 @@ public class ServerThread extends Thread{
 						server.attack(nr, in.readInt(), in.readInt(), in.readInt(), in.readInt());
 					if(message.equals("move"))
 						server.move(nr, in.readInt(), in.readInt(), in.readInt(), in.readInt());
+					if(message.equals("nextPlayer"))
+						server.nextPlayer(nr);
 					message = null;
+				} else{
+					ServerThread.sleep(50);
 				}
+				ServerThread.yield();
 			}
 				
 		}catch(Exception e){
@@ -80,11 +85,24 @@ public class ServerThread extends Thread{
 	}
 	
 	public void confirmMove(int fx, int fy, int tx, int ty){
+		server.log(nr + "move Confirm");
 		send("moveConfirm");
 		writeInt(fx);
 		writeInt(fy);
 		writeInt(tx);
 		writeInt(ty);
+	}
+	
+	public void declineMove(int fx, int fy, int tx, int ty){
+		send("moveDecline");
+		writeInt(fx);
+		writeInt(fy);
+		writeInt(tx);
+		writeInt(ty);
+	}
+	
+	public void nextPlayer(){
+		send("nextPlayer");
 	}
 	
 	public void send(String s){
