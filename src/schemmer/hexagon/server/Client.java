@@ -68,6 +68,7 @@ public class Client {
 				int i = in.readInt();
 				int x = in.readInt();
 				int y = in.readInt();
+				Log.d("Received player("+i+"): "+x+" "+y);
 				main.getRH().addServerCreatedPlayer(i, x, y);
 			}
 		}catch(IOException e){
@@ -219,11 +220,13 @@ public class Client {
 	
 	public void moveTo(Hexagon before, Hexagon after){
 		try{
-			out.writeUTF("move");
-			out.writeInt(before.getX());
-			out.writeInt(before.getY());
-			out.writeInt(after.getX());
-			out.writeInt(after.getY());
+			if(before != null && after != null){
+				out.writeUTF("move");
+				out.writeInt(before.getX());
+				out.writeInt(before.getY());
+				out.writeInt(after.getX());
+				out.writeInt(after.getY());
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

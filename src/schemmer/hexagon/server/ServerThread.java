@@ -15,6 +15,8 @@ public class ServerThread extends Thread{
 	
 	private int nr;
 	
+	private boolean clientReady = false;
+	
 	public ServerThread(Server server, Socket sck, int i){
 		try{
 			this.server = server;
@@ -39,8 +41,10 @@ public class ServerThread extends Thread{
 				if(in.available() > 0){
 					message = in.readUTF();
 					server.log("Received: "+message);
-					if(message.equals("clientReady"))
-						server.clientReady();
+					if(message.equals("clientReady")){
+						server.clientReady(nr);
+						clientReady = true;
+					}
 					if(message.equals("attack"))
 						server.attack(nr, in.readInt(), in.readInt(), in.readInt(), in.readInt());
 					if(message.equals("move"))
@@ -49,7 +53,7 @@ public class ServerThread extends Thread{
 						server.nextPlayer(nr);
 					message = null;
 				} else{
-					ServerThread.sleep(50);
+					ServerThread.sleep(100);
 				}
 				ServerThread.yield();
 			}
@@ -65,6 +69,17 @@ public class ServerThread extends Thread{
 		writeInt(server.getMH().RADIUS);
 		writeInt(message.length);
 		write(message);
+	}
+	
+	public void sendPlayers(int count){
+		while(!clientReady){
+			for(int p = 0; p < count; p++){
+				sendPlayer(server.getRH().getPlayer(p), p);
+			}
+			try {
+				ServerThread.sleep(50);
+			} catch (InterruptedException e) {}
+		}
 	}
 	
 	public void sendPlayer(Player pl, int i){

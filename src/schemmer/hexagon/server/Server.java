@@ -91,9 +91,7 @@ public class Server extends Main{
 	
 	public void sendPlayers(){
 		for(int i = 0; i < clients.size(); i++){
-			for(int p = 0; p < (maxPlayerCount + maxAICount); p++){
-				clients.get(i).sendPlayer(rh.getPlayer(p), p);
-			}
+			clients.get(i).sendPlayers(maxPlayerCount + maxAICount);
 		}
 	}
 	
@@ -117,9 +115,9 @@ public class Server extends Main{
 		clients.get(i).writeInt(maxAICount);
 	}
 	
-	public void clientReady(){
+	public void clientReady(int nr){
 		clientReady++;
-		log("Client is ready: "+ clientReady);
+		log("Client "+nr+" is ready: "+ clientReady);
 	}
 	
 	private void createUI(){

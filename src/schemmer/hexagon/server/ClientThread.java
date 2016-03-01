@@ -36,7 +36,7 @@ public class ClientThread extends Thread{
 					if(message.equals("nextPlayer"))
 						nextPlayer();
 				} else{
-					ClientThread.sleep(50);
+					ClientThread.sleep(100);
 				}
 				ClientThread.yield();
 			}

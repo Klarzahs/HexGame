@@ -10,7 +10,7 @@ import schemmer.hexagon.utils.Log;
 public class RoundHandler {
 	private ArrayList<Player> players = new ArrayList<Player>();
 	private MapHandler mh;
-	private int playerCount, currentPlayer, currentRound, AIcount;		// TODO: AIcount
+	private int playerCount = -1, currentPlayer, currentRound, AIcount;		// TODO: AIcount
 	private Main main;
 	
 	private Client client;
@@ -38,8 +38,14 @@ public class RoundHandler {
 	
 	public void createAllPlayers(int playerCount, int AIcount){
 		if(!Main.isLocal){
-			client.setPlayerCount();												//fetch player/AI count from server
-			client.getPlayersFromServer();
+			while(this.getPlayerCount() == -1 ) 
+				client.setPlayerCount();												// fetch player/AI count from server
+			Log.d("Set playerCount");
+			while(players.size() < this.getPlayerCount()){
+				/* wait till actually received */
+				client.getPlayerFromServer();
+			}	
+			
 			main.receivedPlayers = true;
 		}else{
 			if(playerCount < 1)
@@ -101,7 +107,7 @@ public class RoundHandler {
 	}
 	
 	public Player getPlayer(int i){
-		if(players.size() < i) return null;
+		if(players.size() == 0 || players.size() < i) return null;
 		return players.get(i);
 	}
 	
@@ -120,6 +126,11 @@ public class RoundHandler {
 	}
 	
 	public void addServerCreatedPlayer(int i, int x, int y){
+		// check if already there
+		if(players.size() != 0 && players.size() > i && players.get(i) != null){
+			Log.d("Already has player("+i+")");
+			return;
+		}
 		boolean isAi = false;
 		if(i > playerCount) isAi = true;
 		Player player = new Player(isAi, i, main.getMH(), x, y);

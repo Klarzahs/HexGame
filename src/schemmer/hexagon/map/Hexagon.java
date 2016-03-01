@@ -35,6 +35,7 @@ import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.units.UnitState;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
+import schemmer.hexagon.utils.Log;
 import schemmer.hexagon.utils.Point;
 
 public class Hexagon {
@@ -316,6 +317,7 @@ public class Hexagon {
 		
 		// send info to server
 		if(!Main.isLocal){
+			Log.d("Sending move to server");
 			main.getClient().moveTo(before, this);
 		}
 	}
