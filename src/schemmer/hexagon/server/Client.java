@@ -23,31 +23,35 @@ public class Client {
 	private DataInputStream in;
 	private Main main;
 	private ClientThread thread;
-	
+
 	public Client(Main main){
 		String serverName = "localhost";
 		int port = 5555;
-		
+
 		this.main = main;
-		
-	    try
-	    {
-	       client = new Socket(serverName, port);
-	       
-	       outToServer = client.getOutputStream();
-	       out = new DataOutputStream(outToServer);
-	       
-	       write("Hello from "+ client.getLocalSocketAddress());
-	       inFromServer = client.getInputStream();
-	       in = new DataInputStream(inFromServer);
-	       
-	       thread = new ClientThread(this, out, in);
-	    }catch(IOException e)
-	    {
-	       e.printStackTrace();
-	    }
+
+		try
+		{
+			client = new Socket(serverName, port);
+
+			client.setSendBufferSize( 256 * 1024 );
+			client.setReceiveBufferSize( 256 * 1024 );
+			client.setTcpNoDelay(true);
+
+			outToServer = client.getOutputStream();
+			out = new DataOutputStream(outToServer);
+
+			write("Hello from "+ client.getLocalSocketAddress());
+			inFromServer = client.getInputStream();
+			in = new DataInputStream(inFromServer);
+
+			thread = new ClientThread(this, client);
+		}catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void write(String s){
 		try {
 			out.writeUTF(s);
@@ -61,7 +65,7 @@ public class Client {
 			getPlayerFromServer();
 		}
 	}
-	
+
 	public void getPlayerFromServer(){
 		try{
 			if(in.available() > 0 && in.readUTF().equals("player")){
@@ -77,11 +81,7 @@ public class Client {
 	}
 
 	public void nextPlayer() {
-		try{
-			out.writeUTF("nextPlayer");
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		thread.sendNextPlayer();
 	}
 
 	public int getCurrentRound() {
@@ -90,24 +90,9 @@ public class Client {
 	}
 
 	public int setPlayerCount() {
-		boolean readSuccess = false;
-		try{
-			while(!readSuccess){
-				if(in.available() > 0){
-					if(in.readUTF().equals("playerCount")){
-						main.getRH().setMaxPlayers(in.readInt());
-						main.getRH().setMaxAIs(in.readInt());
-						readSuccess = true;
-					}
-				}
-			}
-		}catch(IOException e){
-			Log.d("IO Error");
-			e.printStackTrace();
-		}
-		return 0;
+		return thread.setPlayerCount();
 	}
-	
+
 	public void receivedPlayers(){
 		try{
 			out.writeUTF("clientReady");
@@ -117,56 +102,49 @@ public class Client {
 	}
 
 	public Hexagon[][] getMapFromServer(Main main) {
-		boolean received = false;
-		byte[] message = new byte[0];
+		String message = "";
 		Hexagon[][] map;
 		int radius = -1;
-		try{
-			while(!received){
-				if(in.available() > 0){
-					//while(true){							  // query until you get the map message
-					if(in.readUTF().equals("map")){
-						radius = in.readInt();
-						int length = in.readInt();                    // read length of incoming message
-						if(length>0) {
-							message = new byte[length];
-							in.readFully(message, 0, message.length); // read the message
-							received = true;
-						}
-					}
-				}
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		if(radius == -1){
+		message = thread.getMapStringFromServer();
+		radius = Integer.parseInt(message.split("/")[0]);
+		if(message.equals("") || radius == -1){
 			System.out.println("Failed to get mapradius");
 			return null;
 		}
 		
+		String[] mapPartStrings = message.split(",");
+		String[] hexagonChars;
+		for(int i = 0; i < mapPartStrings.length - 1; i++){
+			hexagonChars = mapPartStrings[i].split(".");
+			for(int j = 0; j < hexagonChars.length - 1; j++){
+				if(!hexagonChars[j].equals(" "))		// null hexagon
+					map[i][j] = 
+			}
+		}
+
 		//convert message to map
 		map = new Hexagon[radius * 2 + 1][radius * 2 + 1];
 		for (int q = -radius; q <= radius; q++) {
 			int r1 = Math.max(-radius, -q - radius);
-		    int r2 = Math.min(radius, -q + radius);
-		    for (int r = r1; r <= r2; r++) {
-		    	int x = r + radius;
-		    	int y = q + radius + Math.min(0, r);
-		    	map[x][y] = new Hexagon(main, new Cube(q, -q-r, r), x, y);
-		    	setHexType(map[x][y], message[(radius * 2 + 1) * x + y]);
-		    }
+			int r2 = Math.min(radius, -q + radius);
+			for (int r = r1; r <= r2; r++) {
+				int x = r + radius;
+				int y = q + radius + Math.min(0, r);
+				map[x][y] = new Hexagon(main, new Cube(q, -q-r, r), x, y);
+				setHexType(map[x][y], message[(radius * 2 + 1) * x + y]);
+			}
 		}
 		main.receivedMap = true;
 		return map;
 	}
-	
-	private void setHexType(Hexagon hex, byte b){
+
+	private void setHexType(Hexagon hex, char c){
 		hex.setType(HexTypeInt.TYPE_FIELD.getValue());
-		if(b >= 20){
+		if(c >= 20){
 			hex.setType(HexTypeInt.TYPE_HILL.getValue());
-			b = (byte) (b - 20);
+			c = (char) (c - 20);
 		}
-		switch(b){
+		switch(c){
 		case 0:
 			hex.setBiome(MapFactory.desert);
 			break;
@@ -205,7 +183,7 @@ public class Client {
 			break;
 		}
 	}
-	
+
 	public void attack(Hexagon field, Hexagon fieldEnemy){
 		try{
 			out.writeUTF("attack");
@@ -217,7 +195,7 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void moveTo(Hexagon before, Hexagon after){
 		try{
 			if(before != null && after != null){
@@ -231,11 +209,11 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void startListening(){
 		thread.start();
 	}
-	
+
 	public Main getMain(){
 		return main;
 	}

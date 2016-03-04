@@ -449,22 +449,22 @@ public class Hexagon {
 		return null;
 	}
 	
-	public Byte getAsByte(){
+	public char getAsChar(){
 		byte b = 0;
 		if(type != null && type.getIndex() == HexTypeInt.TYPE_HILL.getValue()) b = 20; 
-		if(biome instanceof Desert) return (byte) (0 + b);
-		if(biome instanceof Forest) return (byte) (1 + b);
-		if(biome instanceof GrassDesert) return (byte) (2 + b);
-		if(biome instanceof RainForest) return (byte) (3 + b);
-		if(biome instanceof Savanna) return (byte) (4 + b);
-		if(biome instanceof SeasonalForest) return (byte) (5 + b);
-		if(biome instanceof Swamp) return (byte) (6 + b);
-		if(biome instanceof Taiga) return (byte) (7 + b);
-		if(biome instanceof Tundra) return (byte) (8 + b);
-		if(type.getIndex() == HexTypeInt.TYPE_DEEPWATER.getValue()) return (byte) (9 + b);
-		if(type.getIndex() == HexTypeInt.TYPE_WATER.getValue()) return (byte) (10 + b);
-		if(type.getIndex() == HexTypeInt.TYPE_MOUNTAIN.getValue()) return (byte) (11 + b);
-		return -1;
+		if(biome instanceof Desert) return (char) (0 + b);
+		if(biome instanceof Forest) return (char) (1 + b);
+		if(biome instanceof GrassDesert) return (char) (2 + b);
+		if(biome instanceof RainForest) return (char) (3 + b);
+		if(biome instanceof Savanna) return (char) (4 + b);
+		if(biome instanceof SeasonalForest) return (char) (5 + b);
+		if(biome instanceof Swamp) return (char) (6 + b);
+		if(biome instanceof Taiga) return (char) (7 + b);
+		if(biome instanceof Tundra) return (char) (8 + b);
+		if(type.getIndex() == HexTypeInt.TYPE_DEEPWATER.getValue()) return (char) (9 + b);
+		if(type.getIndex() == HexTypeInt.TYPE_WATER.getValue()) return (char) (10 + b);
+		if(type.getIndex() == HexTypeInt.TYPE_MOUNTAIN.getValue()) return (char) (11 + b);
+		return (char)-1;
 	}
 }
 

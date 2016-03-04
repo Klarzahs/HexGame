@@ -110,9 +110,8 @@ public class Server extends Main{
 	}
 	
 	public void sendPlayerCount(int i){
-		clients.get(i).send("playerCount");
-		clients.get(i).writeInt(maxPlayerCount);
-		clients.get(i).writeInt(maxAICount);
+		String m = "playerCount,"+maxPlayerCount+","+maxAICount;
+		clients.get(i).flush(m);
 	}
 	
 	public void clientReady(int nr){
@@ -131,7 +130,12 @@ public class Server extends Main{
         window.setVisible(true);
 	}
 	
-	public void attack(int nr, int x, int y, int ex, int ey){
+	public void attack(int nr, String m){
+		String[] arr = m.split(",");
+		int x = Integer.parseInt(arr[1]);
+		int y = Integer.parseInt(arr[2]);
+		int ex = Integer.parseInt(arr[3]);
+		int ey = Integer.parseInt(arr[4]);
 		Hexagon fhex = mh.getMap()[x][y];
 		Hexagon ehex = mh.getMap()[ex][ey];
 		Unit friend = fhex.getUnit();
@@ -154,8 +158,13 @@ public class Server extends Main{
 		}
 	}
 	
-	public void move(int nr, int fx, int fy, int tx, int ty){
+	public void move(int nr, String m){
 		if(clientsReady()){
+			String[] arr = m.split(",");
+			int fx = Integer.parseInt(arr[1]);
+			int fy = Integer.parseInt(arr[2]);
+			int tx = Integer.parseInt(arr[3]);
+			int ty = Integer.parseInt(arr[4]);
 			try{
 				log("move: "+fx+" "+fy+" to "+tx+" "+ty+" ("+nr+")");
 				Hexagon from = mh.getMap()[fx][fy];

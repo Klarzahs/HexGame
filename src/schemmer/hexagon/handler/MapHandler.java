@@ -52,6 +52,7 @@ public class MapHandler {
 	
 	public MapHandler(Main main, Client client){
 		this.main = main;
+		Log.d("Querying map..");
 		map = client.getMapFromServer(main);
 	}
 	
@@ -365,13 +366,16 @@ public class MapHandler {
 		return main;
 	}
 	
-	public byte[] getMapAsByte(){
-		byte[] result = new byte[map.length*map[0].length];
+	public String getMapAsChar(){
+		String result = "";
 		for(int r = 0; r < map.length; r++){ //row
 			for(int c = 0; c < map[r].length; c++){ //column
 				if(map[r][c] != null)
-					result[(r * map.length + c)] = map[r][c].getAsByte();;
+					result += map[r][c].getAsChar()+".";
+				else
+					result += " ";
 			}
+			result += ",";
 		}
 		return result;
 	}
@@ -380,7 +384,7 @@ public class MapHandler {
 		for(int r = 0; r < map.length; r++){
 			for(int c = 0; c < map[r].length; c++){
 				if(map[r][c] != null){
-					server.append(map[r][c].getAsByte() + " ");
+					server.append(map[r][c].getAsChar() + " ");
 				}
 				else
 					server.append("  ");
@@ -393,7 +397,7 @@ public class MapHandler {
 		for(int r = 0; r < map.length; r++){
 			for(int c = 0; c < map[r].length; c++){
 				if(map[r][c] != null)
-					System.out.print(map[r][c].getAsByte() + " ");
+					System.out.print(map[r][c].getAsChar() + " ");
 				else
 					System.out.print("  ");
 			}
