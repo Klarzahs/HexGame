@@ -15,7 +15,6 @@ import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
-import schemmer.hexagon.utils.Log;
 
 public class Server extends Main{
 	private ServerSocket serverSocket;
@@ -49,6 +48,7 @@ public class Server extends Main{
 		sendPlayerCount();
 		sendPlayers();
 		
+		
 		while(!clientsReady()){}		// wait
 		rh.startRound();
 	}
@@ -61,9 +61,11 @@ public class Server extends Main{
 		while(nr < maxPlayerCount){
 			try{
 				Socket client = serverSocket.accept();
-				clients.add(new ServerThread(this, client, nr));
-				nr++;
+				ServerThread t = new ServerThread(this, client, nr);
+				clients.add(t);
 				log("Nr "+nr +" connected!");
+				t.start();
+				nr++;
 			}catch(SocketTimeoutException e){
 			}catch(Exception e){
 				e.printStackTrace();
@@ -194,6 +196,12 @@ public class Server extends Main{
 		for(int i = 0; i < clients.size(); i++){
 			if(i != nr)
 				clients.get(i).nextPlayer();
+		}
+	}
+	
+	private void startClientListener(){
+		for(int i = 0; i < clients.size(); i++){
+			clients.get(i).start();
 		}
 	}
 	

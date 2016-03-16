@@ -124,16 +124,13 @@ public class ClientThread extends Thread{
 	}
 
 	public int setPlayerCount() {
-		boolean readSuccess = false;
 		try{
-			while(!readSuccess){
-				String s = in.readLine();
-				if(s.equals("playerCount")){
-					String[] arr = s.split(",");
-					client.getMain().getRH().setMaxPlayers(Integer.parseInt(arr[1]));
-					client.getMain().getRH().setMaxAIs(Integer.parseInt(arr[2]));
-					readSuccess = true;
-				}
+			String s = in.readLine();
+			String[] arr = s.split(",");
+			if(arr[0].equals("playerCount")){
+				client.getMain().getRH().setMaxPlayers(Integer.parseInt(arr[1]));
+				client.getMain().getRH().setMaxAIs(Integer.parseInt(arr[2]));
+				System.out.println("Playercount set");
 			}
 		}catch(IOException e){
 			Log.d("IO Error");
@@ -146,15 +143,34 @@ public class ClientThread extends Thread{
 		try{
 			String s = in.readLine();
 			Log.d(s);
-			if(s.substring(0, "map".length()).equals("map")){
-				String arr[] = s.split(",");
-				int radius = Integer.parseInt(arr[1]);
-				String mapString = in.readLine();
-				return radius + "/" + mapString;
-			}
+			return s;
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		return "";
+	}
+
+	public boolean getPlayerFromServer(){
+		try{
+			String m = in.readLine();
+			String[] arr = m.split(",");
+			Log.d(m);
+
+			if(arr[0].equals("player")){
+				int i = Integer.parseInt(arr[1]);
+				int x = Integer.parseInt(arr[2]);
+				int y = Integer.parseInt(arr[3]);
+				client.getMain().getRH().addServerCreatedPlayer(i, x, y);
+				return true;
+			}
+			return false;
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public void flush(String s){
+		out.println(s);
 	}
 }

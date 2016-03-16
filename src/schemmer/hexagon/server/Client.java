@@ -37,47 +37,24 @@ public class Client {
 			client.setSendBufferSize( 256 * 1024 );
 			client.setReceiveBufferSize( 256 * 1024 );
 			client.setTcpNoDelay(true);
+			
+			thread = new ClientThread(this, client);
 
 			outToServer = client.getOutputStream();
 			out = new DataOutputStream(outToServer);
 
-			write("Hello from "+ client.getLocalSocketAddress());
+			thread.flush("Hello from "+ client.getLocalSocketAddress());
 			inFromServer = client.getInputStream();
 			in = new DataInputStream(inFromServer);
-
-			thread = new ClientThread(this, client);
 		}catch(IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
 
-	public void write(String s){
-		try {
-			out.writeUTF(s);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void getPlayersFromServer() {
-		for(int i = 0; i < (main.getRH().getPlayerCount() + main.getRH().getAICount()); i++){
-			getPlayerFromServer();
-		}
-	}
-
-	public void getPlayerFromServer(){
-		try{
-			if(in.available() > 0 && in.readUTF().equals("player")){
-				int i = in.readInt();
-				int x = in.readInt();
-				int y = in.readInt();
-				Log.d("Received player("+i+"): "+x+" "+y);
-				main.getRH().addServerCreatedPlayer(i, x, y);
-			}
-		}catch(IOException e){
-			e.printStackTrace();
-		}
+	public void getPlayerFromServer() {
+		if(!thread.getPlayerFromServer())
+			System.out.println("Failed to get Player!");
 	}
 
 	public void nextPlayer() {
@@ -101,43 +78,31 @@ public class Client {
 		}
 	}
 
-	public Hexagon[][] getMapFromServer(Main main) {
+	public void getMapFromServer(Main main) {
 		String message = "";
-		Hexagon[][] map;
 		int radius = -1;
 		message = thread.getMapStringFromServer();
-		radius = Integer.parseInt(message.split("/")[0]);
-		if(message.equals("") || radius == -1){
-			System.out.println("Failed to get mapradius");
-			return null;
+		
+		String[] m = message.split(",");
+		
+		if(!m[0].equals("map")){
+			return;
 		}
 		
-		String[] mapPartStrings = message.split(",");
-		String[] hexagonChars;
-		for(int i = 0; i < mapPartStrings.length - 1; i++){
-			hexagonChars = mapPartStrings[i].split(".");
-			for(int j = 0; j < hexagonChars.length - 1; j++){
-				if(!hexagonChars[j].equals(" "))		// null hexagon
-					map[i][j] = 
-			}
+		radius = Integer.parseInt(m[1]);
+		if(message.equals("") || radius == -1){
+			System.out.println("Failed to get mapradius");
+			return;
 		}
-
-		//convert message to map
-		map = new Hexagon[radius * 2 + 1][radius * 2 + 1];
-		for (int q = -radius; q <= radius; q++) {
-			int r1 = Math.max(-radius, -q - radius);
-			int r2 = Math.min(radius, -q + radius);
-			for (int r = r1; r <= r2; r++) {
-				int x = r + radius;
-				int y = q + radius + Math.min(0, r);
-				map[x][y] = new Hexagon(main, new Cube(q, -q-r, r), x, y);
-				setHexType(map[x][y], message[(radius * 2 + 1) * x + y]);
-			}
-		}
+		
+		MapFactory.setMapSeed(m[2]);
+		MapFactory.setBiomeSeed(m[3]);
+		main.getMH().createHexagon(radius);
+		
 		main.receivedMap = true;
-		return map;
 	}
 
+	@Deprecated
 	private void setHexType(Hexagon hex, char c){
 		hex.setType(HexTypeInt.TYPE_FIELD.getValue());
 		if(c >= 20){
@@ -186,11 +151,12 @@ public class Client {
 
 	public void attack(Hexagon field, Hexagon fieldEnemy){
 		try{
-			out.writeUTF("attack");
-			out.writeInt(field.getX());
-			out.writeInt(field.getY());
-			out.writeInt(fieldEnemy.getX());
-			out.writeInt(fieldEnemy.getY());
+			String s = "attack,";
+			s += field.getX()+",";
+			s += field.getY()+",";
+			s += fieldEnemy.getX()+",";
+			s += fieldEnemy.getY();
+			thread.flush(s);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -199,11 +165,12 @@ public class Client {
 	public void moveTo(Hexagon before, Hexagon after){
 		try{
 			if(before != null && after != null){
-				out.writeUTF("move");
-				out.writeInt(before.getX());
-				out.writeInt(before.getY());
-				out.writeInt(after.getX());
-				out.writeInt(after.getY());
+				String s = "move,";
+				s += before.getX()+",";
+				s += before.getY()+",";
+				s += after.getX()+",";
+				s += after.getY();
+				thread.flush(s);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -217,4 +184,6 @@ public class Client {
 	public Main getMain(){
 		return main;
 	}
+
+	
 }

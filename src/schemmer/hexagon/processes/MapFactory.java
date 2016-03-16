@@ -31,8 +31,8 @@ public class MapFactory {
 	public static Taiga taiga = new Taiga();
 	public static SeasonalForest seasonalForest = new SeasonalForest();
 	
-	private static final String SEED_MAP = "77223344";
-	private static final String SEED_BIOME = "98765432";
+	private static String SEED_MAP = "77223344";
+	private static String SEED_BIOME = "98765432";
 	
 	private static float[][] noise;
 	
@@ -149,4 +149,19 @@ public class MapFactory {
 	    return simplexnoise;
 	}
 	
+	public static String getBiomeSeed(){
+		return SEED_BIOME;
+	}
+	
+	public static String getMapSeed(){
+		return SEED_MAP;
+	}
+	
+	public static void setBiomeSeed(String s){
+		SEED_BIOME = s;
+	}
+	
+	public static void setMapSeed(String s){
+		SEED_MAP = s;
+	}
 }

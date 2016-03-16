@@ -336,4 +336,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Wi
 	public boolean hasFocus(){
 		return hasFocus;
 	}
+	
+	public void setMH(MapHandler m){
+		this.mh = m;
+	}
 }

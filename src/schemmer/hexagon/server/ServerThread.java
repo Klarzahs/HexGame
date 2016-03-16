@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 import schemmer.hexagon.player.Player;
+import schemmer.hexagon.processes.MapFactory;
 
 public class ServerThread extends Thread{
 	private Server server;
@@ -37,11 +38,12 @@ public class ServerThread extends Thread{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		this.start();
+		//this.start();
 	}
 
 	@Override
 	public void run(){
+		server.log("Thread "+nr+" started");
 		String message;
 		try{
 			while(true){
@@ -62,10 +64,7 @@ public class ServerThread extends Thread{
 						this.ack();
 
 					message = null;
-				} else{
-					ServerThread.sleep(100);
-				}
-				//ServerThread.yield();
+				} 
 			}
 
 		}catch(Exception e){
@@ -74,33 +73,27 @@ public class ServerThread extends Thread{
 	}
 
 	private void sendMap(){
-		String message = server.getMH().getMapAsChar();
+		//String message = server.getMH().getMapAsChar();
 		String m = "map,";
-		m += server.getMH().RADIUS+"";
+		m += server.getMH().RADIUS+",";
+		m += MapFactory.getMapSeed()+",";
+		m += MapFactory.getBiomeSeed();
 		flush(m);
-		flush(message);
 	}
 
 	public void sendPlayers(int count){
-		while(!clientReady){
-			for(int p = 0; p < count; p++){
-				sendPlayer(server.getRH().getPlayer(p), p);
-			}
-			try{
-				ServerThread.sleep(50);
-			}catch(Exception e){
-				e.printStackTrace();
-			}
+		server.log("Sending players..");
+		for(int p = 0; p < count; p++){
+			sendPlayer(server.getRH().getPlayer(p), p);
 		}
 	}
 
 	public void sendPlayer(Player pl, int i){
-		// ack is handled by clientReady
-		out.write("player");
-		out.write(i);
-		out.write(pl.getStartingPosition().getX());
-		out.write(pl.getStartingPosition().getY());
-		out.flush();
+		String m = "player,";
+		m += i+",";
+		m += pl.getStartingPosition().getX()+",";
+		m += pl.getStartingPosition().getY()+"";
+		flush(m);
 	}
 
 	public void confirmAttack(int x, int y, int ex, int ey, float dmgToYou, float dmgToEnemy){

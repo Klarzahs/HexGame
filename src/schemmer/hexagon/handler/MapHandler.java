@@ -52,8 +52,9 @@ public class MapHandler {
 	
 	public MapHandler(Main main, Client client){
 		this.main = main;
+		main.setMH(this);
 		Log.d("Querying map..");
-		map = client.getMapFromServer(main);
+		client.getMapFromServer(main);
 	}
 	
 	public void update(double delta){
