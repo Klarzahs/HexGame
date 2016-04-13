@@ -38,12 +38,8 @@ public class RoundHandler {
 	
 	public void createAllPlayers(int playerCount, int AIcount){
 		if(!Main.isLocal){
-			while(this.getPlayerCount() == -1 ) 
-				client.setPlayerCount();												// fetch player/AI count from server
-			while(players.size() < this.getPlayerCount()){
-				/* wait till actually received */
-				client.getPlayerFromServer();
-			}	
+			while(this.getPlayerCount() == -1 ) {}		// fetch player/AI count from server - done implicitly
+			while(players.size() < this.getPlayerCount()){}	
 			
 			main.receivedPlayers = true;
 		}else{

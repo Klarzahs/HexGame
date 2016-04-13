@@ -54,7 +54,7 @@ public class MapHandler {
 		this.main = main;
 		main.setMH(this);
 		Log.d("Querying map..");
-		client.getMapFromServer(main);
+		//client.getMapFromServer(main); - now done implicitly in ClientFunctions messageHandling
 	}
 	
 	public void update(double delta){

@@ -3,10 +3,17 @@ package schemmer.hexagon.server;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.handler.EntityHandler;
@@ -16,120 +23,231 @@ import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
 
-public class Server extends Main{
-	private ServerSocket serverSocket;
-	private ArrayList<ServerThread> clients = new ArrayList<ServerThread>();
+public class Server extends Main implements Runnable{
 	private int maxPlayerCount;
 	private int maxAICount;
 	private int clientReady = 0;
-	
+	private int clientConnected = 0;
+
 	private final static int PLAYER_COUNT = 2;
 	private final static int AI_COUNT = 0;
-	
+
 	private ServerWindow window;
 
-	public Server(int port, int player, int ai) throws IOException
+	public final static String ADDRESS = "127.0.0.1";
+	public final static int PORT = 5555;
+	public final static long TIMEOUT = 10000;
+
+	private ServerSocketChannel serverChannel;
+	private Selector selector;
+	//private Map<SocketChannel,byte[]> dataTracking = new HashMap<SocketChannel, byte[]>();
+	private ArrayList<SocketChannel> clientChannels = new ArrayList<SocketChannel>();
+	private ServerFunctions functions = new ServerFunctions(this);
+
+	public Server(int player, int ai) throws IOException
 	{
 		createUI();
-		
-		serverSocket = new ServerSocket(port);
-		serverSocket.setSoTimeout(10000);
+
 		this.maxPlayerCount = player;
 		this.maxAICount = ai;
-
-		eh = new EntityHandler();
-		mh = new MapHandler(this);
 		
-		acceptClients();
-
-		rh = new RoundHandler(mh);
-		rh.createAllPlayers(player, ai);
-		
-		sendPlayerCount();
-		sendPlayers();
-		
-		
-		while(!clientsReady()){}		// wait
-		rh.startRound();
+		init();		//handles accepting implictly on run
 	}
 
-	
-	private void acceptClients(){
-		int nr = 0;
 
-		log("Waiting for clients..");
-		while(nr < maxPlayerCount){
-			try{
-				Socket client = serverSocket.accept();
-				ServerThread t = new ServerThread(this, client, nr);
-				clients.add(t);
-				log("Nr "+nr +" connected!");
-				t.start();
-				nr++;
-			}catch(SocketTimeoutException e){
-			}catch(Exception e){
-				e.printStackTrace();
-				log(e.getMessage());
-			}
-		}
-	}
-	
-	public void append(String s){
-		window.log(s);
-	}
-	
-	public void log(String s){
-		window.log(s);
-		window.newLine();
-	}
-	
-	public static void main (String [] args) {
-		try{
-			new Server(5555, PLAYER_COUNT, AI_COUNT);
-		}catch(Exception e){
+	private void init(){
+		log("Initializing server");
+		// We do not want to call init() twice and recreate the selector or the serverChannel.
+		if (selector != null) return;
+		if (serverChannel != null) return;
+
+		try {
+			selector = Selector.open();
+			serverChannel = ServerSocketChannel.open();
+			serverChannel.configureBlocking(false);
+			serverChannel.socket().bind(new InetSocketAddress(ADDRESS, PORT));
+
+			serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+			
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void sendPlayers(){
-		for(int i = 0; i < clients.size(); i++){
-			clients.get(i).sendPlayers(maxPlayerCount + maxAICount);
+	public void finishInit(){
+		eh = new EntityHandler();
+		mh = new MapHandler(this);
+
+		rh = new RoundHandler(mh);
+		rh.createAllPlayers(maxPlayerCount, maxAICount);
+
+		sendMaps();
+		sendPlayerCount();
+		sendPlayers();
+
+		while(!clientsReady()){}		// wait
+		rh.startRound();
+	}
+
+	@Override
+	public void run() {
+		log("Now accepting connections...");
+		try{
+			// A run the server as long as the thread is not interrupted.
+			while (!Thread.currentThread().isInterrupted()){
+				selector.select(TIMEOUT);
+
+				Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
+
+				while (keys.hasNext()){
+					SelectionKey key = keys.next();
+					keys.remove();
+
+					if (!key.isValid()){
+						continue;
+					}
+					if (key.isAcceptable()){
+						log("Accepting connection");
+						accept(key);
+					}
+					if (key.isReadable()){
+						log("Reading connection");
+						read(key);
+					}
+				}
+			}
+		} catch (IOException e){
+			e.printStackTrace();
+		} finally{
+			closeConnection();
+		}
+
+	}
+
+
+	private void closeConnection(){
+		log("Closing server down");
+		if (selector != null){
+			try {
+				selector.close();
+				serverChannel.socket().close();
+				serverChannel.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void accept(SelectionKey key) throws IOException{
+		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
+		SocketChannel socketChannel = serverSocketChannel.accept();
+		socketChannel.configureBlocking(false);
+
+		clientChannels.add(socketChannel);
+
+		socketChannel.register(selector, SelectionKey.OP_READ);
+		log("Accepted client at "+socketChannel.getRemoteAddress());
+		clientConnected++;
+		if(clientConnected == maxPlayerCount){
+			finishInit();
+		}
+	}
+
+	private void read(SelectionKey key) throws IOException{
+		SocketChannel channel = (SocketChannel) key.channel();
+		ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+		readBuffer.clear();
+		int read;
+		try {
+			read = channel.read(readBuffer);
+		} catch (IOException e) {
+			log("Reading problem, closing connection");
+			key.cancel();
+			channel.close();
+			return;
+		}
+		if (read == -1){
+			log("Nothing was there to be read, closing connection");
+			channel.close();
+			key.cancel();
+			return;
+		}
+		readBuffer.flip();
+		byte[] data = new byte[1000];
+		readBuffer.get(data, 0, read);
+		String[] stringArr = (new String(data)).split("/");
+		
+		//get the nr from the client
+		int nr = clientChannels.indexOf(channel);
+		for(int i = 0; i < stringArr.length; i++){
+			String message = stringArr[i];
+			if(message != null){
+				this.log("Received: "+message);
+				if(message.equals("clientReady"))
+					this.clientReady();
+				if(message.substring(0, "attack".length()).equals("attack"))
+					this.attack(nr, message);
+				if(message.substring(0, "move".length()).equals("move"))
+					this.move(nr, message);
+				if(message.substring(0, "nextPlayer".length()).equals("nextPlayer"))
+					this.nextPlayer(nr);
+				message = null;
+			} 
+		}
+		
+	}
+
+
+	public void append(String s){
+		window.log(s);
+	}
+
+	public void log(String s){
+		window.log(s);
+		window.newLine();
+	}
+
+	public void sendMaps(){
+		for(int i = 0; i < clientChannels.size(); i++){
+			functions.sendMap(clientChannels.get(i));
 		}
 	}
 	
-	public void sendPlayer(Player pl, int i){
-		clients.get(i).sendPlayer(pl, i);
+	public void sendPlayers(){
+		for(int i = 0; i < clientChannels.size(); i++){
+			functions.sendPlayer(clientChannels.get(i),  rh.getPlayer(i), i);
+		}
 	}
-	
+
 	public void sendPlayerCount(){
-		for(int i = 0; i < clients.size(); i++){
+		for(int i = 0; i < clientChannels.size(); i++){
 			sendPlayerCount(i);
 		}
 	}
-	
+
 	public void nextPlayer(){
 		//TODO: 
 	}
-	
+
 	public void sendPlayerCount(int i){
 		String m = "playerCount,"+maxPlayerCount+","+maxAICount;
-		clients.get(i).flush(m);
+		functions.sendMessage(clientChannels.get(i), m);
 	}
-	
-	public void clientReady(int nr){
+
+	public void clientReady(){
 		clientReady++;
-		log("Client "+nr+" is ready: "+ clientReady);
+		log("Clients ready: "+ clientReady);
 	}
-	
+
 	private void createUI(){
 		window = new ServerWindow();
 		window.setSize(800, 640);
-        window.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }//windowClosing
-        });
-        window.setVisible(true);
+		window.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}//windowClosing
+		});
+		window.setVisible(true);
 	}
 	
 	public void attack(int nr, String m){
@@ -152,14 +270,14 @@ public class Server extends Main{
 		enemy.setHealth(enemy.getHealth() - (int)(dmgToEnemy * 10));
 		confirmAttack(nr, x, y, ex, ey, dmgToYou, dmgToEnemy);
 	}
-	
+
 	public void confirmAttack(int nr, int x, int y, int ex, int ey, float dmgToYou, float dmgToEnemy){
-		for(int i = 0; i < clients.size(); i++){
+		for(int i = 0; i < clientChannels.size(); i++){
 			if(i != nr)
-				clients.get(i).confirmAttack(x, y, ex, ey, dmgToYou, dmgToEnemy);
+				functions.confirmAttack(clientChannels.get(i), x, y, ex, ey, dmgToYou, dmgToEnemy);
 		}
 	}
-	
+
 	public void move(int nr, String m){
 		if(clientsReady()){
 			String[] arr = m.split(",");
@@ -168,7 +286,7 @@ public class Server extends Main{
 			int tx = Integer.parseInt(arr[3]);
 			int ty = Integer.parseInt(arr[4]);
 			try{
-				log("move: "+fx+" "+fy+" to "+tx+" "+ty+" ("+nr+")");
+				log("Move: "+fx+" "+fy+" to "+tx+" "+ty+" ("+nr+")");
 				Hexagon from = mh.getMap()[fx][fy];
 				Hexagon to = mh.getMap()[tx][ty];
 				Unit u = from.getUnit();
@@ -180,32 +298,40 @@ public class Server extends Main{
 			}
 		}
 	}
-	
+
 	public void confirmMove(int nr, int fx, int fy, int tx, int ty){
-		for(int i = 0; i < clients.size(); i++){
+		for(int i = 0; i < clientChannels.size(); i++){
 			if(i != nr)
-				clients.get(i).confirmMove(fx, fy, tx, ty);
+				functions.confirmMove(clientChannels.get(i), fx, fy, tx, ty);
 		}
 	}
-	
+
 	public void declineMove(int nr, int fx, int fy, int tx, int ty){
-		clients.get(nr).declineMove(fx, fy, tx, ty);
+		functions.declineMove(clientChannels.get(nr), fx, fy, tx, ty);
 	}
-	
+
 	public void nextPlayer(int nr){
-		for(int i = 0; i < clients.size(); i++){
+		for(int i = 0; i < clientChannels.size(); i++){
 			if(i != nr)
-				clients.get(i).nextPlayer();
+				functions.nextPlayer(clientChannels.get(i));
 		}
 	}
-	
-	private void startClientListener(){
-		for(int i = 0; i < clients.size(); i++){
-			clients.get(i).start();
-		}
-	}
-	
+
 	private boolean clientsReady(){
 		return (clientReady >= maxPlayerCount);
+	}
+	
+	public int getMaxCount(){
+		return (maxAICount + maxPlayerCount);
+	}
+	
+	public static void main (String [] args) {
+		try{
+			Server server = new Server(PLAYER_COUNT, AI_COUNT);
+			Thread threadServer = new Thread(server);
+			threadServer.start();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 }

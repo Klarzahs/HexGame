@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import schemmer.hexagon.buildings.Building;
+import schemmer.hexagon.debug.Server;
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
@@ -61,6 +62,8 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Wi
 		Main.isLocal = isLocal;
 		if(!isLocal) {
 			client = new Client(this);
+			Thread threadClient = new Thread(client);
+			threadClient.start();
 
 			eh = new EntityHandler(client);
 			mh = new MapHandler(this, client);					// map is queried when connection was made
@@ -79,7 +82,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Wi
 			while(!receivedPlayers){}
 
 			client.receivedPlayers();
-			client.startListening();
+			//client.startListening();	- done by ThreadClient.start
 		}else{
 
 			eh = new EntityHandler();

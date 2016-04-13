@@ -1,4 +1,4 @@
-package schemmer.hexagon.server;
+package schemmer.hexagon.debug;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,41 +9,28 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import schemmer.hexagon.game.Main;
-import schemmer.hexagon.map.HexTypeInt;
-import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.processes.MapFactory;
 
-public class Client implements Runnable{
-	private Main main;
-	private ClientFunctions clientFunctions;
-	
+public class Client implements Runnable {
+
 	private ArrayList<String> messages = new ArrayList<String>();
 	private Selector selector;
 
 	private SocketChannel channel;
 
-	public Client(Main main){
-		String serverName = "localhost";
-		int port = 5555;
 
-		this.main = main;
-		clientFunctions = new ClientFunctions(this);
-
-		try
-		{
+	public Client(String message){
+		messages.add(message);
+		try{
 			selector = Selector.open();
 			channel = SocketChannel.open();
 			channel.configureBlocking(false);
 
 			channel.register(selector, SelectionKey.OP_CONNECT);
-			channel.connect(new InetSocketAddress(serverName, port));
-		}catch(IOException e)
-		{
+			channel.connect(new InetSocketAddress("127.0.0.1", 8511));
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-	
 
 	@Override
 	public void run() {
@@ -112,8 +99,9 @@ public class Client implements Runnable{
 		byte[] buff = new byte[1024];
 		readBuffer.get(buff, 0, length);
 		
-		clientFunctions.handleMessage(new String(buff));
-		System.out.println("CLIENT: Server said: "+new String(buff));
+		//channel.register(selector, SelectionKey.OP_READ);
+		
+		System.out.println("CLIENT("+messages.get(0)+"): Server said: "+new String(buff));
 	}
 
 	private void write(SelectionKey key) throws IOException {
@@ -138,107 +126,30 @@ public class Client implements Runnable{
 	public void sendMessage(String s){
 		try {
 			while(!channel.isConnected()){}
-			channel.write(ByteBuffer.wrap(s.getBytes()));
+			channel.write(ByteBuffer.wrap((s+messages.get(0)).getBytes()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void nextPlayer() {
-		clientFunctions.sendNextPlayer();
-	}
 
-	public int getCurrentRound() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void receivedPlayers(){
-		try{
-			sendMessage("clientReady");
-		}catch(Exception e){
-			e.printStackTrace();
+	public static void main(String[] args) {
+		Client client = new Client("C1");
+		Client client2 = new Client("C2");
+		Server server = new Server();
+		Thread threadServer = new Thread(server);
+		Thread threadClient = new Thread(client);
+		Thread threadClient2 = new Thread(client2);
+		threadServer.start();
+		threadClient.start();
+		threadClient2.start();
+		for(int i = 0; i < 10; i++){
+			client.sendMessage("TEST MESSAGE "+i);
+			client2.sendMessage("TEST MESSAGE "+i);
 		}
+		server.sendMessage("Hello to all clients");
+		//thread2.start();
 	}
 
-	@Deprecated
-	private void setHexType(Hexagon hex, char c){
-		hex.setType(HexTypeInt.TYPE_FIELD.getValue());
-		if(c >= 20){
-			hex.setType(HexTypeInt.TYPE_HILL.getValue());
-			c = (char) (c - 20);
-		}
-		switch(c){
-		case 0:
-			hex.setBiome(MapFactory.desert);
-			break;
-		case 1:
-			hex.setBiome(MapFactory.forest);
-			break;
-		case 2:
-			hex.setBiome(MapFactory.grassDesert);
-			break;
-		case 3:
-			hex.setBiome(MapFactory.rainForest);
-			break;
-		case 4:
-			hex.setBiome(MapFactory.savanna);
-			break;
-		case 5:
-			hex.setBiome(MapFactory.seasonalForest);
-			break;
-		case 6:
-			hex.setBiome(MapFactory.swamp);
-			break;
-		case 7:
-			hex.setBiome(MapFactory.taiga);
-			break;
-		case 8:
-			hex.setBiome(MapFactory.tundra);
-			break;
-		case 9:
-			hex.setType(HexTypeInt.TYPE_DEEPWATER.getValue());
-			break;
-		case 10:
-			hex.setType(HexTypeInt.TYPE_WATER.getValue());
-			break;
-		case 11:
-			hex.setType(HexTypeInt.TYPE_MOUNTAIN.getValue());
-			break;
-		}
-	}
 
-	public void attack(Hexagon field, Hexagon fieldEnemy){
-		try{
-			String s = "attack,";
-			s += field.getX()+",";
-			s += field.getY()+",";
-			s += fieldEnemy.getX()+",";
-			s += fieldEnemy.getY();
-			clientFunctions.flush(s);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-
-	public void moveTo(Hexagon before, Hexagon after){
-		try{
-			if(before != null && after != null){
-				String s = "move,";
-				s += before.getX()+",";
-				s += before.getY()+",";
-				s += after.getX()+",";
-				s += after.getY();
-				clientFunctions.flush(s);
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
-
-	public Main getMain(){
-		return main;
-	}
-
-	
 }

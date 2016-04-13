@@ -1,64 +1,45 @@
 package schemmer.hexagon.server;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
-
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
+import schemmer.hexagon.processes.MapFactory;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.utils.Log;
 
-public class ClientThread extends Thread{
+public class ClientFunctions{
 	private Client client;
-	private PrintWriter out;
-	private BufferedReader in;
 
-	public ClientThread(Client c, Socket sock){
+	public ClientFunctions(Client c){
 		this.client = c;
-		try{
-			out = new PrintWriter(new OutputStreamWriter(sock.getOutputStream()));
-			in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-			Log.d("ClientThread created");
-		}catch(Exception e){
-			e.printStackTrace();
-		}
 	}
 
-	@Override
-	public void run(){
-		Log.d("ClientThread started");
-		String message;
-		try{
-			while(true){
-				message = in.readLine();
-				if(message != null){
-					Log.d("CT: received "+message);
-					if(message.substring(0, "attackConfirm".length()).equals("attackConfirm"))
-						confirmAttack(message);
-					if(message.substring(0, "moveConfirm".length()).equals("moveConfirm"))
-						confirmMove(message);
-					if(message.substring(0, "moveDecline".length()).equals("moveDecline"))
-						declineMove(message);
-					if(message.substring(0, "nextPlayer".length()).equals("nextPlayer"))
-						nextPlayer();
-					this.sendAck();
-				} else{
-					ClientThread.sleep(50);
-				}
+	public void handleMessage(String m){
+		if(m != null){
+			Log.d("ClientFunctions: received "+m);
+			String messages[] = m.split("/");
+			for(int i = 0; i < messages.length; i++){
+				String message = messages[i];
+				if(message.substring(0, "map".length()).equals("map"))
+					getMapFromServer(message);
+				if(message.substring(0, "playerCount".length()).equals("playerCount"))
+					setPlayerCount(message);
+				else if(message.substring(0, "player".length()).equals("player"))
+					getPlayerFromServer(message);
+				if(message.substring(0, "attackConfirm".length()).equals("attackConfirm"))
+					confirmAttack(message);
+				if(message.substring(0, "moveConfirm".length()).equals("moveConfirm"))
+					confirmMove(message);
+				if(message.substring(0, "moveDecline".length()).equals("moveDecline"))
+					declineMove(message);
+				if(message.substring(0, "nextPlayer".length()).equals("nextPlayer"))
+					nextPlayer();
 			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	public void reply(String message){
 		try{
-			out.println(message);
+			client.sendMessage(message);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -115,44 +96,42 @@ public class ClientThread extends Thread{
 	}
 
 	public void sendNextPlayer(){
-		out.println("nextPlayer");
+		client.sendMessage("nextPlayer");
 	}
 
-	private void sendAck(){
-		Log.d("Sending ack..");
-		reply("ack");
-	}
-
-	public int setPlayerCount() {
-		try{
-			String s = in.readLine();
-			String[] arr = s.split(",");
-			if(arr[0].equals("playerCount")){
-				client.getMain().getRH().setMaxPlayers(Integer.parseInt(arr[1]));
-				client.getMain().getRH().setMaxAIs(Integer.parseInt(arr[2]));
-				System.out.println("Playercount set");
-			}
-		}catch(IOException e){
-			Log.d("IO Error");
-			e.printStackTrace();
+	public void setPlayerCount(String s) {
+		String[] arr = s.split(",");
+		if(arr[0].equals("playerCount")){
+			client.getMain().getRH().setMaxPlayers(Integer.parseInt(arr[1]));
+			client.getMain().getRH().setMaxAIs(Integer.parseInt(arr[2]));
+			System.out.println("Playercount set");
 		}
-		return 0;
 	}
 
-	public String getMapStringFromServer() {
-		try{
-			String s = in.readLine();
-			Log.d(s);
-			return s;
-		}catch(Exception e){
-			e.printStackTrace();
+	public void getMapFromServer(String s) {
+		int radius = -1;
+
+		String[] m = s.split(",");
+
+		if(!m[0].equals("map")){
+			return;
 		}
-		return "";
+
+		radius = Integer.parseInt(m[1]);
+		if(s.equals("") || radius == -1){
+			System.out.println("Failed to get mapradius");
+			return;
+		}
+
+		MapFactory.setMapSeed(m[2]);
+		MapFactory.setBiomeSeed(m[3]);
+		client.getMain().getMH().createHexagon(radius);
+
+		client.getMain().receivedMap = true;
 	}
 
-	public boolean getPlayerFromServer(){
+	public boolean getPlayerFromServer(String m){
 		try{
-			String m = in.readLine();
 			String[] arr = m.split(",");
 			Log.d(m);
 
@@ -169,8 +148,8 @@ public class ClientThread extends Thread{
 		}
 		return false;
 	}
-	
+
 	public void flush(String s){
-		out.println(s);
+		client.sendMessage(s);
 	}
 }
