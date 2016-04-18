@@ -1,27 +1,27 @@
 package schemmer.hexagon.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.processes.MapFactory;
+import schemmer.hexagon.utils.Log;
 
-public class Client implements Runnable{
+public class Client implements Runnable {	
 	private Main main;
 	private ClientFunctions clientFunctions;
 	
-	private ArrayList<String> messages = new ArrayList<String>();
-	private Selector selector;
-
 	private SocketChannel channel;
+	private ReadableByteChannel wrappedChannel;
 
 	public Client(Main main){
 		String serverName = "localhost";
@@ -32,114 +32,76 @@ public class Client implements Runnable{
 
 		try
 		{
-			selector = Selector.open();
-			channel = SocketChannel.open();
-			channel.configureBlocking(false);
-
-			channel.register(selector, SelectionKey.OP_CONNECT);
-			channel.connect(new InetSocketAddress(serverName, port));
+			InetSocketAddress hostAddress = new InetSocketAddress(serverName, port);
+		    channel = SocketChannel.open(hostAddress);
+		    channel.socket().setSoTimeout(10);
+		    InputStream inStream = channel.socket().getInputStream();
+		    wrappedChannel = Channels.newChannel(inStream);
+			Log.d("Connected to "+channel.getLocalAddress());
 		}catch(IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
 	
-
 	@Override
-	public void run() {
-		try {
-			while (!Thread.interrupted()){
-
-				selector.select(1000);
-
-				Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
-
-				while (keys.hasNext()){
-					SelectionKey key = keys.next();
-					keys.remove();
-
-					if (!key.isValid()) continue;
-
-					if (key.isConnectable()){
-						System.out.println("CLIENT: I am connected to the server");
-						connect(key);
-					}   
-					if (key.isWritable()){
-						write(key);
-					}
-					if (key.isReadable()){
-						read(key);
-					}
-				}   
+	public void run(){
+		while(true){
+			try{
+				this.read();
+				Thread.sleep(10);
+			}catch(Exception e){
+				e.printStackTrace();
 			}
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} finally {
-			close();
 		}
 	}
+	
+	public void send(String msg){
+    	try{
+	        byte [] message = msg.getBytes();
+	        ByteBuffer buffer = ByteBuffer.wrap(message);
+	        channel.write(buffer);
+	        buffer.clear();
+	        Log.d("Sent "+msg+" to server");
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    public void read(){
+    	try{
+	    	ByteBuffer readBuffer = ByteBuffer.allocate(1000);
+			readBuffer.clear();
+			int length = -1;
+			try{
+				length = wrappedChannel.read(readBuffer);
+			} catch(SocketTimeoutException e){
+			} catch (IOException e){
+				System.out.println("CLIENT: Reading problem, closing connection");
+				close();
+				System.exit(1);
+				return;
+			}
+			if (length == -1){
+				return;
+			}
+			readBuffer.flip();
+			byte[] buff = new byte[1024];
+			readBuffer.get(buff, 0, length);
+			System.out.println("CLIENT: Server said: "+new String(buff));
+			clientFunctions.handleMessage(new String(buff));
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
 
 	private void close(){
 		try {
-			selector.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private void read (SelectionKey key) throws IOException {
-		SocketChannel channel = (SocketChannel) key.channel();
-		ByteBuffer readBuffer = ByteBuffer.allocate(1000);
-		readBuffer.clear();
-		int length;
-		try{
-			length = channel.read(readBuffer);
-		} catch (IOException e){
-			System.out.println("CLIENT: Reading problem, closing connection");
-			key.cancel();
+			//selector.close();
+			wrappedChannel.close();
 			channel.close();
-			return;
-		}
-		if (length == -1){
-			System.out.println("CLIENT: Nothing was read from server");
-			channel.close();
-			key.cancel();
-			return;
-		}
-		readBuffer.flip();
-		byte[] buff = new byte[1024];
-		readBuffer.get(buff, 0, length);
-		
-		clientFunctions.handleMessage(new String(buff));
-		System.out.println("CLIENT: Server said: "+new String(buff));
-	}
-
-	private void write(SelectionKey key) throws IOException {
-		SocketChannel channel = (SocketChannel) key.channel();
-		if(!messages.isEmpty()){
-			String message = messages.get(0);
-			channel.write(ByteBuffer.wrap(message.getBytes()));
-		}
-
-		channel.register(selector, SelectionKey.OP_READ);
-	}
-
-	private void connect(SelectionKey key) throws IOException {
-		SocketChannel channel = (SocketChannel) key.channel();
-		if (channel.isConnectionPending()){
-			channel.finishConnect();
-		}
-		channel.configureBlocking(false);
-		channel.register(selector, SelectionKey.OP_READ);
-	}
-	
-	public void sendMessage(String s){
-		try {
-			while(!channel.isConnected()){}
-			channel.write(ByteBuffer.wrap(s.getBytes()));
-		} catch (IOException e) {
+		} catch(SocketTimeoutException e){
+    	}catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -155,7 +117,7 @@ public class Client implements Runnable{
 
 	public void receivedPlayers(){
 		try{
-			sendMessage("clientReady");
+			send("clientReady");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

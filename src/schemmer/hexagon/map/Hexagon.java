@@ -317,7 +317,6 @@ public class Hexagon {
 		
 		// send info to server
 		if(!Main.isLocal){
-			Log.d("Sending move to server");
 			main.getClient().moveTo(before, this);
 		}
 	}

@@ -8,11 +8,12 @@ public class Log {
 	}
 	
 	public static void d(String log){
-		if(DEBUG) System.out.println(log);
+		if(DEBUG) 
+			System.out.println(log);
 	}
 	
 	public static void e(String name, String log){
-		System.out.println("ERROR @"+name+": \n"+log);
+		System.err.println("ERROR @"+name+": \n"+log);
 	}
 	
 	public static void e(String log){

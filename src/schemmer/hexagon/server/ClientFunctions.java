@@ -39,7 +39,7 @@ public class ClientFunctions{
 
 	public void reply(String message){
 		try{
-			client.sendMessage(message);
+			client.send(message);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -96,7 +96,7 @@ public class ClientFunctions{
 	}
 
 	public void sendNextPlayer(){
-		client.sendMessage("nextPlayer");
+		client.send("nextPlayer");
 	}
 
 	public void setPlayerCount(String s) {
@@ -104,7 +104,6 @@ public class ClientFunctions{
 		if(arr[0].equals("playerCount")){
 			client.getMain().getRH().setMaxPlayers(Integer.parseInt(arr[1]));
 			client.getMain().getRH().setMaxAIs(Integer.parseInt(arr[2]));
-			System.out.println("Playercount set");
 		}
 	}
 
@@ -150,6 +149,6 @@ public class ClientFunctions{
 	}
 
 	public void flush(String s){
-		client.sendMessage(s);
+		client.send(s);
 	}
 }

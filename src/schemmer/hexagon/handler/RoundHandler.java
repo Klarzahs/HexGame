@@ -10,7 +10,7 @@ import schemmer.hexagon.utils.Log;
 public class RoundHandler {
 	private ArrayList<Player> players = new ArrayList<Player>();
 	private MapHandler mh;
-	private int playerCount = -1, currentPlayer, currentRound, AIcount;		// TODO: AIcount
+	private volatile int playerCount = -1, currentPlayer, currentRound, AIcount;		// TODO: AIcount
 	private Main main;
 	
 	private Client client;
@@ -40,8 +40,8 @@ public class RoundHandler {
 		if(!Main.isLocal){
 			while(this.getPlayerCount() == -1 ) {}		// fetch player/AI count from server - done implicitly
 			while(players.size() < this.getPlayerCount()){}	
-			
 			main.receivedPlayers = true;
+			Log.d("Received players from server");
 		}else{
 			if(playerCount < 1)
 				Log.e("RoundHandler", "Max Players below 1!");

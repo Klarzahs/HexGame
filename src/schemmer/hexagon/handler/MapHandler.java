@@ -53,7 +53,6 @@ public class MapHandler {
 	public MapHandler(Main main, Client client){
 		this.main = main;
 		main.setMH(this);
-		Log.d("Querying map..");
 		//client.getMapFromServer(main); - now done implicitly in ClientFunctions messageHandling
 	}
 	

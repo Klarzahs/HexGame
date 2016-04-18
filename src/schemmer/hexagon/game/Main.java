@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import schemmer.hexagon.buildings.Building;
-import schemmer.hexagon.debug.Server;
 import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
@@ -29,7 +28,6 @@ import schemmer.hexagon.loader.ImageNumber;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.server.Client;
-import schemmer.hexagon.utils.Log;
 
 public class Main implements MouseListener, MouseMotionListener, KeyListener, WindowStateListener{
 
@@ -75,7 +73,7 @@ public class Main implements MouseListener, MouseMotionListener, KeyListener, Wi
 
 			mh.addScreen();
 
-			while(!receivedMap){}
+			//while(!receivedMap){}
 
 			rh = new RoundHandler(mh, client);
 			rh.createAllPlayers(player, ai);

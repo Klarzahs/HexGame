@@ -22,12 +22,13 @@ import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.utils.Log;
 
 public class Server extends Main implements Runnable{
 	private int maxPlayerCount;
 	private int maxAICount;
-	private int clientReady = 0;
-	private int clientConnected = 0;
+	private volatile int clientReady = 0;
+	private volatile int clientConnected = 0;
 
 	private final static int PLAYER_COUNT = 2;
 	private final static int AI_COUNT = 0;
@@ -39,13 +40,13 @@ public class Server extends Main implements Runnable{
 	public final static long TIMEOUT = 10000;
 
 	private ServerSocketChannel serverChannel;
-	private Selector selector;
-	//private Map<SocketChannel,byte[]> dataTracking = new HashMap<SocketChannel, byte[]>();
+	private Selector selector; 
+	private ByteBuffer buf = ByteBuffer.allocate(256);
+	
 	private ArrayList<SocketChannel> clientChannels = new ArrayList<SocketChannel>();
 	private ServerFunctions functions = new ServerFunctions(this);
 
-	public Server(int player, int ai) throws IOException
-	{
+	public Server(int player, int ai) throws IOException{
 		createUI();
 
 		this.maxPlayerCount = player;
@@ -53,7 +54,6 @@ public class Server extends Main implements Runnable{
 		
 		init();		//handles accepting implictly on run
 	}
-
 
 	private void init(){
 		log("Initializing server");
@@ -68,7 +68,6 @@ public class Server extends Main implements Runnable{
 			serverChannel.socket().bind(new InetSocketAddress(ADDRESS, PORT));
 
 			serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -84,17 +83,21 @@ public class Server extends Main implements Runnable{
 		sendMaps();
 		sendPlayerCount();
 		sendPlayers();
+		
+		log("Finished initializing");
 
-		while(!clientsReady()){}		// wait
+		//while(!clientsReady()){}		// wait
+		log("Game started");
 		rh.startRound();
 	}
 
+	
 	@Override
 	public void run() {
 		log("Now accepting connections...");
 		try{
 			// A run the server as long as the thread is not interrupted.
-			while (!Thread.currentThread().isInterrupted()){
+			while (!Thread.currentThread().isInterrupted()){		
 				selector.select(TIMEOUT);
 
 				Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
@@ -111,7 +114,6 @@ public class Server extends Main implements Runnable{
 						accept(key);
 					}
 					if (key.isReadable()){
-						log("Reading connection");
 						read(key);
 					}
 				}
@@ -124,14 +126,14 @@ public class Server extends Main implements Runnable{
 
 	}
 
-
+	
 	private void closeConnection(){
 		log("Closing server down");
 		if (selector != null){
 			try {
 				selector.close();
-				serverChannel.socket().close();
-				serverChannel.close();
+				//serverChannel.socket().close();
+				//serverChannel.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -146,7 +148,7 @@ public class Server extends Main implements Runnable{
 		clientChannels.add(socketChannel);
 
 		socketChannel.register(selector, SelectionKey.OP_READ);
-		log("Accepted client at "+socketChannel.getRemoteAddress());
+		log("Accepted client at "+socketChannel.getRemoteAddress() +", valid Ops:"+ socketChannel.validOps());
 		clientConnected++;
 		if(clientConnected == maxPlayerCount){
 			finishInit();
@@ -155,9 +157,10 @@ public class Server extends Main implements Runnable{
 
 	private void read(SelectionKey key) throws IOException{
 		SocketChannel channel = (SocketChannel) key.channel();
-		ByteBuffer readBuffer = ByteBuffer.allocate(1024);
-		readBuffer.clear();
+
+		//readBuffer.clear();
 		int read;
+		ByteBuffer readBuffer = ByteBuffer.allocate(1024);
 		try {
 			read = channel.read(readBuffer);
 		} catch (IOException e) {
@@ -173,14 +176,17 @@ public class Server extends Main implements Runnable{
 			return;
 		}
 		readBuffer.flip();
-		byte[] data = new byte[1000];
-		readBuffer.get(data, 0, read);
-		String[] stringArr = (new String(data)).split("/");
-		
+		byte[] buff = new byte[1024];
+		readBuffer.get(buff, 0, read);
+		String[] stringArr = (new String(buff)).split("/");
+		parseMessage(stringArr, channel);
+	}
+
+	private void parseMessage(String[] msgs, SocketChannel channel){
 		//get the nr from the client
 		int nr = clientChannels.indexOf(channel);
-		for(int i = 0; i < stringArr.length; i++){
-			String message = stringArr[i];
+		for(int i = 0; i < msgs.length; i++){
+			String message = truncateMessage(msgs[i]);
 			if(message != null){
 				this.log("Received: "+message);
 				if(message.equals("clientReady"))
@@ -194,9 +200,32 @@ public class Server extends Main implements Runnable{
 				message = null;
 			} 
 		}
-		
 	}
-
+	
+	private String truncateMessage(String msg){
+		int end = -1;
+		for(int i = 0; i < msg.length(); i++){
+			if((int) msg.charAt(i) == 0){		// ASCII: NULL, empty String
+				end = i;
+				break;
+			}
+		}
+		if(end != -1)
+			return msg.substring(0, end);
+		return msg;
+	}
+	
+	
+	public void broadcast(String msg) throws IOException {
+		ByteBuffer msgBuf=ByteBuffer.wrap((msg+"/").getBytes());
+		for(SelectionKey key : selector.keys()) {
+			if(key.isValid() && key.channel() instanceof SocketChannel) {
+				SocketChannel sch=(SocketChannel) key.channel();
+				sch.write(msgBuf);
+				msgBuf.rewind();
+			}
+		}
+	}
 
 	public void append(String s){
 		window.log(s);
@@ -215,7 +244,9 @@ public class Server extends Main implements Runnable{
 	
 	public void sendPlayers(){
 		for(int i = 0; i < clientChannels.size(); i++){
-			functions.sendPlayer(clientChannels.get(i),  rh.getPlayer(i), i);
+			for(int p = 0; p < maxPlayerCount; p++){
+				functions.sendPlayer(clientChannels.get(i),  rh.getPlayer(p), p);
+			}
 		}
 	}
 
@@ -279,7 +310,7 @@ public class Server extends Main implements Runnable{
 	}
 
 	public void move(int nr, String m){
-		if(clientsReady()){
+		//if(clientsReady()){
 			String[] arr = m.split(",");
 			int fx = Integer.parseInt(arr[1]);
 			int fy = Integer.parseInt(arr[2]);
@@ -296,7 +327,7 @@ public class Server extends Main implements Runnable{
 				log(e.getMessage());
 				declineMove(nr, fx, fy, tx, ty);
 			}
-		}
+	//	}
 	}
 
 	public void confirmMove(int nr, int fx, int fy, int tx, int ty){

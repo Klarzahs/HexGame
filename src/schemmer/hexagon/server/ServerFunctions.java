@@ -2,6 +2,7 @@ package schemmer.hexagon.server;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 import schemmer.hexagon.map.Hexagon;
@@ -79,12 +80,14 @@ public class ServerFunctions{
 	
 	public void sendMessage(SocketChannel c, String m){
 		try {
-			while(!c.isConnected()){}
-			c.write(ByteBuffer.wrap((m+"/").getBytes()));
+			//while(!c.isConnected()){}
+			//c.write(ByteBuffer.wrap((m+"/").getBytes()));
+			server.broadcast(m);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
 	
 	/*  public void write(SelectionKey key) throws IOException{
 	 *  	from before: 
