@@ -310,7 +310,7 @@ public class Server extends Main implements Runnable{
 	}
 
 	public void move(int nr, String m){
-		//if(clientsReady()){
+		if(clientsReady()){
 			String[] arr = m.split(",");
 			int fx = Integer.parseInt(arr[1]);
 			int fy = Integer.parseInt(arr[2]);
@@ -327,7 +327,7 @@ public class Server extends Main implements Runnable{
 				log(e.getMessage());
 				declineMove(nr, fx, fy, tx, ty);
 			}
-	//	}
+		}
 	}
 
 	public void confirmMove(int nr, int fx, int fy, int tx, int ty){

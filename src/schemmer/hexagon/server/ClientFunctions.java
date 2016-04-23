@@ -1,9 +1,12 @@
 package schemmer.hexagon.server;
 
+import java.util.ArrayList;
+
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.processes.MapFactory;
 import schemmer.hexagon.units.Unit;
+import schemmer.hexagon.utils.Dijkstra;
 import schemmer.hexagon.utils.Log;
 
 public class ClientFunctions{
@@ -72,9 +75,16 @@ public class ClientFunctions{
 		Hexagon from = client.getMain().getMH().getMap()[fx][fy];
 		Hexagon to = client.getMain().getMH().getMap()[tx][ty];
 		Unit u = from.getUnit();
-		Log.d("Unit is "+(u != null));
+		//update visibility
+		ArrayList<Hexagon> path = Dijkstra.getMovementPath(client.getMain().getMH().getMap(), client.getMain().getMH(), from, to);
+		int costs = Dijkstra.getMovementCost(client.getMain().getMH().getMap(), client.getMain().getMH(), from, to);
+		client.getMain().getMH().updateVisibleMap(path, client.getMain().getCurrentPlayer(), u);
+		//actually move
 		to.moveToLocal(u);
+		//update references
+		u.moved(costs);
 		from.unitMoved();
+		client.getMain().getMH().clearMovementRange();
 	}
 
 	//TODO: fix movement cost
@@ -87,8 +97,8 @@ public class ClientFunctions{
 		Hexagon from = client.getMain().getMH().getMap()[fx][fy];
 		Hexagon to = client.getMain().getMH().getMap()[tx][ty];
 		Unit u = to.getUnit();
-		from.moveTo(u);
-		to.unitMoved();
+		to.moveToLocal(u);
+		from.unitMoved();
 	}
 
 	public void nextPlayer(){
@@ -149,6 +159,7 @@ public class ClientFunctions{
 	}
 
 	public void flush(String s){
+		Log.d("Sending: "+s);
 		client.send(s);
 	}
 }

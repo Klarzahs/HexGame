@@ -305,25 +305,34 @@ public class Hexagon {
 	
 	public static boolean moveUnitTo(Unit u, Hexagon to){
 		if(to.getType().isMoveable()){
-			to.moveTo(u);
-			return true;
+			return to.moveTo(u);
 		}
 		return false;
 	}
 	
-	public void moveTo(Unit u){
-		Hexagon before = u.getField();
-		moveToLocal(u);
-		
+	public boolean moveTo(Unit u){
 		// send info to server
 		if(!Main.isLocal){
-			main.getClient().moveTo(before, this);
+			main.getClient().moveTo(u.getField(), this);
+			Log.d("Trying to move to "+this.printCoords());
+			return false;
+		}else{
+			moveToLocal(u);
+			return true;
 		}
+	}
+	
+	public void spawnHere(Unit u){
+		this.unit = u;
+		u.setField(this);
+		u.getPlayer().setRessourcesChanged(true);
 	}
 	
 	public void moveToLocal(Unit u){
 		// move unit locally
 		this.unit = u;
+		if(u == null)
+			Log.d("Unit is null in moveToLocal, islocal "+Main.isLocal);
 		u.setField(this);
 		u.getPlayer().setRessourcesChanged(true);
 

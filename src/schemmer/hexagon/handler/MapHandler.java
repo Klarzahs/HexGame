@@ -183,12 +183,14 @@ public class MapHandler {
 							int costs = Dijkstra.getMovementCost(map, this, marked, target);
 							if(costs != -1 && costs <= u.getMovementSpeed()){
 								//update the visibleMap of current player
-								ArrayList<Hexagon> path = Dijkstra.getMovementPath(map, this, marked, target);
-								updateVisibleMap(path, main.getCurrentPlayer(), u);
 								
-								Hexagon.moveUnitTo(u, target);
-								u.moved(costs);
-								marked.unitMoved();
+								if(Hexagon.moveUnitTo(u, target)){		// is the movement local - if not, wait for server reply to actually move
+									ArrayList<Hexagon> path = Dijkstra.getMovementPath(map, this, marked, target);
+									updateVisibleMap(path, main.getCurrentPlayer(), u);
+									u.moved(costs);
+									marked.unitMoved();
+								}
+								
 							}
 						}
 						

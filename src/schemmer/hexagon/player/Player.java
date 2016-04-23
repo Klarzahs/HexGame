@@ -54,7 +54,7 @@ public class Player {
 		setHero(new Hero(this));
 		
 		startingPoint = mh.getMap()[x][y];				// TODO: check if right
-		startingPoint.moveTo(getHero());
+		startingPoint.spawnHere(getHero());
 		
 		//create and init the visibleMap, startingPos + ~4 Hexs
 		visibleMap = new boolean[2*mh.RADIUS+1][2*mh.RADIUS+1];
