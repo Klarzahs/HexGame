@@ -4,9 +4,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -20,9 +17,7 @@ import schemmer.hexagon.handler.EntityHandler;
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.handler.RoundHandler;
 import schemmer.hexagon.map.Hexagon;
-import schemmer.hexagon.player.Player;
 import schemmer.hexagon.units.Unit;
-import schemmer.hexagon.utils.Log;
 
 public class Server extends Main implements Runnable{
 	private int maxPlayerCount;

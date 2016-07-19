@@ -57,6 +57,7 @@ public class GameLoop extends Thread{
 				eh.update(delta);
 				mh.update(delta);
 		      
+				
 				// draw everyting
 				try{
 					screen.repaint();

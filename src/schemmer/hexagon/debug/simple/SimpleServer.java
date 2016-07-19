@@ -1,11 +1,14 @@
 package schemmer.hexagon.debug.simple;
 
 
-import java.net.*;
-import java.nio.*;
-import java.nio.channels.*;
 import java.io.IOException;
-import java.util.*;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
 
 public class SimpleServer implements Runnable {
 	private final int port;

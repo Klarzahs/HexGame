@@ -57,7 +57,7 @@ public class RoundHandler {
 	
 	public Player getCurrentPlayer(){
 		if(players.size() == 0) return null;
-		return players.get(currentPlayer);
+		return getPlayer(currentPlayer);
 	}
 	
 	public void startRound(){
@@ -68,14 +68,17 @@ public class RoundHandler {
 	public void nextPlayer(){
 		if(!Main.isLocal) {
 			client.nextPlayer();
+		}else{
+			nextPlayerLocal();
 		}
-		nextPlayerLocal();
 	}
 	
 	public void nextPlayerLocal(){
 		mh.resetMarked();
 		getCurrentPlayer().refreshAll();
-		currentPlayer += 1;
+		Log.d("Current player: "+getCurrentPlayer());
+		currentPlayer = (currentPlayer + 1) % (getPlayerCount() + getAICount());
+		Log.d("Next player: "+getCurrentPlayer());
 		if(currentPlayer == playerCount)
 			startRound();
 	}

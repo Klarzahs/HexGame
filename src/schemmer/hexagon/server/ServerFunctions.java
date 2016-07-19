@@ -1,14 +1,10 @@
 package schemmer.hexagon.server;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
-import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.processes.MapFactory;
-import schemmer.hexagon.units.Unit;
 
 public class ServerFunctions{
 	private Server server;
@@ -87,19 +83,4 @@ public class ServerFunctions{
 			e.printStackTrace();
 		}
 	}
-	
-	
-	/*  public void write(SelectionKey key) throws IOException{
-	 *  	from before: 
-		 *  //byte[] hello = new String("SERVER: Hello from server").getBytes();
-			//dataTracking.put(socketChannel, hello);
-	 * 
-	        SocketChannel channel = (SocketChannel) key.channel();
-	        byte[] data = dataTracking.get(channel);
-	        dataTracking.remove(channel);
-
-	        channel.write(ByteBuffer.wrap(data));
-
-	        key.interestOps(SelectionKey.OP_READ);
-	    }*/
 }

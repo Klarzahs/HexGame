@@ -1,6 +1,7 @@
 package schemmer.hexagon.server;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import schemmer.hexagon.handler.MapHandler;
 import schemmer.hexagon.map.Hexagon;
@@ -24,18 +25,19 @@ public class ClientFunctions{
 				String message = messages[i];
 				if(message.substring(0, "map".length()).equals("map"))
 					getMapFromServer(message);
-				if(message.substring(0, "playerCount".length()).equals("playerCount"))
+				else if(message.substring(0, "nextPlayer".length()).equals("nextPlayer"))
+					nextPlayer();
+				else if(message.substring(0, "playerCount".length()).equals("playerCount"))
 					setPlayerCount(message);
 				else if(message.substring(0, "player".length()).equals("player"))
 					getPlayerFromServer(message);
-				if(message.substring(0, "attackConfirm".length()).equals("attackConfirm"))
+				else if(message.substring(0, "attackConfirm".length()).equals("attackConfirm"))
 					confirmAttack(message);
-				if(message.substring(0, "moveConfirm".length()).equals("moveConfirm"))
+				else if(message.substring(0, "moveConfirm".length()).equals("moveConfirm"))
 					confirmMove(message);
-				if(message.substring(0, "moveDecline".length()).equals("moveDecline"))
+				else if(message.substring(0, "moveDecline".length()).equals("moveDecline"))
 					declineMove(message);
-				if(message.substring(0, "nextPlayer".length()).equals("nextPlayer"))
-					nextPlayer();
+				
 			}
 		} 
 	}
@@ -74,6 +76,7 @@ public class ClientFunctions{
 		Log.d("received confirm");
 		Hexagon from = client.getMain().getMH().getMap()[fx][fy];
 		Hexagon to = client.getMain().getMH().getMap()[tx][ty];
+		client.getMain().getMH().getMovementRange(from);
 		Unit u = from.getUnit();
 		//update visibility
 		ArrayList<Hexagon> path = Dijkstra.getMovementPath(client.getMain().getMH().getMap(), client.getMain().getMH(), from, to);
@@ -161,5 +164,12 @@ public class ClientFunctions{
 	public void flush(String s){
 		Log.d("Sending: "+s);
 		client.send(s);
+	}
+	
+	private void clearPathCosts(ArrayList<Hexagon> path){
+		Iterator<Hexagon> it = path.iterator();
+		while(it.hasNext()){
+			it.next().setCosts(-1);
+		}
 	}
 }

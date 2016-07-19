@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;

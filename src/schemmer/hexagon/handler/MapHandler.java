@@ -94,7 +94,7 @@ public class MapHandler {
 		if(marked != null){
 			marked.draw(g2d, markedColor, new BasicStroke(3), offX, offY);
 		}
-		if(movementRange != null && marked.getUnit() != null){
+		if(movementRange != null && marked != null && marked.getUnit() != null){
 			for(int i = 0; i < movementRange.size(); i++){
 				if(marked.getUnit().getPlayer() == main.getRH().getCurrentPlayer())
 					movementRange.get(i).showMovement(g2d, movementRangeColor, offX, offY);
@@ -362,6 +362,7 @@ public class MapHandler {
 	
 	public void resetMarked(){
 		marked = null;
+		clearMovementRange();
 	}
 	
 	public Main getMain(){
@@ -414,5 +415,9 @@ public class MapHandler {
 	
 	public boolean mapLoaded() {
 		return mapLoaded;
+	}
+	
+	public ArrayList<Hexagon> getMovementRange(){
+		return movementRange;
 	}
 }
