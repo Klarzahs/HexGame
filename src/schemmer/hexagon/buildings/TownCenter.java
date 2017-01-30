@@ -20,9 +20,9 @@ public class TownCenter extends Building{
 		initMenu(producableCount, 20, 10, 1);
 		this.tTB = 1;
 		
-		if(TownCenter.unitIcons == null){
+		if(Building.unitIcons == null){
 			try{
-				TownCenter.unitIcons = new BufferedImage[1];			// villager
+				Building.unitIcons = new BufferedImage[1];			// villager
 				unitIcons[0] = ImageIO.read(this.getClass().getResourceAsStream("/png/pieces/Pieces (Black)/pieceBlack_villager.png"));
 			}catch(Exception e){
 				System.out.println("Couldn't load STATIC TownCenter-Unit images!");
@@ -40,6 +40,7 @@ public class TownCenter extends Building{
 		
 	}
 	
+	@Override
 	public void buildStep(){
 		super.buildStep(this);
 	}
@@ -51,9 +52,10 @@ public class TownCenter extends Building{
 	
 	@Override
 	public BufferedImage[] getUnitIcons(){
-		return TownCenter.unitIcons;
+		return Building.unitIcons;
 	}
 	
+	@Override
 	public Object getClassOf(int i){
 		switch(i){
 		case 0:
@@ -63,6 +65,7 @@ public class TownCenter extends Building{
 		}
 	}
 	
+	@Override
 	public void produce(int nr){
 		currentlyProduced = nr;
 		System.out.println("Queued unit production");

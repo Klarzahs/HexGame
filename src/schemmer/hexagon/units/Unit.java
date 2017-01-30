@@ -3,7 +3,6 @@ package schemmer.hexagon.units;
 import java.awt.image.BufferedImage;
 
 import schemmer.hexagon.buildings.Costs;
-import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 
@@ -78,14 +77,10 @@ public abstract class Unit {
 	}
 	
 	public void attack(Unit enemy, Hexagon field, Hexagon fieldEnemy){
-		if(Main.isLocal){
-			float dmgToEnemy = this.attack - enemy.defense * fieldEnemy.getMovementCosts() / 2f;
-			float dmgToYou = enemy.attack - this.defense * field.getMovementCosts() / 2f;
-			this.setHealth(this.getHealth() - (int)(dmgToYou * 10));
-			enemy.setHealth(enemy.getHealth() - (int)(dmgToEnemy * 10));
-		}else{
-			player.getMain().getClient().attack(field, fieldEnemy);
-		}
+		float dmgToEnemy = this.attack - enemy.defense * fieldEnemy.getMovementCosts() / 2f;
+		float dmgToYou = enemy.attack - this.defense * field.getMovementCosts() / 2f;
+		this.setHealth(this.getHealth() - (int)(dmgToYou * 10));
+		enemy.setHealth(enemy.getHealth() - (int)(dmgToEnemy * 10));
 	}
 	
 	public boolean handleDelete(){

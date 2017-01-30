@@ -22,6 +22,7 @@ public class Quarry extends Building{
 	}
 
 	
+	@Override
 	public void buildStep(){
 		super.buildStep(this);
 	}

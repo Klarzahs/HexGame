@@ -150,9 +150,9 @@ public class Dijkstra {
 		//if the costs are lower than maxMovement add it to the result
 		Iterator<Entry<Hexagon, Integer>> it = costs.entrySet().iterator();
 	    while (it.hasNext()) {
-	        Map.Entry<Hexagon, Integer> pair = (Map.Entry<Hexagon, Integer>)it.next();
+	        Map.Entry<Hexagon, Integer> pair = it.next();
 	        
-	        if((int)pair.getValue() <= maxMovement){
+	        if(pair.getValue() <= maxMovement){
 	        	result.add(pair.getKey());
 	        	pair.getKey().setCosts(pair.getValue());
 	        }
@@ -186,7 +186,7 @@ public class Dijkstra {
         
         @Override
         public int compare(Hexagon x, Hexagon y) {
-            return (int) (x.priority - y.priority);
+            return x.priority - y.priority;
         }
     };
     

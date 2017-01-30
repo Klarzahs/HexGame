@@ -83,6 +83,8 @@ public abstract class Building extends BuildingMenu implements BuildingCallback{
 					System.out.println("Couldn't load "+callback.getImageName()+" image!");
 				}
 				this.p.setMaxPop(this.p.getMaxPop() + 5);
+				Main.instance.getUIH().resetHoveringInformation();
+				Main.instance.getUIH().resetAllIcons();
 			}else{
 				if(currentlyProduced != -1){
 					producingCount += producingStep;

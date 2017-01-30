@@ -27,6 +27,7 @@ public class GameLoop extends Thread{
 		this.mh = main.getMH();
 	}
 	
+	@Override
 	public void run() {
 		log("Starting game loop");
 		long now, updateLength;

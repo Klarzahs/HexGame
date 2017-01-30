@@ -13,8 +13,6 @@ import schemmer.hexagon.game.Screen;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.player.Player;
 import schemmer.hexagon.processes.MapFactory;
-import schemmer.hexagon.server.Client;
-import schemmer.hexagon.server.Server;
 import schemmer.hexagon.units.Unit;
 import schemmer.hexagon.utils.Conv;
 import schemmer.hexagon.utils.Cube;
@@ -26,7 +24,7 @@ public class MapHandler {
 	private Main main;
 	private Screen screen;
 	
-	public int RADIUS = 25;
+	public int RADIUS = 5;
 	public boolean DEBUG = false;
 	
 	private Hexagon[][] map;		//Range: 0..2*radius+1, but hex coords are range: -radius .. radius
@@ -48,12 +46,6 @@ public class MapHandler {
 	public MapHandler(Main main){
 		this.main = main;
 		createHexagon(RADIUS);
-	}
-	
-	public MapHandler(Main main, Client client){
-		this.main = main;
-		main.setMH(this);
-		//client.getMapFromServer(main); - now done implicitly in ClientFunctions messageHandling
 	}
 	
 	public void update(double delta){
@@ -189,6 +181,8 @@ public class MapHandler {
 									updateVisibleMap(path, main.getCurrentPlayer(), u);
 									u.moved(costs);
 									marked.unitMoved();
+									main.getUIH().getBuildingIcons().resetBuildingIconNr();
+									this.resetMarked();
 								}
 								
 							}
@@ -381,19 +375,6 @@ public class MapHandler {
 			result += ",";
 		}
 		return result;
-	}
-	
-	public void printMap(Server server){
-		for(int r = 0; r < map.length; r++){
-			for(int c = 0; c < map[r].length; c++){
-				if(map[r][c] != null){
-					server.append(map[r][c].getAsChar() + " ");
-				}
-				else
-					server.append("  ");
-			}
-			server.log("");
-		}
 	}
 	
 	public void printMap(){

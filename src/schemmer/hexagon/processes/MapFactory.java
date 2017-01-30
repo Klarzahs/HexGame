@@ -13,6 +13,7 @@ import schemmer.hexagon.game.Main;
 import schemmer.hexagon.map.HexTypeInt;
 import schemmer.hexagon.map.Hexagon;
 import schemmer.hexagon.utils.Cube;
+import schemmer.hexagon.utils.Log;
 
 public class MapFactory {
 	private final static float deepWaterWeight = 0.285f;		
@@ -44,6 +45,7 @@ public class MapFactory {
 		noise = MapFactory.generateSimplexNoise(SimplexNoise.size*2, SimplexNoise.size*2, 0.006f);
 		
 		int pixelPerHex = (SimplexNoise.size*2) / (map.length);
+		Log.d("ppH "+pixelPerHex+" SN: "+SimplexNoise.size+" length: "+map.length);
 		for(int x = 0; x < map.length; x++){
 			for (int y = 0; y < map[x].length; y++){
 				if(map[x][y] != null){
@@ -134,6 +136,12 @@ public class MapFactory {
 		    	map[x][y] = new Hexagon(m, new Cube(q, -q-r, r), x, y);
 		    }
 		}
+		for(int x = 0; x <  map.length; x++){
+			for (int y = 0; y < map[x].length; y++){
+				System.out.print("["+x+", "+y+"],");
+			}
+			System.out.println("");
+		}
 	}
 	
 	public static float[][] generateSimplexNoise(int width, int height, float scale){
@@ -141,7 +149,7 @@ public class MapFactory {
 	    
 	    for(int x = 0; x < width; x++){
 	       for(int y = 0; y < height; y++){
-	          simplexnoise[x][y] = (float) SimplexNoise.octavedNoise(x, y, scale); 	//(x * frequency,y * frequency);
+	          simplexnoise[x][y] = SimplexNoise.octavedNoise(x, y, scale); 	//(x * frequency,y * frequency);
 	          simplexnoise[x][y] = (simplexnoise[x][y] + 1) / 2;   //generate values between 0 and 1
 	       }
 	    }

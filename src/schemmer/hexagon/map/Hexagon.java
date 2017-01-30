@@ -130,7 +130,7 @@ public class Hexagon {
 		for (int i = 0; i < CORNERS; i++){
 			g2d.drawLine((int)(hexCorner(i).x)-offX, (int)(hexCorner(i).y)-offY, (int)(hexCorner((i+1)%CORNERS).x)-offX, (int)(hexCorner((i+1)%CORNERS).y)-offY);
 		}
-		g2d.drawString(""+(int)this.coords.getV()[0] + "|" + (int)this.coords.getV()[1]+"|"+(int)this.coords.getV()[2], (int)center.x-offX, (int)center.y-offY);
+		g2d.drawString(""+this.coords.getV()[0] + "|" + this.coords.getV()[1]+"|"+this.coords.getV()[2], (int)center.x-offX, (int)center.y-offY);
 	}
 	
 	public void drawPicture(Graphics2D g2d, int offX, int offY){
@@ -311,15 +311,8 @@ public class Hexagon {
 	}
 	
 	public boolean moveTo(Unit u){
-		// send info to server
-		if(!Main.isLocal){
-			main.getClient().moveTo(u.getField(), this);
-			Log.d("Trying to move to "+this.printCoords());
-			return false;
-		}else{
-			moveToLocal(u);
-			return true;
-		}
+		moveToLocal(u);
+		return true;
 	}
 	
 	public void spawnHere(Unit u){
@@ -332,7 +325,7 @@ public class Hexagon {
 		// move unit locally
 		this.unit = u;
 		if(u == null)
-			Log.d("Unit is null in moveToLocal, islocal "+Main.isLocal);
+			Log.d("Unit is null in moveToLocal");
 		u.setField(this);
 		u.getPlayer().setRessourcesChanged(true);
 

@@ -36,6 +36,7 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 		main = m;
 	}
 	
+	@Override
 	public void drawIcons(Graphics2D g2d){
 		//draw building icons
 		g2d.setColor(Color.BLACK);
@@ -52,11 +53,12 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 		}
 	}
 	
+	@Override
 	public void handleBuildingSelection(MouseEvent e, boolean heroSelected){
 		//deselection
 		if(selectedBuildingNr != -1){
 			selectedBuildingNr = -1;
-			return;
+			//return;
 		}
 		for(int i = 0; i < rects.length; i++){
 			if(rects[i].contains(e.getX(), e.getY()))
@@ -64,6 +66,7 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 		}
 	}
 	
+	@Override
 	public Costs getCurrentIconCosts(){
 		Costs co;
 		switch(selectedBuildingNr){
@@ -97,11 +100,13 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 		return co;
 	}
 	
+	@Override
 	public boolean cursorInBuildingIconArea(double x, double y){
 		Rectangle icons = new Rectangle(middleX/4 + 20, middleY*2 - middleX/6 + 10, (buildingIcons.length > 5? 4 : buildingIcons.length) * 70, 140);
 		return icons.contains(x, y);
 	}
 	
+	@Override
 	public boolean isBuildingPossible(){ 
 		if(getBuildingIconNr() < 0) return false;
 		Costs co = getCurrentIconCosts();
@@ -110,14 +115,17 @@ public class BuildingIconsTierTwo extends HoverableIcon implements BuildingIconT
 		return false;		
 	}
 
+	@Override
 	public void resetBuildingIconNr(){
 		selectedBuildingNr = -1;
 	}
 	
+	@Override
 	public boolean isBuildingIconSelected(){
 		return (selectedBuildingNr >= 0);
 	}
 	
+	@Override
 	public int getBuildingIconNr(){
 		return selectedBuildingNr;
 	}

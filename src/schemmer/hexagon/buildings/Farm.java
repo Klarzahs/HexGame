@@ -22,6 +22,7 @@ public class Farm extends Building{
 	}
 
 	
+	@Override
 	public void buildStep(){
 		super.buildStep(this);
 	}

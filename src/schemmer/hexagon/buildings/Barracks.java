@@ -20,6 +20,7 @@ public class Barracks extends Building{
 		}
 	}
 	
+	@Override
 	public void buildStep(){
 		super.buildStep(this);
 	}

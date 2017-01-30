@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import schemmer.hexagon.game.Main;
 import schemmer.hexagon.player.Player;
-import schemmer.hexagon.server.Client;
 import schemmer.hexagon.utils.Log;
 
 public class RoundHandler {
@@ -13,16 +12,8 @@ public class RoundHandler {
 	private volatile int playerCount = -1, currentPlayer, currentRound, AIcount;		// TODO: AIcount
 	private Main main;
 	
-	private Client client;
-	
 	public RoundHandler(MapHandler mh){
 		this.mh = mh;
-		main = mh.getMain();
-	}
-	
-	public RoundHandler(MapHandler mh, Client c){
-		this.mh = mh;
-		client = c;
 		main = mh.getMain();
 	}
 	
@@ -37,22 +28,15 @@ public class RoundHandler {
 	}
 	
 	public void createAllPlayers(int playerCount, int AIcount){
-		if(!Main.isLocal){
-			while(this.getPlayerCount() == -1 ) {}		// fetch player/AI count from server - done implicitly
-			while(players.size() < this.getPlayerCount()){}	
-			main.receivedPlayers = true;
-			Log.d("Received players from server");
-		}else{
-			if(playerCount < 1)
-				Log.e("RoundHandler", "Max Players below 1!");
-			for (int i = 0; i < playerCount; i++){
-				createPC(i);
-			}
-			for (int i = playerCount; i < AIcount + playerCount; i++){
-				createNPC(i);
-			}
-			this.playerCount = playerCount;
+		if(playerCount < 1)
+			Log.e("RoundHandler", "Max Players below 1!");
+		for (int i = 0; i < playerCount; i++){
+			createPC(i);
 		}
+		for (int i = playerCount; i < AIcount + playerCount; i++){
+			createNPC(i);
+		}
+		this.playerCount = playerCount;
 	}
 	
 	public Player getCurrentPlayer(){
@@ -66,19 +50,13 @@ public class RoundHandler {
 	}
 	
 	public void nextPlayer(){
-		if(!Main.isLocal) {
-			client.nextPlayer();
-		}else{
-			nextPlayerLocal();
-		}
+		nextPlayerLocal();
 	}
 	
 	public void nextPlayerLocal(){
 		mh.resetMarked();
 		getCurrentPlayer().refreshAll();
-		Log.d("Current player: "+getCurrentPlayer());
 		currentPlayer = (currentPlayer + 1) % (getPlayerCount() + getAICount());
-		Log.d("Next player: "+getCurrentPlayer());
 		if(currentPlayer == playerCount)
 			startRound();
 	}
@@ -92,7 +70,6 @@ public class RoundHandler {
 	}
 	
 	public int getCurrentRound(){
-		if(!Main.isLocal) return client.getCurrentRound();
 		return currentRound;
 	}
 	

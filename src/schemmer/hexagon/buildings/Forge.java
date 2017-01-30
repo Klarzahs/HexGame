@@ -20,6 +20,7 @@ public class Forge extends Building{
 		}
 	}
 	
+	@Override
 	public void buildStep(){
 		super.buildStep(this);
 	}

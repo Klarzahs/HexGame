@@ -21,6 +21,7 @@ public class Hut extends Building{
 		}
 	}
 	
+	@Override
 	public void buildStep(){
 		super.buildStep(this);
 	}

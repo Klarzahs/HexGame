@@ -180,7 +180,7 @@ public class UIHandler {
 	
 	public boolean cursorInIconArea(double x, double y){
 		if(isBuilderSelected()) return getBuildingIcons().cursorInBuildingIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
-		else if(isBuildingSelected()) return getBuildingMenu().cursorInUnitIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
+		if(isBuildingSelected()) return getBuildingMenu().cursorInUnitIconArea(x, y) | stateIcons.cursorInStateIconArea(x, y);
 		return false;
 	}
 	

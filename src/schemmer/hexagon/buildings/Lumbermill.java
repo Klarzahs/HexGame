@@ -21,6 +21,7 @@ public class Lumbermill extends Building{
 		}
 	}
 	
+	@Override
 	public void buildStep(){
 		super.buildStep(this);
 	}
